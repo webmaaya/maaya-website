@@ -1,0 +1,147 @@
+/* ============================================================
+   EnquiryForm.css — Enquiry Modal
+   ============================================================ */
+
+/* Overlay */
+.enquiry-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Modal box */
+.enquiry-modal {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(15,23,42,0.25);
+  animation: slideUp 0.25s ease;
+  position: relative;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Close button */
+.enquiry-modal__close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--bg-section);
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+.enquiry-modal__close:hover { background: var(--border); color: var(--text-primary); }
+
+/* Header */
+.enquiry-modal__icon { font-size: 40px; margin-bottom: 10px; }
+
+.enquiry-modal__title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.enquiry-modal__sub {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* Form groups */
+.eq-group {
+  margin-bottom: 14px;
+}
+
+.eq-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+}
+
+.eq-input,
+.eq-select {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  font-size: 14.5px;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--bg-base);
+  outline: none;
+  transition: var(--transition);
+}
+
+.eq-input:focus,
+.eq-select:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* Two col row */
+.eq-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* Submit button */
+.btn-eq-submit {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 6px;
+}
+.btn-eq-submit:hover { background: var(--primary-dark); box-shadow: var(--shadow-blue); }
+.btn-eq-submit:disabled { background: var(--border); cursor: not-allowed; }
+
+/* Success state */
+.enquiry-success {
+  text-align: center;
+  padding: 20px 0;
+}
+.enquiry-success__icon  { font-size: 56px; display: block; margin-bottom: 16px; }
+.enquiry-success__title { font-family: var(--font-heading); font-size: 22px; font-weight: 800; color: var(--success); margin-bottom: 10px; }
+.enquiry-success__text  { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+
+@media (max-width: 500px) {
+  .enquiry-modal { padding: 28px 20px; }
+  .eq-row { grid-template-columns: 1fr; }
+}

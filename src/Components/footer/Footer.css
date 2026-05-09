@@ -1,0 +1,112 @@
+/* ============================================================
+   Footer.css — MAAYA Enterprises
+   ============================================================ */
+
+.footer {
+  background: #0D1B40;
+  color: rgba(255, 255, 255, 0.75);
+  padding: 56px 24px 0;
+}
+
+.footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Grid ─────────────────────────────────────────────────── */
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr;
+  gap: 36px;
+  margin-bottom: 48px;
+}
+
+/* Brand column */
+.footer__brand p {
+  font-size: 14px;
+  line-height: 1.75;
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* TODO: Replace this placeholder with real logo image */
+
+/* Headings */
+.footer__heading {
+  font-family: var(--font-heading);
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+/* Links */
+.footer__links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer__links a {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.footer__links a:hover {
+  color: #93C5FD;
+}
+
+/* Social icons */
+.footer__socials {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.footer__social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 14px;
+  font-weight: 700;
+  transition: var(--transition);
+  text-decoration: none;
+  background: transparent;
+}
+.footer__social-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Bottom bar ──────────────────────────────────────────── */
+.footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .footer__grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 500px) {
+  .footer__grid { grid-template-columns: 1fr; }
+  .footer { padding: 40px 20px 0; }
+  .footer__bottom { flex-direction: column; text-align: center; }
+}

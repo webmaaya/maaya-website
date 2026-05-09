@@ -1,0 +1,138 @@
+/* ============================================================
+   AdminAuthGate.css — Admin Login Gate
+   ============================================================ */
+
+.admin-gate {
+  min-height: 100vh;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-gate::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.admin-gate__box {
+  background: #1e293b;
+  border: 1.5px solid #334155;
+  border-radius: 20px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  animation: slideUp 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.admin-gate__icon { font-size: 48px; display: block; margin-bottom: 14px; }
+
+.admin-gate__title {
+  font-family: 'Sora', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #E2E8F0;
+  margin-bottom: 6px;
+}
+
+.admin-gate__sub {
+  font-size: 13px;
+  color: #64748B;
+  margin-bottom: 28px;
+}
+
+.admin-gate__error {
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #FCA5A5;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.admin-gate__group { margin-bottom: 16px; text-align: left; }
+
+.admin-gate__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.admin-gate__input-wrap { position: relative; }
+
+.admin-gate__input {
+  width: 100%;
+  padding: 12px 44px 12px 16px;
+  background: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 10px;
+  color: #E2E8F0;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.admin-gate__input:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+
+.admin-gate__eye {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  cursor: pointer; color: #64748B;
+  font-size: 18px; padding: 0;
+}
+.admin-gate__eye:hover { color: #3B82F6; }
+
+.admin-gate__btn {
+  width: 100%;
+  padding: 13px;
+  background: #2563EB;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  margin-top: 4px;
+}
+.admin-gate__btn:hover:not(:disabled) { background: #1D4ED8; box-shadow: 0 4px 20px rgba(37,99,235,0.35); }
+.admin-gate__btn:disabled { background: #475569; cursor: not-allowed; }
+
+.admin-gate__back {
+  display: block;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #475569;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.admin-gate__back:hover { color: #94A3B8; }

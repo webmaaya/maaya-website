@@ -1,0 +1,341 @@
+/* ============================================================
+   AdminPanel.css — MAAYA Enterprises Admin Panel
+   ============================================================ */
+
+.admin {
+  min-height: 100vh;
+  background: #0f172a;
+  color: white;
+  font-family: var(--font-body);
+}
+
+/* ── Top Bar ─────────────────────────────────────────────── */
+.admin__topbar {
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.admin__topbar-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  color: #60A5FA;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin__topbar-badge {
+  font-size: 11px;
+  background: #1D4ED8;
+  color: white;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* ── Layout ──────────────────────────────────────────────── */
+.admin__body {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 0;
+  min-height: calc(100vh - 60px);
+}
+
+/* ── Left Panel — Form ───────────────────────────────────── */
+.admin__form-panel {
+  background: #1e293b;
+  border-right: 1px solid #334155;
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(100vh - 60px);
+  position: sticky;
+  top: 60px;
+}
+
+.admin__form-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: #E2E8F0;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Form groups */
+.admin__group {
+  margin-bottom: 16px;
+}
+
+.admin__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.admin__input,
+.admin__select,
+.admin__textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 8px;
+  color: #E2E8F0;
+  font-size: 14px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.admin__input:focus,
+.admin__select:focus,
+.admin__textarea:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.admin__select option { background: #1e293b; }
+
+.admin__textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Duration pricing grid */
+.admin__duration-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.admin__duration-item {
+  background: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.admin__duration-label {
+  font-size: 11px;
+  color: #60A5FA;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Syllabus builder */
+.admin__syllabus-module {
+  background: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.admin__syllabus-module-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.admin__syllabus-module-title {
+  flex: 1;
+  padding: 7px 10px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #E2E8F0;
+  font-size: 13px;
+  font-family: var(--font-body);
+  outline: none;
+}
+
+.admin__syllabus-chapter {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.admin__syllabus-chapter input {
+  flex: 1;
+  padding: 6px 10px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #CBD5E1;
+  font-size: 12.5px;
+  font-family: var(--font-body);
+  outline: none;
+}
+
+/* Buttons */
+.btn-admin-primary {
+  width: 100%;
+  padding: 12px;
+  background: #2563EB;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+.btn-admin-primary:hover { background: #1D4ED8; }
+.btn-admin-primary:disabled { background: #475569; cursor: not-allowed; }
+
+.btn-admin-secondary {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: #94A3B8;
+  border: 1.5px solid #334155;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+.btn-admin-secondary:hover { background: #1e293b; color: #E2E8F0; }
+
+.btn-icon {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  background: #1e293b;
+  color: #94A3B8;
+}
+.btn-icon:hover { background: #334155; color: white; }
+.btn-icon.danger:hover { background: #7f1d1d; color: #FCA5A5; }
+
+.btn-add-small {
+  font-size: 12px;
+  color: #60A5FA;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  font-weight: 600;
+}
+.btn-add-small:hover { color: #93C5FD; }
+
+/* ── Right Panel — Course List ───────────────────────────── */
+.admin__list-panel {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.admin__list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.admin__list-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: #E2E8F0;
+}
+
+.admin__list-count {
+  font-size: 13px;
+  color: #64748B;
+}
+
+/* Course row */
+.admin__course-row {
+  background: #1e293b;
+  border: 1.5px solid #334155;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: all 0.2s;
+}
+
+.admin__course-row:hover { border-color: #3B82F6; }
+
+.admin__course-row-left { flex: 1; min-width: 0; }
+
+.admin__course-row-name {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: #E2E8F0;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin__course-row-meta {
+  font-size: 12px;
+  color: #64748B;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin__course-row-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Status indicators */
+.admin__status {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748B;
+}
+.admin__status-icon { font-size: 40px; display: block; margin-bottom: 12px; }
+.admin__status p { font-size: 15px; }
+
+/* Success / Error toast */
+.admin__toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 9999;
+  animation: fadeInUp 0.3s ease;
+}
+.admin__toast.success { background: #065F46; color: #A7F3D0; border: 1px solid #10B981; }
+.admin__toast.error   { background: #7F1D1D; color: #FECACA; border: 1px solid #EF4444; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .admin__body { grid-template-columns: 1fr; }
+  .admin__form-panel { position: static; max-height: none; }
+}

@@ -1,0 +1,148 @@
+/* ============================================================
+   MAAYA Enterprises — Global CSS
+   Theme: Deep Navy + Electric Blue + Gold Accent
+   Premium, unique, glassmorphism feel
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap');
+
+
+/* ── CSS Variables ─────────────────────────────────────────── */
+:root {
+  /* Core Colors */
+  --primary:       #2563EB;
+  --primary-dark:  #1D4ED8;
+  --primary-light: #EFF6FF;
+  --primary-glow:  rgba(37, 99, 235, 0.25);
+
+  --accent:        #F59E0B;
+  --accent-dark:   #D97706;
+  --accent-light:  #FFFBEB;
+
+  --success:       #10B981;
+  --danger:        #EF4444;
+
+  /* Background layers */
+  --bg-base:       #F8FAFF;
+  --bg-card:       #FFFFFF;
+  --bg-section:    #F1F5FE;
+
+  /* Text */
+  --text-primary:  #0F172A;
+  --text-secondary:#475569;
+  --text-muted:    #94A3B8;
+
+  /* Border */
+  --border:        #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  /* Shadows */
+  --shadow-sm:     0 1px 3px rgba(15,23,42,0.08);
+  --shadow-md:     0 4px 16px rgba(15,23,42,0.10);
+  --shadow-lg:     0 8px 32px rgba(15,23,42,0.14);
+  --shadow-blue:   0 8px 32px rgba(37,99,235,0.18);
+  --shadow-hover:  0 16px 48px rgba(37,99,235,0.22);
+
+  /* Gradient backgrounds for course cards */
+  --grad-blue:    linear-gradient(135deg, #1e3a8a 0%, #2563EB 60%, #7c3aed 100%);
+  --grad-purple:  linear-gradient(135deg, #4c1d95 0%, #7c3aed 60%, #db2777 100%);
+  --grad-green:   linear-gradient(135deg, #064e3b 0%, #059669 60%, #0891b2 100%);
+  --grad-orange:  linear-gradient(135deg, #78350f 0%, #d97706 60%, #dc2626 100%);
+  --grad-teal:    linear-gradient(135deg, #134e4a 0%, #0d9488 60%, #0284c7 100%);
+  --grad-pink:    linear-gradient(135deg, #831843 0%, #db2777 60%, #7c3aed 100%);
+
+  /* Font */
+  --font-body:    'Plus Jakarta Sans', sans-serif;
+  --font-heading: 'Sora', sans-serif;
+  --font-heading: 'Poppins', sans-serif;  /* ✅ Yahan change karo */
+
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* Transitions */
+  --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Grid layout */
+  /* .features__grid { grid-template-columns: 1fr 1fr; } */
+}
+
+/* ── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+  border: none;
+  outline: none;
+}
+
+/* ── Utility Classes ─────────────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Course Card Gradients — used in JS via className */
+.grad-blue   { background: var(--grad-blue); }
+.grad-purple { background: var(--grad-purple); }
+.grad-green  { background: var(--grad-green); }
+.grad-orange { background: var(--grad-orange); }
+.grad-teal   { background: var(--grad-teal); }
+.grad-pink   { background: var(--grad-pink); }
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ── Selection ────────────────────────────────────────────── */
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+/* ── Page Fade-in Animation ───────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+  animation: fadeInUp 0.5s ease both;
+}
+
+/* ── Responsive Breakpoints (reference) ───────────────────── */
+/* Mobile  : max-width 640px  */
+/* Tablet  : max-width 1024px */
+/* Desktop : 1024px+          */
