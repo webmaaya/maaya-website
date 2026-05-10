@@ -6,7 +6,7 @@
   position: fixed;
   bottom: 28px;
   right: 28px;
-  z-index: 999;
+  z-index: 10000;
   width: 58px;
   height: 58px;
   border-radius: 50%;

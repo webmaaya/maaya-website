@@ -7,9 +7,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import {AuthProvider} from "./context/AuthContext";
 import ScrollToTop from "./Components/ScrollToTop";
+import FloatingChatbot from "./Components/chatbot/FloatingChatbot";
 
 // Layout components
-import Navbar   from "./Components/navigations/Navbar";
+import Navbar   from "./Components/navigations/NavBar";
 import Footer         from "./Components/footer/Footer";
 import WhatsappButton from "./Components/whatsapp/WhatsappButton";
 
@@ -67,6 +68,7 @@ export default function App() {
 
       {/* ── Floating WhatsApp Button ── */}
       <WhatsappButton />
+      <FloatingChatbot />
       </>
       }/>
     </Routes>
