@@ -10,9 +10,9 @@ import { auth } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/logo/MAAYA.png";
 import { NAV_LINKS } from "../../constants/data";
-import "./navbar.css";
+import "./NavBar.css";
 
-export default function Navbar() {
+export default function NavBar() {
   const [menuOpen,    setMenuOpen]    = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const location   = useLocation();

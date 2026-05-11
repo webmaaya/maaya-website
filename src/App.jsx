@@ -10,7 +10,7 @@ import ScrollToTop from "./Components/ScrollToTop";
 import FloatingChatbot from "./Components/chatbot/FloatingChatbot";
 
 // Layout components
-import Navbar   from "./Components/navigations/NavBar";
+import NavBar   from "./Components/navigations/NavBar";
 import Footer         from "./Components/footer/Footer";
 import WhatsappButton from "./Components/whatsapp/WhatsappButton";
 
@@ -45,7 +45,7 @@ export default function App() {
       {/* ── Page Routes ── */}
      <Route path="*" element={
        <>
-      <Navbar />
+      <NavBar />
       <Routes>   
        <Route path="/"           element={<Home/>} />
         <Route path="/courses"    element={<Courses/> }/>
