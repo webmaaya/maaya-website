@@ -10,7 +10,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 import DiplomaCard from "../cards/DiplomaCard";
 import EnquiryForm from "./EnquiryForm";
-import "./CoursesSection.css";
+import "./Coursessection.css";
 
 export default function CoursesSection() {
   const [diplomas,    setDiplomas]    = useState([]);
