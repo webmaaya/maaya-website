@@ -27,7 +27,7 @@
   background: #cc0000;
   border: 2.5px solid rgb(179, 48, 48);
   cursor: pointer;
-  z-index: 9998;          /* WhatsApp z-index se kam */
+  z-index: 1000;          /* WhatsApp z-index se kam */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -131,7 +131,7 @@
   display: flex;
   flex-direction: column;
   font-family: 'Segoe UI', sans-serif;
-  z-index: 9999;
+  z-index: 1001;
   overflow: hidden;
   border: 1px solid #e8f0fe;
   animation: maayaSlideUp 0.3s ease;
@@ -317,6 +317,8 @@
 .maaya-input::placeholder { color: #aab4c8; }
 
 .maaya-send-btn {
+  position: relative;
+  z-index: 1002;
   width: 40px; height: 40px;
   border-radius: 12px;
   background: linear-gradient(135deg, #1a3a8f, #2a4fa8);
