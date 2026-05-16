@@ -1,5 +1,5 @@
 /* ============================================================
-   DiplomaDetail.css — Diploma Course Detail Page
+   DiplomaDetail.css — Diploma & Online Course Detail Page
    ============================================================ */
 
 /* Hero */
@@ -56,7 +56,27 @@
   font-weight: 700;
 }
 
-/* Enroll Card */
+/* ── Online course price row on hero ── */
+.dip-hero__price-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.dip-hero__price-old {
+  font-size: 16px;
+  color: rgba(255,255,255,0.55);
+  text-decoration: line-through;
+}
+
+.dip-hero__price-now {
+  font-size: 28px;
+  font-weight: 800;
+  color: #A7F3D0;
+}
+
+/* ── Enroll Card ─────────────────────────────────────────── */
 .dip-enroll-card {
   background: white;
   border-radius: var(--radius-xl);
@@ -77,10 +97,41 @@
 .dip-enroll-card__sub {
   font-size: 13px;
   color: var(--text-muted);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   line-height: 1.5;
 }
 
+/* ── Online price box inside enroll card ── */
+.dip-enroll-card__price-box {
+  background: #F0FDF4;
+  border: 1.5px solid #BBF7D0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.dip-enroll-card__price-old {
+  font-size: 13px;
+  color: #94A3B8;
+  text-decoration: line-through;
+  margin-bottom: 2px;
+}
+
+.dip-enroll-card__price-now {
+  font-size: 28px;
+  font-weight: 800;
+  color: #16A34A;
+  margin-bottom: 4px;
+}
+
+.dip-enroll-card__duration {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+/* Enroll button */
 .btn-enroll-diploma {
   width: 100%;
   padding: 14px;
@@ -93,8 +144,15 @@
   cursor: pointer;
   transition: var(--transition);
   margin-bottom: 12px;
+  font-family: var(--font-body);
 }
 .btn-enroll-diploma:hover { background: var(--primary-dark); box-shadow: var(--shadow-blue); }
+
+/* Green button for online courses */
+.btn-enroll-diploma.online {
+  background: #16A34A;
+}
+.btn-enroll-diploma.online:hover { background: #15803D; }
 
 .dip-enroll-card__note {
   font-size: 12px;
@@ -206,6 +264,24 @@
 }
 .dip-learn-item::before { content: "✅"; flex-shrink: 0; }
 
+/* Tags row — online course */
+.dip-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.dip-tag {
+  font-size: 12px;
+  font-weight: 600;
+  background: #EFF6FF;
+  color: #1D4ED8;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid #BFDBFE;
+}
+
 /* Who should join */
 .dip-who-list { list-style: none; }
 .dip-who-list li {
@@ -221,7 +297,7 @@
 }
 .dip-who-list li::before { content: "👤"; font-size: 16px; }
 
-/* Accordion syllabus — reuses same style from CourseDetail */
+/* ── Accordion Syllabus ───────────────────────────────────── */
 .accordion-module {
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
@@ -264,7 +340,7 @@
   flex-shrink: 0;
 }
 
-.accordion-module__meta { font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+.accordion-module__meta  { font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
 .accordion-module__arrow { font-size: 16px; color: var(--primary); font-weight: 700; flex-shrink: 0; }
 
 .accordion-module__chapters {

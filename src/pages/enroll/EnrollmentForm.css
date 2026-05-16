@@ -1,0 +1,742 @@
+/* ============================================================
+   EnrollmentForm.css — MAAYA Enterprises Online Enrollment
+   ============================================================ */
+
+.enroll {
+  min-height: 100vh;
+  background: #F8FAFC;
+  font-family: var(--font-body);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.enroll__header {
+  background: white;
+  border-bottom: 1.5px solid #E2E8F0;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.enroll__back {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2563EB;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.enroll__back:hover { opacity: 0.75; }
+
+.enroll__header-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 800;
+  color: #1E293B;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.enroll__course-tag {
+  font-size: 12px;
+  background: #DBEAFE;
+  color: #1D4ED8;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.enroll__online-badge {
+  font-size: 11px;
+  background: #D1FAE5;
+  color: #065F46;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+/* ── Step Progress ───────────────────────────────────────── */
+.enroll__steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 14px 24px;
+  gap: 0;
+}
+
+.enroll__step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94A3B8;
+  padding: 0 16px;
+  position: relative;
+}
+
+.enroll__step:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  right: -6px;
+  color: #CBD5E1;
+}
+
+.enroll__step.active { color: #2563EB; }
+.enroll__step.done   { color: #16A34A; }
+
+.enroll__step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #E2E8F0;
+  color: #64748B;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.enroll__step.active .enroll__step-circle { background: #2563EB; color: white; }
+.enroll__step.done   .enroll__step-circle { background: #16A34A; color: white; }
+
+/* ── Body ────────────────────────────────────────────────── */
+.enroll__body {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ── Form Card ───────────────────────────────────────────── */
+.enroll__card {
+  background: white;
+  border-radius: 16px;
+  border: 1.5px solid #E2E8F0;
+  padding: 28px;
+}
+
+.enroll__card-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  color: #1E293B;
+  margin-bottom: 6px;
+}
+
+.enroll__card-subtitle {
+  font-size: 13px;
+  color: #64748B;
+  margin-bottom: 20px;
+}
+
+/* ── Groups ──────────────────────────────────────────────── */
+.enroll__group { margin-bottom: 20px; }
+
+.enroll__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.enroll__input {
+  width: 100%;
+  padding: 11px 14px;
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  color: #1E293B;
+  font-size: 14px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.enroll__input:focus { border-color: #2563EB; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+.enroll__input.error { border-color: #EF4444; background: #FFF5F5; }
+
+.enroll__error {
+  display: block;
+  font-size: 12px;
+  color: #EF4444;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.enroll__error-box {
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #B91C1C;
+  margin-bottom: 16px;
+}
+
+.enroll__two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── Qualification Pills ─────────────────────────────────── */
+.enroll__qual-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.enroll__qual-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: var(--font-body);
+}
+.enroll__qual-btn:hover  { border-color: #2563EB; color: #2563EB; }
+.enroll__qual-btn.active { background: #2563EB; border-color: #2563EB; color: white; }
+
+/* ── Profile Multi-select ────────────────────────────────── */
+.enroll__profile-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.enroll__profile-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: var(--font-body);
+  text-align: left;
+}
+.enroll__profile-btn:hover  { border-color: #7C3AED; color: #7C3AED; }
+.enroll__profile-btn.active { background: #7C3AED; border-color: #7C3AED; color: white; }
+
+/* ── Aadhaar Type ────────────────────────────────────────── */
+.enroll__aadhaar-type {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.enroll__aadhaar-type-btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: left;
+  font-family: var(--font-body);
+}
+.enroll__aadhaar-type-btn:hover  { border-color: #0891B2; color: #0891B2; }
+.enroll__aadhaar-type-btn.active { background: #0E7490; border-color: #0E7490; color: white; }
+
+/* ── File Upload Box ─────────────────────────────────────── */
+.enroll__file-box {
+  border: 2px dashed #CBD5E1;
+  border-radius: 12px;
+  background: #F8FAFC;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+.enroll__file-box:hover  { border-color: #2563EB; background: #EFF6FF; }
+.enroll__file-box.error  { border-color: #EF4444; background: #FFF5F5; }
+.enroll__file-box.has-file { border-style: solid; border-color: #16A34A; background: #F0FDF4; }
+
+.enroll__file-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px;
+}
+.enroll__file-icon { font-size: 32px; }
+.enroll__file-text { font-size: 14px; font-weight: 700; color: #475569; }
+.enroll__file-hint { font-size: 12px; color: #94A3B8; text-align: center; }
+
+.enroll__file-preview {
+  max-height: 160px;
+  max-width: 100%;
+  object-fit: contain;
+  padding: 8px;
+}
+
+.enroll__file-change {
+  font-size: 12px;
+  color: #2563EB;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 4px;
+  padding: 2px 0;
+  font-family: var(--font-body);
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.enroll__next-btn {
+  width: 100%;
+  padding: 14px;
+  background: #2563EB;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+  font-family: var(--font-body);
+}
+.enroll__next-btn:hover { background: #1D4ED8; }
+
+.enroll__submit-btn {
+  flex: 1;
+  padding: 14px;
+  background: #16A34A;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+.enroll__submit-btn:hover    { background: #15803D; }
+.enroll__submit-btn:disabled { background: #9CA3AF; cursor: not-allowed; }
+
+.enroll__back-btn {
+  padding: 13px 20px;
+  background: transparent;
+  color: #64748B;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+.enroll__back-btn:hover { background: #F1F5F9; }
+
+.enroll__step-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ── Fee Summary ─────────────────────────────────────────── */
+.enroll__fee-summary {
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.enroll__fee-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #F1F5F9;
+}
+.enroll__fee-row:last-child { border-bottom: none; }
+.enroll__fee-row.total {
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 2px solid #E2E8F0;
+  border-bottom: none;
+  font-weight: 700;
+}
+.enroll__fee-amount { font-size: 22px; color: #16A34A; }
+
+/* ── UPI Box ─────────────────────────────────────────────── */
+.enroll__upi-box {
+  background: #EFF6FF;
+  border: 1.5px solid #BFDBFE;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.enroll__upi-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1E40AF;
+  margin-bottom: 12px;
+}
+
+.enroll__upi-id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border: 1px solid #BFDBFE;
+}
+.enroll__upi-id strong { flex: 1; color: #1D4ED8; font-size: 15px; letter-spacing: 0.5px; }
+
+.enroll__copy-btn {
+  padding: 5px 14px;
+  background: #2563EB;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.enroll__qr-box { text-align: center; margin-bottom: 16px; }
+
+.enroll__qr-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1E40AF;
+  margin-bottom: 12px;
+}
+
+.enroll__qr-placeholder {
+  display: inline-flex;
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  border: 2px solid #BFDBFE;
+  margin-bottom: 8px;
+}
+
+.enroll__qr-img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+}
+
+.enroll__qr-fallback {
+  width: 180px;
+  min-height: 120px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  gap: 6px;
+}
+
+.enroll__qr-note {
+  font-size: 13px;
+  color: #1E40AF;
+  font-weight: 600;
+}
+
+.enroll__upi-steps { display: flex; flex-direction: column; gap: 8px; }
+.enroll__upi-step  { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #374151; }
+.enroll__upi-step span {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #2563EB; color: white;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+/* Progress box */
+.enroll__progress-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #EFF6FF;
+  border: 1.5px solid #BFDBFE;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #1D4ED8;
+  font-weight: 600;
+}
+.enroll__progress-spinner { font-size: 20px; }
+
+/* Online badges */
+.enroll__online-badge {
+  font-size: 11px;
+  background: #1D4ED8;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+.enroll__online-badge-card {
+  font-size: 12px;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  margin-top: 6px;
+  display: inline-block;
+}
+
+/* Sidebar progress */
+.enroll__sidebar-progress {
+  background: white;
+  border-radius: 12px;
+  border: 1.5px solid #E2E8F0;
+  padding: 14px;
+  margin-top: 12px;
+}
+.enroll__sidebar-progress-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+.enroll__sidebar-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #94A3B8;
+  padding: 6px 0;
+  font-weight: 600;
+}
+.enroll__sidebar-step span {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #E2E8F0;
+  color: #94A3B8;
+  font-size: 12px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.enroll__sidebar-step.current       { color: #2563EB; }
+.enroll__sidebar-step.current span  { background: #2563EB; color: white; }
+.enroll__sidebar-step.done          { color: #16A34A; }
+.enroll__sidebar-step.done span     { background: #16A34A; color: white; }
+
+/* WhatsApp success */
+.enroll__success-contact { margin: 16px 0; text-align: center; }
+.enroll__success-contact p { font-size: 13px; color: #64748B; margin-bottom: 8px; }
+.enroll__whatsapp-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: #25D366;
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.enroll__disclaimer {
+  font-size: 12px;
+  color: #64748B;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+.enroll__sidebar {
+  position: sticky;
+  top: 110px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.enroll__course-card {
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  color: white;
+}
+.enroll__course-icon  { font-size: 36px; margin-bottom: 8px; }
+.enroll__course-name  { font-family: var(--font-heading); font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+.enroll__online-badge-card {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.enroll__sidebar-info {
+  background: white;
+  border-radius: 12px;
+  border: 1.5px solid #E2E8F0;
+  padding: 14px;
+}
+
+.enroll__sidebar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  font-size: 13px;
+  color: #64748B;
+  border-bottom: 1px solid #F1F5F9;
+}
+.enroll__sidebar-row:last-child { border-bottom: none; }
+.enroll__sidebar-row strong { color: #1E293B; }
+
+.enroll__sidebar-features {
+  background: white;
+  border-radius: 12px;
+  border: 1.5px solid #E2E8F0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.enroll__sidebar-feature { font-size: 13px; color: #374151; font-weight: 500; }
+
+/* Sidebar progress */
+.enroll__sidebar-progress {
+  background: white;
+  border-radius: 12px;
+  border: 1.5px solid #E2E8F0;
+  padding: 14px;
+}
+.enroll__sidebar-progress-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #94A3B8;
+  margin-bottom: 12px;
+}
+.enroll__sidebar-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #94A3B8;
+  padding: 6px 0;
+  border-bottom: 1px solid #F1F5F9;
+}
+.enroll__sidebar-step:last-child { border-bottom: none; }
+.enroll__sidebar-step span {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #E2E8F0; color: #94A3B8;
+  font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.enroll__sidebar-step.current       { color: #2563EB; font-weight: 700; }
+.enroll__sidebar-step.current span  { background: #2563EB; color: white; }
+.enroll__sidebar-step.done          { color: #16A34A; }
+.enroll__sidebar-step.done span     { background: #16A34A; color: white; }
+
+/* ── Loading / Not Found ─────────────────────────────────── */
+.enroll__loading {
+  text-align: center;
+  padding: 100px 24px;
+  color: #64748B;
+}
+.enroll__loading span { font-size: 48px; display: block; margin-bottom: 16px; }
+.enroll__back-link { color: #2563EB; text-decoration: none; font-weight: 600; display: inline-block; margin-top: 12px; }
+
+/* ── Success Screen ──────────────────────────────────────── */
+.enroll__success {
+  min-height: 100vh;
+  background: #F0FDF4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.enroll__success-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 32px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  border: 2px solid #BBF7D0;
+  box-shadow: 0 8px 40px rgba(22,163,74,0.1);
+}
+
+.enroll__success-icon { font-size: 64px; margin-bottom: 16px; }
+.enroll__success-card h2 { font-family: var(--font-heading); font-size: 24px; font-weight: 800; color: #15803D; margin-bottom: 8px; }
+.enroll__success-card p  { font-size: 15px; color: #374151; margin-bottom: 8px; line-height: 1.6; }
+
+.enroll__success-steps { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; text-align: left; }
+.enroll__success-step  { display: flex; gap: 12px; align-items: flex-start; }
+.enroll__success-step span {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #16A34A; color: white;
+  font-weight: 800; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.enroll__success-step p { font-size: 14px; color: #374151; margin: 0; padding-top: 4px; }
+
+.enroll__success-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 28px;
+  background: #16A34A;
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.enroll__success-btn:hover { background: #15803D; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .enroll__body { grid-template-columns: 1fr; padding: 16px; }
+  .enroll__sidebar { position: static; order: -1; }
+  .enroll__two-col { grid-template-columns: 1fr; }
+  .enroll__steps { padding: 12px 8px; }
+  .enroll__step { padding: 0 8px; font-size: 11px; }
+  .enroll__step span:last-child { display: none; }
+}

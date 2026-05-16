@@ -18,13 +18,13 @@ import WhatsappButton from "./Components/whatsapp/WhatsappButton";
 import Home  from "./pages/home/Home";
 import Courses  from "./pages/courses/Courses";
 import DiplomaDetail from "./pages/coursedetail/DiplomaDetail";
-// TODO: Create these pages later
 import About   from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
 import AdminPanel from "./pages/adminpanel/AdminPanel";
 import Login    from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import AdminAuthGate from "./pages/adminauthgate/AdminAuthGate";
+import EnrollmentForm from "./pages/enroll/EnrollmentForm";
 
 export default function App() {
   return (
@@ -33,11 +33,11 @@ export default function App() {
     <ScrollToTop />
     <Routes>
       {/* ── Sticky Navbar (always visible) ── */}
-      {/* <Route path="/admin" element={<AdminPanel />} /> {/* Admin panel route */}
+     
        <Route path="/register" element={<Register />} />
           <Route path="/login"    element={<Login />} />
           <Route path="/admin"    element={<AdminAuthGate />} />
-
+          <Route path="/enroll/:courseId" element={<EnrollmentForm />} />
      
      
      
@@ -51,7 +51,6 @@ export default function App() {
         <Route path="/courses"    element={<Courses/> }/>
         <Route path="/diploma/:id" element={<DiplomaDetail />} /> */
 
-        {/* TODO: Uncomment when these pages are ready */}
         <Route path="/about"    element={<About/>} />
         <Route path="/contact"  element={<Contact/>} />
         {/* 404 fallback */}

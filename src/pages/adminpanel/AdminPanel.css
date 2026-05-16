@@ -1,5 +1,5 @@
 /* ============================================================
-   AdminPanel.css — MAAYA Enterprises Admin Panel
+   AdminPanel.css — MAAYA Enterprises (Updated)
    ============================================================ */
 
 .admin {
@@ -45,7 +45,7 @@
 /* ── Layout ──────────────────────────────────────────────── */
 .admin__body {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: 380px 1fr;
   gap: 0;
   min-height: calc(100vh - 60px);
 }
@@ -69,12 +69,73 @@
   margin-bottom: 20px;
   padding-bottom: 12px;
   border-bottom: 1px solid #334155;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
-/* Form groups */
+/* ── Course Type Toggle ──────────────────────────────────── */
+.admin__type-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1.5px solid #334155;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.admin__type-btn {
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: #0f172a;
+  color: #64748B;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+
+.admin__type-btn.active-offline { background: #1e3a5f; color: #60A5FA; }
+.admin__type-btn.active-online  { background: #14532d; color: #34D399; }
+
+.admin__online-note {
+  font-size: 12px;
+  background: #14532d33;
+  border: 1px solid #166534;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #86EFAC;
+  margin-bottom: 16px;
+}
+
+.admin__offline-note {
+  font-size: 12px;
+  background: #1e3a5f33;
+  border: 1px solid #1D4ED8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #93C5FD;
+  margin-bottom: 16px;
+}
+
+/* ── Price Box ───────────────────────────────────────────── */
+.admin__price-box {
+  background: #0f172a;
+  border: 1.5px solid #3B82F6;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.admin__price-box-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #60A5FA;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
+/* ── Form Groups ─────────────────────────────────────────── */
 .admin__group {
   margin-bottom: 16px;
 }
@@ -102,6 +163,7 @@
   font-family: var(--font-body);
   outline: none;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .admin__input:focus,
@@ -112,35 +174,52 @@
 }
 
 .admin__select option { background: #1e293b; }
+.admin__textarea { resize: vertical; min-height: 80px; }
 
-.admin__textarea {
-  resize: vertical;
-  min-height: 80px;
+/* ── Include Rows (sub-courses) ──────────────────────────── */
+.admin__include-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
-/* Duration pricing grid */
-.admin__duration-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.admin__duration-item {
+.admin__include-row input {
+  padding: 7px 10px;
   background: #0f172a;
-  border: 1.5px solid #334155;
-  border-radius: 8px;
-  padding: 10px;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #E2E8F0;
+  font-size: 13px;
+  font-family: var(--font-body);
+  outline: none;
 }
 
-.admin__duration-label {
-  font-size: 11px;
-  color: #60A5FA;
-  font-weight: 700;
-  margin-bottom: 6px;
-  display: block;
+.admin__include-row input:focus { border-color: #3B82F6; }
+
+/* ── Array Rows (features, whatYouLearn, whoShouldJoin) ──── */
+.admin__arr-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
-/* Syllabus builder */
+.admin__arr-row input {
+  flex: 1;
+  padding: 8px 10px;
+  background: #0f172a;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: #E2E8F0;
+  font-size: 13px;
+  font-family: var(--font-body);
+  outline: none;
+}
+
+.admin__arr-row input:focus { border-color: #3B82F6; }
+
+/* ── Syllabus ─────────────────────────────────────────────── */
 .admin__syllabus-module {
   background: #0f172a;
   border: 1.5px solid #334155;
@@ -187,7 +266,7 @@
   outline: none;
 }
 
-/* Buttons */
+/* ── Buttons ─────────────────────────────────────────────── */
 .btn-admin-primary {
   width: 100%;
   padding: 12px;
@@ -200,8 +279,9 @@
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 4px;
+  font-family: var(--font-body);
 }
-.btn-admin-primary:hover { background: #1D4ED8; }
+.btn-admin-primary:hover   { background: #1D4ED8; }
 .btn-admin-primary:disabled { background: #475569; cursor: not-allowed; }
 
 .btn-admin-secondary {
@@ -216,6 +296,7 @@
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 8px;
+  font-family: var(--font-body);
 }
 .btn-admin-secondary:hover { background: #1e293b; color: #E2E8F0; }
 
@@ -228,8 +309,9 @@
   transition: all 0.2s;
   background: #1e293b;
   color: #94A3B8;
+  flex-shrink: 0;
 }
-.btn-icon:hover { background: #334155; color: white; }
+.btn-icon:hover       { background: #334155; color: white; }
 .btn-icon.danger:hover { background: #7f1d1d; color: #FCA5A5; }
 
 .btn-add-small {
@@ -240,6 +322,7 @@
   cursor: pointer;
   padding: 4px 0;
   font-weight: 600;
+  font-family: var(--font-body);
 }
 .btn-add-small:hover { color: #93C5FD; }
 
@@ -249,26 +332,33 @@
   overflow-y: auto;
 }
 
-.admin__list-header {
+/* List Tabs (Diploma / Online) */
+.admin__list-tabs {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  gap: 0;
+  border: 1.5px solid #334155;
+  border-radius: 10px;
+  overflow: hidden;
   margin-bottom: 20px;
 }
 
-.admin__list-title {
-  font-family: var(--font-heading);
-  font-size: 16px;
-  font-weight: 700;
-  color: #E2E8F0;
-}
-
-.admin__list-count {
+.admin__list-tab {
+  flex: 1;
+  padding: 10px;
   font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  background: #0f172a;
   color: #64748B;
+  transition: all 0.2s;
+  font-family: var(--font-body);
 }
 
-/* Course row */
+.admin__list-tab:hover { color: #E2E8F0; }
+.admin__list-tab.active { background: #1e293b; color: #60A5FA; border-bottom: 2px solid #3B82F6; }
+
+/* Course Row */
 .admin__course-row {
   background: #1e293b;
   border: 1.5px solid #334155;
@@ -284,23 +374,24 @@
 
 .admin__course-row:hover { border-color: #3B82F6; }
 
-.admin__course-row-left { flex: 1; min-width: 0; }
+.admin__course-row-left  { flex: 1; min-width: 0; }
 
 .admin__course-row-name {
   font-weight: 700;
   font-size: 14.5px;
   color: #E2E8F0;
   margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .admin__course-row-meta {
   font-size: 12px;
   color: #64748B;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -310,16 +401,33 @@
   flex-shrink: 0;
 }
 
-/* Status indicators */
+.admin__badge-tag {
+  font-size: 10px;
+  background: #78350F;
+  color: #FDE68A;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.admin__online-tag {
+  font-size: 11px;
+  background: #14532d;
+  color: #34D399;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* Status */
 .admin__status {
   text-align: center;
   padding: 60px 20px;
   color: #64748B;
 }
 .admin__status-icon { font-size: 40px; display: block; margin-bottom: 12px; }
-.admin__status p { font-size: 15px; }
 
-/* Success / Error toast */
+/* Toast */
 .admin__toast {
   position: fixed;
   bottom: 24px;
@@ -333,6 +441,11 @@
 }
 .admin__toast.success { background: #065F46; color: #A7F3D0; border: 1px solid #10B981; }
 .admin__toast.error   { background: #7F1D1D; color: #FECACA; border: 1px solid #EF4444; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 900px) {

@@ -279,7 +279,7 @@ export default function PlacedStudents() {
             Our Placed Students
           </h2>
           <p className="placed__count">
-            400+ students successfully placed
+            500+ students successfully placed
           </p>
         </div>
       </div>

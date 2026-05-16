@@ -1,20 +1,22 @@
 // ============================================================
 //  DiplomaDetail.jsx — /diploma/:id
-//  Shows: Overview, Syllabus (accordion), Who Should Join
-//  Enroll Now → opens EnquiryForm modal
+//  Online course  → "Enroll Now" → /enroll/:id (full form)
+//  Offline course → "Enroll Now" → EnquiryForm modal
 // ============================================================
 
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import EnquiryForm from "../../Components/sections/EnquiryForm";
+import EnquiryForm from "../../components/sections/EnquiryForm";
 import "./DiplomaDetail.css";
 
 const TABS = ["Overview", "Syllabus", "Who Should Join"];
 
 export default function DiplomaDetail() {
-  const { id }    = useParams();
+  const { id }     = useParams();
+  const navigate   = useNavigate();
+
   const [diploma,  setDiploma]  = useState(null);
   const [loading,  setLoading]  = useState(true);
   const [tab,      setTab]      = useState("Overview");
@@ -25,7 +27,11 @@ export default function DiplomaDetail() {
     const fetch = async () => {
       setLoading(true);
       try {
-        const snap = await getDoc(doc(db, "diplomaCourses", id));
+        // Try diplomaCourses first, then onlineCourses
+        let snap = await getDoc(doc(db, "diplomaCourses", id));
+        if (!snap.exists()) {
+          snap = await getDoc(doc(db, "onlineCourses", id));
+        }
         if (snap.exists()) {
           setDiploma({ id: snap.id, ...snap.data() });
           setOpenMods({ 0: true });
@@ -54,6 +60,16 @@ export default function DiplomaDetail() {
 
   const toggleMod = (i) => setOpenMods(p => ({ ...p, [i]: !p[i] }));
 
+  // Online course → go to enrollment form
+  // Offline/diploma → show enquiry modal
+  const handleEnroll = () => {
+    if (diploma.isOnline) {
+      navigate(`/enroll/${diploma.id}`);
+    } else {
+      setShowForm(true);
+    }
+  };
+
   return (
     <main>
 
@@ -65,30 +81,67 @@ export default function DiplomaDetail() {
           <div>
             <div className="dip-hero__rating">
               <span className="dip-hero__stars">★★★★★</span>
-              <span className="dip-hero__rating-text">MKCL Certified Program</span>
+              <span className="dip-hero__rating-text">
+                {diploma.isOnline ? "🌐 Online Course" : "MKCL Certified Program"}
+              </span>
             </div>
             <h1 className="dip-hero__title">{diploma.title}</h1>
             <p className="dip-hero__sub">{diploma.overview}</p>
             <div className="dip-hero__duration">📅 {diploma.duration}</div>
+
+            {/* Price shown on hero for online courses */}
+            {diploma.isOnline && diploma.price && (
+              <div className="dip-hero__price-row">
+                {diploma.originalPrice && (
+                  <span className="dip-hero__price-old">₹{diploma.originalPrice}</span>
+                )}
+                <span className="dip-hero__price-now">₹{diploma.price}</span>
+              </div>
+            )}
           </div>
 
           {/* Right — Enroll Card */}
           <div className="dip-enroll-card">
-            <h3 className="dip-enroll-card__title">Interested in this Program?</h3>
-            <p className="dip-enroll-card__sub">
-              Fill a quick form — our counsellor will call you within 24 hours and guide you through the admission process.
-            </p>
+            {diploma.isOnline ? (
+              <>
+                <h3 className="dip-enroll-card__title">🌐 Enroll in this Online Course</h3>
+                <p className="dip-enroll-card__sub">
+                  Complete the enrollment form, pay the fees, and get access to this course on your device!
+                </p>
 
-            <button
-              className="btn-enroll-diploma"
-              onClick={() => setShowForm(true)}
-            >
-              Enroll Now — It's Free to Enquire!
-            </button>
+                {/* Price display for online */}
+                <div className="dip-enroll-card__price-box">
+                  {diploma.originalPrice && (
+                    <div className="dip-enroll-card__price-old">₹{diploma.originalPrice}</div>
+                  )}
+                  <div className="dip-enroll-card__price-now">₹{diploma.price}</div>
+                  <div className="dip-enroll-card__duration">⏱ {diploma.duration}</div>
+                </div>
 
-            <p className="dip-enroll-card__note">
-              📞 Or call us: <strong>9420277373</strong>
-            </p>
+                <button className="btn-enroll-diploma online" onClick={handleEnroll}>
+                  Enroll Now — Fill the Form →
+                </button>
+
+                <p className="dip-enroll-card__note">
+                  📞 Questions? Call: <strong>9420277373</strong>
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="dip-enroll-card__title">Interested in this Program?</h3>
+                <p className="dip-enroll-card__sub">
+                  Fill a quick form — our counsellor will call you within 24 hours and guide you through the admission process.
+                </p>
+
+                <button className="btn-enroll-diploma" onClick={handleEnroll}>
+                  Enroll Now — It's Free to Enquire!
+                </button>
+
+                <p className="dip-enroll-card__note">
+                  📞 Or call us: <strong>9420277373</strong>
+                </p>
+              </>
+            )}
 
             {/* Features */}
             <ul className="dip-features-list">
@@ -121,27 +174,46 @@ export default function DiplomaDetail() {
         {/* OVERVIEW */}
         {tab === "Overview" && (
           <div>
-            <h2 className="dip-content-title">What's Included</h2>
-            <div className="dip-includes-grid">
-              {(diploma.includes || []).map(item => (
-                <div key={item.name} className="dip-include-card">
-                  <span className="dip-include-card__icon">{item.icon}</span>
-                  <div className="dip-include-card__name">{item.name}</div>
-                  <div className="dip-include-card__duration">📅 {item.duration}</div>
+            {/* Diploma — show included sub-courses */}
+            {!diploma.isOnline && (diploma.includes || []).length > 0 && (
+              <>
+                <h2 className="dip-content-title">What's Included</h2>
+                <div className="dip-includes-grid">
+                  {diploma.includes.map(item => (
+                    <div key={item.name} className="dip-include-card">
+                      <span className="dip-include-card__icon">{item.icon}</span>
+                      <div className="dip-include-card__name">{item.name}</div>
+                      <div className="dip-include-card__duration">📅 {item.duration}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
 
-            <h2 className="dip-content-title">What You'll Learn</h2>
-            <div className="dip-learn-grid">
-              {(diploma.whatYouLearn || []).map(item => (
-                <div key={item} className="dip-learn-item">{item}</div>
-              ))}
-            </div>
+            {/* What you'll learn */}
+            {(diploma.whatYouLearn || []).length > 0 && (
+              <>
+                <h2 className="dip-content-title">What You'll Learn</h2>
+                <div className="dip-learn-grid">
+                  {diploma.whatYouLearn.map(item => (
+                    <div key={item} className="dip-learn-item">{item}</div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Tags for online */}
+            {diploma.isOnline && (diploma.tags || []).length > 0 && (
+              <div className="dip-tags-row">
+                {diploma.tags.map(t => (
+                  <span key={t} className="dip-tag">{t}</span>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {/* SYLLABUS — Accordion */}
+        {/* SYLLABUS */}
         {tab === "Syllabus" && (
           <div>
             <h2 className="dip-content-title">Course Syllabus</h2>
@@ -165,8 +237,7 @@ export default function DiplomaDetail() {
                   <ul className="accordion-module__chapters">
                     {(mod.chapters || []).map((ch, ci) => (
                       <li key={ci} className="accordion-module__chapter">
-                        <span className="accordion-module__dot">•</span>
-                        {ch}
+                        <span className="accordion-module__dot">•</span>{ch}
                       </li>
                     ))}
                   </ul>
@@ -186,7 +257,6 @@ export default function DiplomaDetail() {
               ))}
             </ul>
 
-            {/* CTA at bottom */}
             <div style={{
               background: "var(--primary-light)",
               border: "1.5px solid var(--primary)",
@@ -199,10 +269,16 @@ export default function DiplomaDetail() {
                 Ready to start your journey?
               </h3>
               <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 16 }}>
-                Enquire now — our counsellor will call you within 24 hours!
+                {diploma.isOnline
+                  ? "Enroll now — pay & get instant course access!"
+                  : "Enquire now — our counsellor will call you within 24 hours!"}
               </p>
-              <button className="btn-enroll-diploma" style={{ maxWidth: 280, margin: "0 auto" }} onClick={() => setShowForm(true)}>
-                Enroll Now →
+              <button
+                className={`btn-enroll-diploma ${diploma.isOnline ? "online" : ""}`}
+                style={{ maxWidth: 280, margin: "0 auto" }}
+                onClick={handleEnroll}
+              >
+                {diploma.isOnline ? "Enroll Now →" : "Enquire Now →"}
               </button>
             </div>
           </div>
@@ -211,8 +287,8 @@ export default function DiplomaDetail() {
         <Link to="/courses" className="btn-back">← Back to Courses</Link>
       </div>
 
-      {/* ── Enquiry Form Modal ── */}
-      {showForm && (
+      {/* Enquiry Modal — only for offline courses */}
+      {showForm && !diploma.isOnline && (
         <EnquiryForm
           preSelectedCourse={diploma.title}
           onClose={() => setShowForm(false)}

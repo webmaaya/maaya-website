@@ -85,7 +85,7 @@ export default function About() {
             <h2>From a Small Centre to Maharashtra's Most Trusted Institute</h2>
             <p>MAAYA Enterprises was founded in 2010 with a simple mission — to bring quality computer education to every student in Maharashtra, regardless of their background or financial situation.</p>
             <p>What started as a small training centre in Sawantwadi has today grown into a full-scale educational institution offering 20+ courses in IT, skill development, business and language — all at affordable fees.</p>
-            <p>/* TODO: Add more story content */</p>
+      
           </div>
           <div className="about-story__visual">
             {STATS.map(s => (
