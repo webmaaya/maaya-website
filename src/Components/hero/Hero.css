@@ -59,6 +59,8 @@
   animation: fadeInUp 0.55s 0.1s ease both;
 }
 
+
+
 .hero__title span {
   color: #FCD34D; /* gold accent on keyword */
 }
