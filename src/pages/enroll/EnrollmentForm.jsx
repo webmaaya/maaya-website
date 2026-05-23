@@ -259,8 +259,8 @@ export default function EnrollmentForm() {
           qualification:   form.qualification,
           current_profile: form.currentProfile.join(", "),
           aadhaar_type:    form.aadhaarType === "big"
-            ? "Big Aadhaar (front only)"
-            : "Small Aadhaar (front + back)",
+            ? "Full Sized Aadhaar Card (front only)"
+            : "Small Sized Aadhaar Card (front + back)",
 
           // Course details
           course_name:     course?.title    || "—",
@@ -478,8 +478,8 @@ Please verify payment and send login credentials to student within 24-48 hours.`
             <Field label="Aadhaar Card Type *">
               <div className="enroll__aadhaar-type">
                 {[
-                  { v:"big",   l:"Big Aadhaar Card — address on front side" },
-                  { v:"small", l:"Small Aadhaar Card — address on back side (upload both sides)" },
+                  { v:"big",   l:"Full Sized Aadhaar Card — address on front side" },
+                  { v:"small", l:"Small Sized Aadhaar Card — address on back side (upload both sides)" },
                 ].map(({v,l})=>(
                   <button key={v} type="button"
                     className={`enroll__aadhaar-type-btn ${form.aadhaarType===v?"active":""}`}
@@ -490,12 +490,12 @@ Please verify payment and send login credentials to student within 24-48 hours.`
 
             <UploadBox
               label={form.aadhaarType==="big"
-                ? "Aadhaar Card (Front — all details visible) *"
-                : "Aadhaar Card — Front Side *"}
+                ? "Full Sized Aadhaar Card (Front — all details visible) *"
+                : "Small Sized Aadhaar Card — Front Side *"}
               field="aadhaarFront" icon="🪪"
               hint={form.aadhaarType==="big"
-                ? "Big Aadhaar: name, photo, DOB & address all on front"
-                : "Small Aadhaar: name, photo, DOB side"}
+                ? "Full Sized Aadhaar: name, photo, DOB & address all on front"
+                : "Small Sized Aadhaar: name, photo, DOB side"}
               preview={previews.aadhaarFront} error={errors.aadhaarFront} onChange={handleFile} />
 
             {form.aadhaarType==="small" && (

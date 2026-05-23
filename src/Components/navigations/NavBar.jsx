@@ -1,9 +1,4 @@
-// ============================================================
-//  Navbar.jsx — MAAYA Enterprises
-//  Sticky navbar with logo, nav links, CTA buttons & mobile menu
-// ============================================================
-
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -13,12 +8,25 @@ import { NAV_LINKS } from "../../constants/data";
 import "./NavBar.css";
 
 export default function NavBar() {
-  const [menuOpen,    setMenuOpen]    = useState(false);
+  const [menuOpen,     setMenuOpen]     = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const location   = useLocation();
+  const location = useLocation();
   const { currentUser, isAdmin } = useAuth();
+  const dropdownRef = useRef(null);
 
   const isActive = (path) => location.pathname === path;
+  const firstName = currentUser?.displayName?.split(" ")[0] || "User";
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -26,29 +34,21 @@ export default function NavBar() {
     setMenuOpen(false);
   };
 
-  // First name only for display
-  const firstName = currentUser?.displayName?.split(" ")[0] || "User";
-
   return (
     <header className="navbar">
       <div className="navbar__inner">
 
-        {/* ── Logo ── */}
+        {/* Logo */}
         <Link to="/" className="navbar__logo" onClick={() => setMenuOpen(false)}>
-          {logo && (
-            <img src={logo} alt="MAAYA Logo" />
-          )}
+          {logo && <img src={logo} alt="MAAYA Logo" />}
         </Link>
 
-        {/* ── Desktop Nav Links ── */}
+        {/* Desktop Nav Links */}
         <nav>
           <ul className="navbar__links">
             {NAV_LINKS.map(link => (
               <li key={link.name}>
-                <Link
-                  to={link.path}
-                  className={isActive(link.path) ? "active" : ""}
-                >
+                <Link to={link.path} className={isActive(link.path) ? "active" : ""}>
                   {link.name}
                 </Link>
               </li>
@@ -56,55 +56,122 @@ export default function NavBar() {
           </ul>
         </nav>
 
-        {/* ── Desktop Right Side ── */}
+        {/* Desktop Right Side */}
         <div className="navbar__cta">
           {currentUser ? (
-            /* ── Logged In — show Welcome + dropdown ── */
-            <div className="navbar__user" onClick={() => setUserMenuOpen(p => !p)}>
-              <div className="navbar__user-avatar">
-                {currentUser.displayName?.charAt(0).toUpperCase() || "U"}
-              </div>
-              <span className="navbar__user-name">
-                Welcome, <strong>{firstName}</strong>
-              </span>
-              <span className="navbar__user-arrow">{userMenuOpen ? "▲" : "▼"}</span>
 
-              {/* Dropdown */}
+            // ── User dropdown wrapper ──
+            <div ref={dropdownRef} style={{ position: "relative" }}>
+
+              {/* Welcome button */}
+              <div
+                className="navbar__user"
+                onClick={() => setUserMenuOpen(p => !p)}
+              >
+                <div className="navbar__user-avatar">
+                  {currentUser.displayName?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <span className="navbar__user-name">
+                  Welcome, <strong>{firstName}</strong>
+                </span>
+                <span className="navbar__user-arrow">
+                  {userMenuOpen ? "▲" : "▼"}
+                </span>
+              </div>
+
+              {/* Dropdown — completely outside navbar__user */}
               {userMenuOpen && (
-                <div className="navbar__user-dropdown">
-                  <div className="navbar__user-dropdown-name">
+                <div style={{
+                  position:     "absolute",
+                  top:          "calc(100% + 8px)",
+                  right:        0,
+                  background:   "#ffffff",
+                  border:       "1.5px solid #E2E8F0",
+                  borderRadius: "14px",
+                  padding:      "8px",
+                  minWidth:     "220px",
+                  boxShadow:    "0 8px 32px rgba(15,23,42,0.25)",
+                  zIndex:       999999,
+                }}>
+
+                  {/* User name */}
+                  <div style={{
+                    fontSize:   14,
+                    fontWeight: 700,
+                    color:      "#0f172a",
+                    padding:    "6px 10px 2px",
+                  }}>
                     {currentUser.displayName}
                   </div>
-                  <div className="navbar__user-dropdown-email">
+
+                  {/* Email */}
+                  <div style={{
+                    fontSize:     12,
+                    color:        "#94A3B8",
+                    padding:      "0 10px 8px",
+                    borderBottom: "1px solid #F1F5F9",
+                    marginBottom: 6,
+                  }}>
                     {currentUser.email}
                   </div>
+
+                  {/* Admin Panel link */}
                   {isAdmin && (
                     <Link
                       to="/admin"
-                      className="navbar__user-dropdown-item admin"
                       onClick={() => setUserMenuOpen(false)}
+                      style={{
+                        display:        "block",
+                        padding:        "9px 10px",
+                        borderRadius:   8,
+                        fontSize:       13.5,
+                        fontWeight:     600,
+                        color:          "#2563EB",
+                        textDecoration: "none",
+                        background:     "transparent",
+                        cursor:         "pointer",
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = "#F1F5F9"}
+                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                     >
                       ⚙️ Admin Panel
                     </Link>
                   )}
+
+                  {/* Sign Out */}
                   <button
-                    className="navbar__user-dropdown-item logout"
                     onClick={handleLogout}
+                    style={{
+                      display:     "block",
+                      width:       "100%",
+                      padding:     "9px 10px",
+                      borderRadius: 8,
+                      fontSize:    13.5,
+                      fontWeight:  600,
+                      color:       "#EF4444",
+                      background:  "transparent",
+                      border:      "none",
+                      cursor:      "pointer",
+                      textAlign:   "left",
+                      fontFamily:  "inherit",
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = "#FEF2F2"}
+                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                   >
                     🚪 Sign Out
                   </button>
                 </div>
               )}
             </div>
+
           ) : (
-            /* ── Logged Out — show only Register Free ── */
             <Link to="/register" className="btn-nav-primary">
               Register Free
             </Link>
           )}
         </div>
 
-        {/* ── Hamburger ── */}
+        {/* Hamburger */}
         <button
           className={`navbar__hamburger ${menuOpen ? "open" : ""}`}
           onClick={() => setMenuOpen(p => !p)}
@@ -114,7 +181,7 @@ export default function NavBar() {
         </button>
       </div>
 
-      {/* ── Mobile Menu ── */}
+      {/* Mobile Menu */}
       {menuOpen && (
         <div className="navbar__mobile">
           {NAV_LINKS.map(link => (
@@ -147,7 +214,7 @@ export default function NavBar() {
             </div>
           ) : (
             <div className="navbar__mobile-cta">
-              <Link to="/register" className="btn-nav-primary" onClick={() => setMenuOpen(false)}>
+              <Link to="/register" className="btn-nav-primary reg-button" onClick={() => setMenuOpen(false)}>
                 Register Free
               </Link>
             </div>
