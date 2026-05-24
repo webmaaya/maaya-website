@@ -2,18 +2,17 @@
 //  About.jsx — MAAYA Enterprises About Page
 //  Added: Affiliated With section at bottom
 // ============================================================
-import Euaslogo from "../../assets/logo/Euas logo.png";
 import IAFlogo from "../../assets/logo/IAF logo.jpg";
 import EUASlogo from "../../assets/logo/EUAS logo.png";
 import UAFlogo from "../../assets/logo/UAF logo.jpeg";
-import UTGEClogo from "../../assets/logo/UTGEC logo.png";
-import SkillIndialogo from "../../assets/logo/Skill India logo.png";
-import NSDClogo from "../../assets/logo/NSDC logo.png";
+import UTGEClogo from "../../assets/logo/Utgec logo.png";
+import SkillIndialogo from "../../assets/logo/Skill india logo.png";
+import NSDClogo from "../../assets/logo/Nsdc logo.png";
 import Ycmoulogo from "../../assets/logo/Ycmou logo.jpg";
 import Kliclogo from "../../assets/logo/Klic logo.png";
 import Mkcllogo from "../../assets/logo/Mkcl logo.png";
 import TrickFastlogo from "../../assets/logo/Trick Fast logo.png";
-import AwardSlideshow from "../../Components/sections/AwardSlideShow";
+import AwardSlideshow from "../../Components/sections/AwardSlideshow";
 import "./About.css";
 
 const STATS = [

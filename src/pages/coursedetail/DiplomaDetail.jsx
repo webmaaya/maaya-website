@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import EnquiryForm from "../../components/sections/EnquiryForm";
+import EnquiryForm from "../../Components/sections/EnquiryForm";
 import "./DiplomaDetail.css";
 
 export default function DiplomaDetail() {
