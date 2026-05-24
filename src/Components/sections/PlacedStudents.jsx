@@ -276,7 +276,7 @@ export default function PlacedStudents() {
         <div>
           <div className="section-badge">🎓 Success Stories</div>
           <h2 className="section-title" style={{ marginBottom: 0 }}>
-            Our Placed Students
+           Our Success Highlights
           </h2>
           <p className="placed__count">
             500+ students successfully placed
