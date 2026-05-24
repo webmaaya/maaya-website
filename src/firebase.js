@@ -7,13 +7,13 @@ import { getFirestore }   from "firebase/firestore";
 import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey:            "AIzaSyDv7qydF7odkXqJCXcCD7Ix-3qkJ0_L9zc",
-  authDomain:        "maaya-enterprises.firebaseapp.com",
-  projectId:         "maaya-enterprises",
-  storageBucket:     "maaya-enterprises.firebasestorage.app",
-  messagingSenderId: "101570355014",
-  appId:             "1:101570355014:web:a52e046f0d31922f72cf47",
-  measurementId:     "G-4JXM1JS0JW",
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId:     import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app  = initializeApp(firebaseConfig);
