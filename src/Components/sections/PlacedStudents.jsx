@@ -1,10 +1,9 @@
 // ============================================================
 //  PlacedStudents.jsx — "Our Placed Students" Section
-//  Horizontal scroll — like Google Shopping cards
-//  Desktop: arrow buttons | Mobile: swipe/drag
+//  Premium Carousel: Center focus, blur sides, auto-loop
 // ============================================================
 
-import { useRef,useState,useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import "./PlacedStudents.css";
 import vikrantPhoto from "../../assets/students/vikrantPhoto.jpg";
 import aniketPhoto from "../../assets/students/aniketPhoto.jpg";
@@ -219,9 +218,10 @@ const STUDENTS = [
 //  Component
 // ============================================================
 export default function PlacedStudents() {
-  const trackRef   = useRef(null);
   const sectionRef = useRef(null);
   const [visible, setVisible] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   // ── Intersection Observer — animate when section enters viewport ──
   useEffect(() => {
@@ -229,41 +229,36 @@ export default function PlacedStudents() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true);
-          observer.disconnect(); // animate only once
+          observer.disconnect();
         }
       },
-      { threshold: 0.15 } // trigger when 15% visible
+      { threshold: 0.15 }
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // ── Arrow scroll ──────────────────────────────────────────
-  const scroll = (dir) => {
-    if (!trackRef.current) return;
-    trackRef.current.scrollBy({
-      left: dir === "right" ? 640 : -640,
-      behavior: "smooth",
-    });
-  };
+  // ── Auto-loop carousel (5 seconds = slower) ────────────────────────────────────
+  useEffect(() => {
+    if (paused) return;
 
-  // ── Mouse drag scroll ─────────────────────────────────────
-  let isDown = false, startX = 0, scrollLeft = 0;
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % STUDENTS.length);
+    }, 5000); // 5 seconds — slower animation
 
-  const onMouseDown = (e) => {
-    isDown     = true;
-    startX     = e.pageX - trackRef.current.offsetLeft;
-    scrollLeft = trackRef.current.scrollLeft;
-  };
-  const onMouseLeave = () => { isDown = false; };
-  const onMouseUp    = () => { isDown = false; };
-  const onMouseMove  = (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x    = e.pageX - trackRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    trackRef.current.scrollLeft = scrollLeft - walk;
+    return () => clearInterval(interval);
+  }, [paused]);
+
+  // ── Get position for card ─────────────────────────────
+  const getPosition = (index) => {
+    const total = STUDENTS.length;
+
+    if (index === activeIndex) return "active";
+    if (index === (activeIndex - 1 + total) % total) return "left";
+    if (index === (activeIndex + 1) % total) return "right";
+
+    return "hidden";
   };
 
   return (
@@ -273,80 +268,58 @@ export default function PlacedStudents() {
     >
       {/* ── Header ── */}
       <div className="placed__header">
-        <div>
-          <div className="section-badge">🎓 Success Stories</div>
-          <h2 className="section-title" style={{ marginBottom: 0 }}>
-           Our Success Highlights
-          </h2>
-          <p className="placed__count">
-            500+ students successfully placed
-          </p>
-        </div>
+        <div className="section-badge">🎓 SUCCESS STORIES</div>
+        <h2 className="section-title">Our Success Highlights</h2>
+        <p className="placed__count">500+ students successfully placed</p>
       </div>
 
-      {/* ── Scrollable Track ── */}
-      <div className="placed__track-wrapper">
-
-        {/* Left Arrow */}
-        <button
-          className="placed__arrow placed__arrow--left"
-          onClick={() => scroll("left")}
-          aria-label="Scroll left"
-        >
-          ‹
-        </button>
-
+      {/* ── Carousel ── */}
+      <div className="carousel">
         {/* Cards */}
-        <div
-          className="placed__track"
-          ref={trackRef}
-          onMouseDown={onMouseDown}
-          onMouseLeave={onMouseLeave}
-          onMouseUp={onMouseUp}
-          onMouseMove={onMouseMove}
-        >
-          {STUDENTS.map((student) => (
-            <div key={student.id} className="student-card">
-
-              {/* Photo */}
-              <div className="student-card__photo-wrap">
-                {student.photo ? (
-                  <img
-                    src={student.photo}
-                    alt={student.name}
-                    className="student-card__photo"
-                    draggable="false"
-                  />
-                ) : (
-                  <div className="student-card__photo-placeholder">👤</div>
-                )}
-                <span className="placed-badge">✓ Placed</span>
-              </div>
-
-              {/* Info */}
-              <div className="student-card__body">
-                <h3 className="student-card__name">{student.name}</h3>
-                <span className="student-card__course">{student.course}</span>
-                <div className="student-card__divider" />
-                <div className="student-card__role-row">
-                  <span className="student-card__role">💼 {student.role}</span>
-                </div>
-                {student.company && (
-                  <p className="student-card__company">🏢 {student.company}</p>
-                )}
-              </div>
+        {STUDENTS.map((student, index) => (
+          <div
+            key={student.id}
+            className={`student-card ${getPosition(index)}`}
+            onMouseEnter={() => {
+              if (getPosition(index) === "active") setPaused(true);
+            }}
+            onMouseLeave={() => {
+              if (getPosition(index) === "active") setPaused(false);
+            }}
+            onTouchStart={() => {
+              if (getPosition(index) === "active") setPaused(true);
+            }}
+            onTouchEnd={() => {
+              if (getPosition(index) === "active") setPaused(false);
+            }}
+          >
+            {/* Photo */}
+            <div className="student-card__photo-wrap">
+              {student.photo ? (
+                <img
+                  src={student.photo}
+                  alt={student.name}
+                  className="student-card__photo"
+                  draggable="false"
+                />
+              ) : (
+                <div className="student-card__photo-placeholder">👤</div>
+              )}
+              <span className="placed-badge">✓ Placed</span>
             </div>
-          ))}
-        </div>
 
-        {/* Right Arrow */}
-        <button
-          className="placed__arrow placed__arrow--right"
-          onClick={() => scroll("right")}
-          aria-label="Scroll right"
-        >
-          ›
-        </button>
+            {/* Info */}
+            <div className="student-card__body">
+              <h3 className="student-card__name">{student.name}</h3>
+              <span className="student-card__course">{student.course}</span>
+              <div className="student-card__divider" />
+              <div className="student-card__role">💼 {student.role}</div>
+              {student.company && (
+                <p className="student-card__company">🏢 {student.company}</p>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

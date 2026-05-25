@@ -46,40 +46,9 @@ export default function CoursesSection() {
     <section className="courses-section">
       <div className="courses-section__inner">
 
-        {/* Header */}
-        <div className="section-header">
-          <div className="section-badge">📚 Our Programs</div>
-          <h2 className="section-title">Diploma Programs</h2>
-          <p className="section-sub">
-            Government certified & industry-aligned programs to boost your career
-          </p>
-        </div>
-
-        {/* Diploma Cards */}
-        {loading ? (
-          <div style={{ textAlign:"center", padding:"40px", color:"var(--text-muted)" }}>
-            ⏳ Loading courses...
-          </div>
-        ) : diplomas.length > 0 ? (
-          <div className="courses-section__grid">
-            {diplomas.slice(0, 6).map(diploma => (
-              <DiplomaCard key={diploma.id} diploma={diploma} />
-            ))}
-          </div>
-        ) : (
-          <div style={{ textAlign:"center", padding:"40px", color:"var(--text-muted)" }}>
-            <p>No programs yet — add from Admin Panel: <a href="/admin">/admin</a></p>
-          </div>
-        )}
-
-        {/* View All */}
-        <div className="courses-section__footer">
-          <Link to="/courses" className="btn-view-all">View All Programs →</Link>
-        </div>
-
-        {/* Free Courses — first 3 on homepage */}
+        {/* ── FREE COURSES SECTION (TOP) ── */}
         {freeCourses.length > 0 && (
-          <div style={{ marginTop: 56 }}>
+          <div>
             <div className="section-header">
               <div className="section-badge">🆓 Free Programs</div>
               <h2 className="section-title">Free Courses</h2>
@@ -87,7 +56,7 @@ export default function CoursesSection() {
             </div>
 
             <div className="courses-section__grid">
-              {freeCourses.slice(0, 3).map(fc => (
+              {freeCourses.slice(0, 6).map(fc => (
                 <div key={fc.id} className="free-course-card">
                   <div className={`free-course-card__thumb ${fc.gradient || "grad-blue"}`}>
                     <span style={{ fontSize: 48 }}>{fc.icon}</span>
@@ -105,13 +74,46 @@ export default function CoursesSection() {
               ))}
             </div>
 
-            {freeCourses.length > 3 && (
+            {freeCourses.length > 6 && (
               <div className="courses-section__footer" style={{ marginTop: 24 }}>
                 <Link to="/courses" className="btn-view-all">View All Free Courses →</Link>
               </div>
             )}
           </div>
         )}
+
+        {/* ── DIPLOMA PROGRAMS SECTION (BOTTOM) ── */}
+        <div style={{ marginTop: 56 }}>
+          <div className="section-header">
+            <div className="section-badge">📚 Our Programs</div>
+            <h2 className="section-title">Diploma Programs</h2>
+            <p className="section-sub">
+              Government certified & industry-aligned programs to boost your career
+            </p>
+          </div>
+
+          {/* Diploma Cards */}
+          {loading ? (
+            <div style={{ textAlign:"center", padding:"40px", color:"var(--text-muted)" }}>
+              ⏳ Loading courses...
+            </div>
+          ) : diplomas.length > 0 ? (
+            <div className="courses-section__grid">
+              {diplomas.slice(0, 3).map(diploma => (
+                <DiplomaCard key={diploma.id} diploma={diploma} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ textAlign:"center", padding:"40px", color:"var(--text-muted)" }}>
+              <p>No programs yet — add from Admin Panel: <a href="/admin">/admin</a></p>
+            </div>
+          )}
+
+          {/* View All */}
+          <div className="courses-section__footer">
+            <Link to="/courses" className="btn-view-all">View All Programs →</Link>
+          </div>
+        </div>
       </div>
 
       {showForm && (

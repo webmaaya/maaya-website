@@ -1,15 +1,13 @@
 /* ============================================================
-   PlacedStudents.css — Hero-style landing animation
+   PlacedStudents.css — Premium Carousel with Center Focus
    ============================================================ */
 
-/* ── Section wrapper ─────────────────────────────────────── */
 .placed {
   padding: 64px 0 72px;
   background: var(--bg-base);
   overflow: hidden;
 }
 
-/* ── Landing animation — section slides up on load ───────── */
 .placed.visible {
   animation: placedSectionIn 0.65s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
@@ -25,98 +23,122 @@
   }
 }
 
-/* ── Section Header ──────────────────────────────────────── */
+/* ── Header ──────────────────────────────────────────────── */
 .placed__header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
   max-width: 1200px;
-  margin: 0 auto 28px;
+  margin: 0 auto 48px;
   padding: 0 24px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  text-align: center;
 }
 
-.placed.visible .placed__header {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.15s;
+.placed__header .section-badge {
+  display: inline-block;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 30px;
+  margin-bottom: 14px;
+}
+
+.placed__header .section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 12px;
 }
 
 .placed__count {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-muted);
-  font-weight: 500;
-  margin-top: 6px;
+  margin: 0;
 }
 
-/* ── Scroll Track ────────────────────────────────────────── */
-.placed__track-wrapper {
+/* ── Carousel Wrapper ────────────────────────────────────── */
+.carousel {
   position: relative;
-}
-
-.placed__track {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  height: 360px;
   display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  padding: 8px 24px 20px;
-  cursor: grab;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  /* Cards slide in from right on load */
-  opacity: 0;
-  transform: translateX(40px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  align-items: center;
+  justify-content: center;
 }
-
-.placed.visible .placed__track {
-  opacity: 1;
-  transform: translateX(0);
-  transition-delay: 0.3s;
-}
-
-.placed__track::-webkit-scrollbar { display: none; }
-.placed__track:active { cursor: grabbing; }
 
 /* ── Student Card ────────────────────────────────────────── */
 .student-card {
-  flex: 0 0 195px;
+  position: absolute;
+  width: 195px;
   background: white;
   border: 1.5px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.student-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-hover);
+/* CENTER — ACTIVE CARD */
+.student-card.active {
+  z-index: 30;
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  filter: blur(0px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border-color: var(--primary);
+  pointer-events: auto;
 }
 
-/* Photo wrapper */
+/* LEFT SIDE — SCALE DOWN */
+.student-card.left {
+  z-index: 20;
+  transform: translateX(-280px) scale(0.85);
+  opacity: 0.7;
+}
+
+/* RIGHT SIDE — SCALE DOWN */
+.student-card.right {
+  z-index: 20;
+  transform: translateX(280px) scale(0.85);
+  opacity: 0.7;
+}
+
+/* HIDDEN CARDS */
+.student-card.hidden {
+  z-index: 10;
+  transform: translateX(0) scale(0.75);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Photo ───────────────────────────────────────────────── */
 .student-card__photo-wrap {
   position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+  border-radius: 16px 16px 0 0;
 }
 
 .student-card__photo {
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center;
   display: block;
-  background: var(--bg-section);
+  border-radius: 14px 14px 0 0;
 }
 
 .student-card__photo-placeholder {
   width: 100%;
-  height: 200px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,7 +146,6 @@
   background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
 }
 
-/* Green Placed badge */
 .placed-badge {
   position: absolute;
   top: 10px;
@@ -133,15 +154,16 @@
   color: white;
   font-size: 10px;
   font-weight: 700;
-  padding: 3px 9px;
+  padding: 4px 10px;
   border-radius: 20px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
-/* Card body */
+/* ── Body ────────────────────────────────────────────────── */
 .student-card__body {
-  padding: 13px 14px 15px;
+  padding: 14px 14px 16px;
 }
 
 .student-card__name {
@@ -149,7 +171,7 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 5px;
+  margin: 0 0 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -161,38 +183,29 @@
   color: var(--primary);
   background: var(--primary-light);
   display: inline-block;
-  padding: 3px 9px;
-  border-radius: 20px;
-  margin-bottom: 9px;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding: 3px 8px;
+  border-radius: 16px;
+  margin-bottom: 8px;
 }
 
 .student-card__divider {
   height: 1px;
   background: var(--border);
-  margin-bottom: 9px;
-}
-
-.student-card__role-row {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  margin: 8px 0;
 }
 
 .student-card__role {
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   color: #059669;
+  display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .student-card__company {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--text-muted);
   margin-top: 3px;
   white-space: nowrap;
@@ -200,42 +213,384 @@
   text-overflow: ellipsis;
 }
 
-/* ── Arrow Buttons ───────────────────────────────────────── */
-.placed__arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-60%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: white;
-  border: 1.5px solid var(--border);
-  box-shadow: var(--shadow-md);
+/* ── Hover Hint ──────────────────────────────────────────── */
+.carousel-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 20px;
+  opacity: 0.6;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+
+/* TABLET */
+@media (max-width: 1024px) {
+  .carousel {
+    padding: 0;
+    height: 340px;
+  }
+
+  .student-card {
+    width: 175px;
+    border-radius: 14px;
+  }
+
+  .student-card.left {
+    transform: translateX(-240px) scale(0.8);
+  }
+
+  .student-card.right {
+    transform: translateX(240px) scale(0.8);
+  }
+
+  .student-card__photo-wrap {
+    height: 200px;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .student-card__photo {
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+/* MEDIUM MOBILE */
+@media (max-width: 768px) {
+  .placed {
+    padding: 48px 0 56px;
+  }
+
+  .carousel {
+    padding: 0;
+    height: 320px;
+  }
+
+  .student-card {
+    width: 155px;
+    border-radius: 12px;
+  }
+
+  .student-card.left {
+    transform: translateX(-210px) scale(0.75);
+  }
+
+  .student-card.right {
+    transform: translateX(210px) scale(0.75);
+  }
+
+  .student-card__photo-wrap {
+    height: 180px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .student-card__photo {
+    border-radius: 10px 10px 0 0;
+  }
+
+  .student-card__body {
+    padding: 12px 11px 13px;
+  }
+
+  .student-card__name {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .student-card__course {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .placed__header {
+    margin-bottom: 36px;
+  }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 640px) {
+  .placed {
+    padding: 36px 0 44px;
+  }
+
+  .carousel {
+    padding: 0;
+    height: 290px;
+  }
+
+  .student-card {
+    width: 140px;
+    border-radius: 10px;
+  }
+
+  .student-card.left {
+    transform: translateX(-190px) scale(0.7);
+  }
+
+  .student-card.right {
+    transform: translateX(190px) scale(0.7);
+  }
+
+  .student-card__photo-wrap {
+    height: 165px;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .student-card__photo {
+    border-radius: 8px 8px 0 0;
+  }
+
+  .student-card__body {
+    padding: 11px 10px 12px;
+  }
+
+  .student-card__name {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  .student-card__course {
+    font-size: 9px;
+    padding: 2px 5px;
+    margin-bottom: 6px;
+  }
+
+  .student-card__divider {
+    margin: 6px 0;
+  }
+
+  .student-card__role {
+    font-size: 11px;
+  }
+
+  .placed-badge {
+    font-size: 8px;
+    padding: 3px 7px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .placed__header .section-title {
+    font-size: 22px;
+  }
+}
+
+/* EXTRA SMALL MOBILE */
+@media (max-width: 480px) {
+  .carousel {
+    padding: 0;
+    height: 270px;
+  }
+
+  .student-card {
+    width: 125px;
+    border-radius: 9px;
+  }
+
+  .student-card.left {
+    transform: translateX(-170px) scale(0.65);
+  }
+
+  .student-card.right {
+    transform: translateX(170px) scale(0.65);
+  }
+
+  .student-card__photo-wrap {
+    height: 150px;
+    border-radius: 9px 9px 0 0;
+  }
+
+  .student-card__photo {
+    border-radius: 7px 7px 0 0;
+  }
+
+  .student-card__body {
+    padding: 10px 9px 11px;
+  }
+
+  .student-card__name {
+    font-size: 11px;
+  }
+
+  .student-card__course {
+    font-size: 8px;
+  }
+}
+
+/* ============================================================
+   MARQUEE WRAPPER
+============================================================ */
+
+.placed__marquee {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+
+/* Pause animation */
+
+.placed__marquee.paused .placed__track {
+  animation-play-state: paused;
+}
+
+/* ============================================================
+   AUTO TRACK
+============================================================ */
+
+.placed__track {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  cursor: pointer;
-  z-index: 10;
-  transition: var(--transition);
+  gap: 22px;
+  width: max-content;
+
+  animation: autoScroll 55s linear infinite;
+}
+
+/* Infinite smooth movement */
+
+@keyframes autoScroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ============================================================
+   CARD
+============================================================ */
+.student-card {
+  width: 220px;
+  flex: 0 0 280px;
+  opacity: 0.18;
+  filter: blur(5px);
+  transform: scale(0.82);
+  transition:
+    transform 1.2s ease,
+    opacity 1.2s ease,
+    filter 1.2s ease;
+}
+
+/* ============================================================
+   CENTER ACTIVE CARD
+============================================================ */
+.student-card.active {
+  opacity: 1;
+  filter: blur(0px);
+  transform: scale(1);
+  z-index: 5;
+}
+
+/* ============================================================
+   PHOTO
+============================================================ */
+
+.student-card__photo-wrap {
+  position: relative;
+}
+
+.student-card__photo {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+
+/* ============================================================
+   BADGE
+============================================================ */
+
+.placed-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+
+  background: #10B981;
+  color: white;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  padding: 6px 11px;
+
+  border-radius: 999px;
+
+  backdrop-filter: blur(10px);
+}
+
+/* ============================================================
+   BODY
+============================================================ */
+
+.student-card__body {
+  padding: 18px;
+}
+
+.student-card__name {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 8px;
   color: var(--text-primary);
 }
 
-.placed__arrow:hover {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
+.student-card__course {
+  display: inline-block;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  color: var(--primary);
+
+  background: var(--primary-light);
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  margin-bottom: 12px;
 }
 
-.placed__arrow--left  { left: 6px; }
-.placed__arrow--right { right: 6px; }
+.student-card__divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 12px;
+}
 
-/* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .placed { padding: 48px 0 56px; }
-  .placed__track { padding: 8px 16px 16px; gap: 12px; }
-  .student-card { flex: 0 0 155px; }
-  .student-card__photo,
-  .student-card__photo-placeholder { height: 165px; }
-  .placed__arrow { display: none; }
+.student-card__role {
+  font-size: 13px;
+  font-weight: 700;
+  color: #059669;
+}
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 768px) {
+
+  .student-card {
+    width: 170px;
+  }
+
+  .student-card__photo {
+    height: 190px;
+  }
+
+  .placed__track {
+    gap: 14px;
+    animation-duration: 28s;
+  }
+
+  .student-card.active {
+    transform: scale(0.96);
+  }
 }

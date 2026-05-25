@@ -4,8 +4,13 @@
 // ============================================================
 
 import { useState } from "react";
-import { CONTACT_INFO } from "../../constants/data";
+import { CONTACT_INFO, COURSES } from "../../constants/data";
 import "./Contact.css";
+
+// ── EmailJS Setup ────────────────────────────────────────────
+const EMAILJS_SERVICE_ID  = "service_k35ifgl";
+const EMAILJS_TEMPLATE_ID = "template_ujykcg8";
+const EMAILJS_PUBLIC_KEY  = "kDsxO0icILJAiKwDx";
 
 // ── Office Hours ─────────────────────────────────────────────
 // TODO: Update with real timings
@@ -14,19 +19,8 @@ const HOURS = [
   { day: "Sunday",          time: "Closed" },
 ];
 
-// ── Course options for enquiry dropdown ──────────────────────
-const COURSE_OPTIONS = [
-  "MS-CIT",
-  "KLiC Web Design & Development",
-  "Tally Prime with GST",
-  "Python & AI",
-  "Spoken English",
-  "Digital Marketing",
-  "MS Office Mastery",
-  "Graphic Design",
-  "Hardware & Networking",
-  "Other",
-];
+// ── Get all course titles from COURSES data ──────────────────
+const COURSE_OPTIONS = COURSES.map(course => course.title);
 
 export default function Contact() {
   // ── Form state ────────────────────────────────────────────
@@ -38,18 +32,60 @@ export default function Contact() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Connect to backend API or EmailJS / FormSubmit to actually send the form
-    // Example with FormSubmit.co:
-      <form action="https://formsubmit.co/education.maaya@gmail.com" method="POST"/>
-    // For now just show success message
-    setSubmitted(true);
+    setError("");
+
+    // Validate form
+    if (!form.name.trim()) {
+      setError("Please enter your full name");
+      return;
+    }
+    if (!form.phone.trim()) {
+      setError("Please enter your phone number");
+      return;
+    }
+    if (form.phone.replace(/\D/g, "").length < 10) {
+      setError("Please enter a valid 10-digit phone number");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Dynamic import EmailJS
+      const emailjs = await import("@emailjs/browser");
+
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: form.name,
+          phone:     form.phone,
+          email:     form.email || "Not provided",
+          course:    form.course || "General Enquiry",
+          message:   form.message || "User sent an enquiry from Contact page",
+          std:       "N/A",
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+
+      setSubmitted(true);
+      setForm({ name: "", phone: "", email: "", course: "", message: "" });
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      setError("Failed to send message. Please try again or contact us directly.");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -148,6 +184,13 @@ export default function Contact() {
                 <p className="form-success__text">
                   Thank you for reaching out. Our team will contact you within 24 hours.
                 </p>
+                <button 
+                  className="btn-submit"
+                  onClick={() => setSubmitted(false)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Send Another Message →
+                </button>
               </div>
             ) : (
               /* ── Form ── */
@@ -229,8 +272,17 @@ export default function Contact() {
                   </div>
 
                   {/* Submit */}
-                  <button type="submit" className="btn-submit">
-                    Send Message →
+                  {error && (
+                    <div className="form-error" style={{ color: "#dc2626", marginBottom: "1rem", fontSize: "0.9rem" }}>
+                      ⚠️ {error}
+                    </div>
+                  )}
+                  <button 
+                    type="submit" 
+                    className="btn-submit"
+                    disabled={loading}
+                  >
+                    {loading ? "Sending..." : "Send Message →"}
                   </button>
                 </form>
               </>
