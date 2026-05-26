@@ -126,7 +126,7 @@
 .student-card__photo-wrap {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 240px;
   overflow: hidden;
   background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
   border-radius: 16px 16px 0 0;
@@ -178,7 +178,7 @@
 
 /* ── Body ────────────────────────────────────────────────── */
 .student-card__body {
-  padding: 14px 14px 16px;
+  padding: 10px 12px 12px;
   background: #FFFFFF;
 }
 
@@ -197,49 +197,53 @@
 
 .student-card__name {
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .student-card__course {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--primary);
   background: var(--primary-light);
   display: inline-block;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  line-height: 1.1;
 }
 
 .student-card__divider {
   height: 1px;
   background: var(--border);
-  margin: 8px 0;
+  margin: 5px 0;
 }
 
 .student-card__role {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #059669;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .student-card__company {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
-  margin-top: 3px;
+  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.1;
 }
 
 /* ── Hover Hint ──────────────────────────────────────────── */
@@ -274,7 +278,7 @@
   }
 
   .student-card__photo-wrap {
-    height: 200px;
+    height: 220px;
     border-radius: 14px 14px 0 0;
   }
 
@@ -308,7 +312,7 @@
   }
 
   .student-card__photo-wrap {
-    height: 180px;
+    height: 200px;
     border-radius: 12px 12px 0 0;
   }
 
@@ -317,16 +321,16 @@
   }
 
   .student-card__body {
-    padding: 12px 11px 13px;
+    padding: 10px 10px 11px;
   }
 
   .student-card__name {
-    font-size: 13px;
-    margin-bottom: 4px;
+    font-size: 12px;
+    margin-bottom: 3px;
   }
 
   .student-card__course {
-    font-size: 10px;
+    font-size: 9px;
     padding: 2px 6px;
   }
 
