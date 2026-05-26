@@ -48,11 +48,11 @@ export default function Hero() {
           <span className="hero__stat-label">Students Enrolled</span>
         </div>
         <div className="hero__stat">
-          <span className="hero__stat-num">20+</span>
+          <span className="hero__stat-num">120+</span>
           <span className="hero__stat-label">Courses Available</span>
         </div>
         <div className="hero__stat">
-          <span className="hero__stat-num">98%</span>
+          <span className="hero__stat-num">100%</span>
           <span className="hero__stat-label">Satisfaction Rate</span>
         </div>
         <div className="hero__stat">

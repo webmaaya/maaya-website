@@ -81,7 +81,7 @@
   transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   pointer-events: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: none;
 }
 
 /* CENTER — ACTIVE CARD */
@@ -89,8 +89,8 @@
   z-index: 30;
   transform: translateX(0) scale(1);
   opacity: 1;
-  filter: blur(0px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  filter: blur(0px) brightness(1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   border-color: var(--primary);
   pointer-events: auto;
 }
@@ -99,14 +99,18 @@
 .student-card.left {
   z-index: 20;
   transform: translateX(-280px) scale(0.85);
-  opacity: 0.7;
+  opacity: 0.5;
+  filter: blur(3px) brightness(0.8);
+  box-shadow: none !important;
 }
 
 /* RIGHT SIDE — SCALE DOWN */
 .student-card.right {
   z-index: 20;
   transform: translateX(280px) scale(0.85);
-  opacity: 0.7;
+  opacity: 0.5;
+  filter: blur(3px) brightness(0.8);
+  box-shadow: none !important;
 }
 
 /* HIDDEN CARDS */
@@ -115,6 +119,7 @@
   transform: translateX(0) scale(0.75);
   opacity: 0;
   pointer-events: none;
+  box-shadow: none !important;
 }
 
 /* ── Photo ───────────────────────────────────────────────── */
@@ -125,6 +130,16 @@
   overflow: hidden;
   background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
   border-radius: 16px 16px 0 0;
+}
+
+.student-card.active .student-card__photo-wrap {
+  filter: brightness(1) contrast(1);
+}
+
+.student-card.left .student-card__photo-wrap,
+.student-card.right .student-card__photo-wrap,
+.student-card.hidden .student-card__photo-wrap {
+  filter: brightness(0.6) contrast(0.8);
 }
 
 .student-card__photo {
@@ -164,6 +179,20 @@
 /* ── Body ────────────────────────────────────────────────── */
 .student-card__body {
   padding: 14px 14px 16px;
+  background: #FFFFFF;
+}
+
+.student-card.active .student-card__body {
+  background: #FFFFFF;
+  color: inherit;
+}
+
+.student-card.left .student-card__body,
+.student-card.right .student-card__body,
+.student-card.hidden .student-card__body {
+  background: #F5F5F5;
+  opacity: 1;
+  filter: brightness(0.85);
 }
 
 .student-card__name {

@@ -154,6 +154,27 @@
 }
 .btn-enroll-diploma.online:hover { background: #15803D; }
 
+/* Enroll Now button in hero section */
+.btn-enroll-now {
+  margin-top: 16px;
+  padding: 13px 28px;
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-body);
+  display: inline-block;
+}
+.btn-enroll-now:hover { 
+  background: var(--primary-dark); 
+  box-shadow: var(--shadow-blue);
+  transform: translateY(-2px);
+}
+
 .dip-enroll-card__note {
   font-size: 12px;
   color: var(--text-muted);
