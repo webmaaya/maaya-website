@@ -13,7 +13,7 @@
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: minmax(0, 1fr) 420px;
   gap: 40px;
   align-items: start;
 }
@@ -56,34 +56,48 @@
   font-weight: 700;
 }
 
-/* ── Online course price row on hero ── */
 .dip-hero__price-row {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-top: 14px;
 }
+.dip-hero__price-old { font-size: 16px; color: rgba(255,255,255,0.55); text-decoration: line-through; }
+.dip-hero__price-now { font-size: 28px; font-weight: 800; color: #A7F3D0; }
 
-.dip-hero__price-old {
-  font-size: 16px;
-  color: rgba(255,255,255,0.55);
-  text-decoration: line-through;
-}
-
-.dip-hero__price-now {
-  font-size: 28px;
-  font-weight: 800;
-  color: #A7F3D0;
+/* Subject pills */
+.dip-hero__subject-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.dip-hero__subject-pill {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
 }
 
 /* ── Enroll Card ─────────────────────────────────────────── */
 .dip-enroll-card {
   background: white;
   border-radius: var(--radius-xl);
-  padding: 28px 24px;
+  padding: 0 0 20px;
   box-shadow: var(--shadow-lg);
   position: sticky;
   top: 80px;
+  overflow: hidden;
+}
+
+/* YouTube video in card */
+.dip-enroll-card__video {
+  width: 100%;
+  aspect-ratio: 16/9;
+  margin-bottom: 0;
+}
+.dip-enroll-card__video iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .dip-enroll-card__title {
@@ -91,49 +105,32 @@
   font-size: 16px;
   font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 6px;
+  margin: 16px 20px 6px;
 }
 
 .dip-enroll-card__sub {
   font-size: 13px;
   color: var(--text-muted);
-  margin-bottom: 16px;
+  margin: 0 20px 16px;
   line-height: 1.5;
 }
 
-/* ── Online price box inside enroll card ── */
 .dip-enroll-card__price-box {
   background: #F0FDF4;
   border: 1.5px solid #BBF7D0;
   border-radius: 10px;
   padding: 14px 16px;
-  margin-bottom: 16px;
+  margin: 0 20px 16px;
   text-align: center;
 }
+.dip-enroll-card__price-old { font-size: 13px; color: #94A3B8; text-decoration: line-through; margin-bottom: 2px; }
+.dip-enroll-card__price-now { font-size: 28px; font-weight: 800; color: #16A34A; margin-bottom: 4px; }
+.dip-enroll-card__duration  { font-size: 12px; color: #64748B; font-weight: 600; }
 
-.dip-enroll-card__price-old {
-  font-size: 13px;
-  color: #94A3B8;
-  text-decoration: line-through;
-  margin-bottom: 2px;
-}
-
-.dip-enroll-card__price-now {
-  font-size: 28px;
-  font-weight: 800;
-  color: #16A34A;
-  margin-bottom: 4px;
-}
-
-.dip-enroll-card__duration {
-  font-size: 12px;
-  color: #64748B;
-  font-weight: 600;
-}
-
-/* Enroll button */
 .btn-enroll-diploma {
-  width: 100%;
+  display: block;
+  width: calc(100% - 40px);
+  margin: 0 20px 12px;
   padding: 14px;
   background: var(--primary);
   color: white;
@@ -143,50 +140,25 @@
   border: none;
   cursor: pointer;
   transition: var(--transition);
-  margin-bottom: 12px;
   font-family: var(--font-body);
+  text-align: center;
 }
 .btn-enroll-diploma:hover { background: var(--primary-dark); box-shadow: var(--shadow-blue); }
-
-/* Green button for online courses */
-.btn-enroll-diploma.online {
-  background: #16A34A;
-}
+.btn-enroll-diploma.online { background: #16A34A; }
 .btn-enroll-diploma.online:hover { background: #15803D; }
-
-/* Enroll Now button in hero section */
-.btn-enroll-now {
-  margin-top: 16px;
-  padding: 13px 28px;
-  background: var(--primary);
-  color: white;
-  border-radius: var(--radius-md);
-  font-size: 15px;
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-  font-family: var(--font-body);
-  display: inline-block;
-}
-.btn-enroll-now:hover { 
-  background: var(--primary-dark); 
-  box-shadow: var(--shadow-blue);
-  transform: translateY(-2px);
-}
 
 .dip-enroll-card__note {
   font-size: 12px;
   color: var(--text-muted);
   text-align: center;
-  margin-bottom: 20px;
+  margin: 0 20px 16px;
 }
 
-/* Features list in card */
 .dip-features-list {
   list-style: none;
   border-top: 1px solid var(--border);
-  padding-top: 16px;
+  padding: 12px 20px 0;
+  margin: 0;
 }
 .dip-features-list li {
   font-size: 13.5px;
@@ -200,11 +172,7 @@
 .dip-features-list li:last-child { border-bottom: none; }
 
 /* ── Tabs ────────────────────────────────────────────────── */
-.dip-tabs-bar {
-  background: white;
-  border-bottom: 2px solid var(--border);
-}
-
+.dip-tabs-bar { background: white; border-bottom: 2px solid var(--border); }
 .dip-tabs-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -212,7 +180,9 @@
   display: flex;
   overflow-x: auto;
   gap: 0;
+  scrollbar-width: none;
 }
+.dip-tabs-inner::-webkit-scrollbar { display: none; }
 
 .dip-tab {
   padding: 13px 22px;
@@ -231,11 +201,7 @@
 .dip-tab:hover:not(.active) { color: var(--text-primary); }
 
 /* ── Content ─────────────────────────────────────────────── */
-.dip-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 24px 72px;
-}
+.dip-content { max-width: 1200px; margin: 0 auto; padding: 40px 24px 72px; }
 
 .dip-content-title {
   font-family: var(--font-heading);
@@ -245,14 +211,13 @@
   margin-bottom: 20px;
 }
 
-/* Included courses grid */
+/* Includes grid */
 .dip-includes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 14px;
   margin-bottom: 32px;
 }
-
 .dip-include-card {
   background: white;
   border: 1.5px solid var(--border);
@@ -262,11 +227,11 @@
   transition: var(--transition);
 }
 .dip-include-card:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
-.dip-include-card__icon     { font-size: 32px; display: block; margin-bottom: 8px; }
-.dip-include-card__name     { font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.dip-include-card__icon { font-size: 32px; display: block; margin-bottom: 8px; }
+.dip-include-card__name { font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
 .dip-include-card__duration { font-size: 12px; color: var(--text-muted); font-weight: 500; }
 
-/* What you learn */
+/* Learn grid */
 .dip-learn-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -285,22 +250,194 @@
 }
 .dip-learn-item::before { content: "✅"; flex-shrink: 0; }
 
-/* Tags row — online course */
-.dip-tags-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 20px;
+/* ── CERTIFICATE SECTION ─────────────────────────────────── */
+.dip-certificate-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  margin: 48px 0 32px;
+  padding: 40px;
+  background: var(--bg-section, #F8FAFC);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
 }
 
-.dip-tag {
+.dip-certificate-left h2 { margin-bottom: 24px; }
+
+.dip-certificate-points {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dip-certificate-point {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.dip-certificate-point__icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.dip-certificate-point strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.dip-certificate-point p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Certificate Preview Card */
+.dip-certificate-right { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+.dip-cert-card {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+  border: 3px solid var(--cert-accent, #D4AF37);
+}
+
+.dip-cert-card__border {
+  background: white;
+  border: 6px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.dip-cert-card__header {
+  background: var(--cert-color, #1E293B);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dip-cert-card__logo {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--cert-accent, #D4AF37);
+  letter-spacing: 2px;
+}
+
+.dip-cert-card__tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+.dip-cert-card__body {
+  padding: 24px 20px;
+  text-align: center;
+  background: white;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(0,0,0,0.01) 20px,
+      rgba(0,0,0,0.01) 40px
+    );
+}
+
+.dip-cert-card__certify {
   font-size: 12px;
+  color: #64748B;
+  margin-bottom: 6px;
+}
+
+.dip-cert-card__name {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--cert-color, #1E293B);
+  border-bottom: 1.5px solid var(--cert-accent, #D4AF37);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
   font-weight: 600;
-  background: #EFF6FF;
-  color: #1D4ED8;
-  padding: 5px 14px;
-  border-radius: 20px;
-  border: 1px solid #BFDBFE;
+}
+
+.dip-cert-card__completed {
+  font-size: 12px;
+  color: #64748B;
+  margin-bottom: 6px;
+}
+
+.dip-cert-card__course {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--cert-color, #1E293B);
+  line-height: 1.3;
+}
+
+.dip-cert-card__divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--cert-accent, #D4AF37), transparent);
+  margin: 16px 0;
+}
+
+.dip-cert-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.dip-cert-card__sig {
+  text-align: center;
+  flex: 1;
+}
+.dip-cert-card__sig-line {
+  height: 1.5px;
+  background: #94A3B8;
+  margin-bottom: 4px;
+}
+.dip-cert-card__sig span {
+  font-size: 9px;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dip-cert-card__seal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.dip-cert-card__seal-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--cert-color, #1E293B);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 2px solid var(--cert-accent, #D4AF37);
+}
+.dip-cert-card__seal span {
+  font-size: 8px;
+  color: #64748B;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.dip-cert-card__note {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
 }
 
 /* Who should join */
@@ -318,6 +455,18 @@
 }
 .dip-who-list li::before { content: "👤"; font-size: 16px; }
 
+/* Tags */
+.dip-tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.dip-tag {
+  font-size: 12px;
+  font-weight: 600;
+  background: #EFF6FF;
+  color: #1D4ED8;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid #BFDBFE;
+}
+
 /* ── Accordion Syllabus ───────────────────────────────────── */
 .accordion-module {
   border: 1.5px solid var(--border);
@@ -325,7 +474,6 @@
   margin-bottom: 10px;
   overflow: hidden;
 }
-
 .accordion-module__header {
   width: 100%;
   display: flex;
@@ -340,7 +488,6 @@
 }
 .accordion-module__header:hover,
 .accordion-module__header.open { background: var(--primary-light); }
-
 .accordion-module__title {
   flex: 1;
   font-size: 15px;
@@ -350,7 +497,6 @@
   align-items: center;
   gap: 12px;
 }
-
 .accordion-module__num {
   width: 26px; height: 26px;
   background: var(--primary);
@@ -360,10 +506,8 @@
   font-size: 12px; font-weight: 800;
   flex-shrink: 0;
 }
-
 .accordion-module__meta  { font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
 .accordion-module__arrow { font-size: 16px; color: var(--primary); font-weight: 700; flex-shrink: 0; }
-
 .accordion-module__chapters {
   list-style: none;
   padding: 4px 18px 14px 56px;
@@ -371,7 +515,6 @@
   border-top: 1px solid var(--border);
   animation: fadeInUp 0.2s ease;
 }
-
 .accordion-module__chapter {
   display: flex;
   align-items: flex-start;
@@ -403,205 +546,30 @@
 }
 .btn-back:hover { background: var(--primary-dark); }
 
-/* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .dip-hero__inner { grid-template-columns: 1fr; }
-  .dip-enroll-card { position: static; max-width: 480px; }
-}
-@media (max-width: 640px) {
-  .dip-hero { padding: 40px 20px 36px; }
-  .dip-content { padding: 32px 20px 56px; }
-}
-
-/* ══════════════════════════════════════════════════════════
-   Basic Diploma — Subjects styles
-══════════════════════════════════════════════════════════ */
-
-/* Hero subject pills */
-.dip-hero__subject-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
-}
-.dip-hero__subject-pill {
-  background: rgba(255,255,255,0.2);
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 5px 14px;
-  border-radius: 20px;
-  backdrop-filter: blur(4px);
-}
-
-/* Subject overview cards (Overview tab) */
+/* ── Subjects (Basic Diploma) ────────────────────────────── */
 .dip-subjects-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 14px;
   margin-bottom: 16px;
 }
-
 .dip-subject-card {
   border-radius: var(--radius-md);
   padding: 20px 14px;
   text-align: center;
   color: white;
-  cursor: default;
-}
-.dip-subject-card__icon { font-size: 36px; margin-bottom: 8px; }
-.dip-subject-card__name {
-  font-family: var(--font-heading);
-  font-size: 13px;
-  font-weight: 800;
-  margin-bottom: 4px;
-  line-height: 1.3;
-}
-.dip-subject-card__count {
-  font-size: 11px;
-  opacity: 0.8;
-  font-weight: 600;
-}
-
-/* Subject accordion (Subjects tab) */
-.dip-subject-accordion {
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-md);
-  margin-bottom: 12px;
-  overflow: hidden;
-}
-
-.dip-subject-accordion__header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px;
-  background: white;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-  text-align: left;
-}
-.dip-subject-accordion__header:hover,
-.dip-subject-accordion__header.open {
-  background: var(--primary-light);
-}
-
-.dip-subject-accordion__left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.dip-subject-accordion__icon { font-size: 28px; }
-.dip-subject-accordion__name {
-  font-family: var(--font-heading);
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.dip-subject-accordion__right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-.dip-subject-accordion__count {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--primary);
-  background: var(--primary-light);
-  padding: 3px 12px;
-  border-radius: 20px;
-}
-.dip-subject-accordion__arrow {
-  font-size: 16px;
-  color: var(--primary);
-  font-weight: 700;
-}
-
-.dip-subject-accordion__body {
-  background: var(--bg-section);
-  border-top: 1px solid var(--border);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  animation: fadeInUp 0.2s ease;
-}
-
-/* Sub-course card inside accordion */
-.dip-subcourse-card {
-  background: white;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  transition: var(--transition);
-}
-.dip-subcourse-card:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.dip-subcourse-card__header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.dip-subcourse-card__num {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: white;
-  font-size: 13px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.dip-subcourse-card__info { flex: 1; }
-
-.dip-subcourse-card__name {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 3px;
-}
-.dip-subcourse-card__duration {
-  font-size: 12px;
-  color: var(--primary);
-  font-weight: 600;
-}
-.dip-subcourse-card__desc {
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin: 0;
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Clickable subject cards */
-.dip-subject-card.clickable {
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
-.dip-subject-card.clickable:hover {
+.dip-subject-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 32px rgba(0,0,0,0.25);
 }
+.dip-subject-card__icon { font-size: 36px; margin-bottom: 8px; }
+.dip-subject-card__name { font-family: var(--font-heading); font-size: 13px; font-weight: 800; margin-bottom: 4px; line-height: 1.3; }
+.dip-subject-card__count { font-size: 11px; opacity: 0.8; font-weight: 600; }
 .dip-subject-card__cta {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 11px; font-weight: 700;
   color: rgba(255,255,255,0.9);
   background: rgba(255,255,255,0.2);
   padding: 4px 12px;
@@ -609,4 +577,75 @@
   margin-top: 8px;
   display: inline-block;
   letter-spacing: 0.5px;
+}
+
+/* Subject accordion */
+.dip-subject-accordion { border: 1.5px solid var(--border); border-radius: var(--radius-md); margin-bottom: 12px; overflow: hidden; }
+.dip-subject-accordion__header {
+  width: 100%; display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px; background: white; border: none;
+  cursor: pointer; transition: var(--transition); text-align: left;
+}
+.dip-subject-accordion__header:hover,
+.dip-subject-accordion__header.open { background: var(--primary-light); }
+.dip-subject-accordion__left { display: flex; align-items: center; gap: 14px; }
+.dip-subject-accordion__icon { font-size: 28px; }
+.dip-subject-accordion__name { font-family: var(--font-heading); font-size: 16px; font-weight: 800; color: var(--text-primary); }
+.dip-subject-accordion__right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.dip-subject-accordion__count { font-size: 12px; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 3px 12px; border-radius: 20px; }
+.dip-subject-accordion__arrow { font-size: 16px; color: var(--primary); font-weight: 700; }
+.dip-subject-accordion__body { background: var(--bg-section); border-top: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 10px; animation: fadeInUp 0.2s ease; }
+
+.dip-subcourse-card { background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 16px; transition: var(--transition); }
+.dip-subcourse-card:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
+.dip-subcourse-card__header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+.dip-subcourse-card__num { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.dip-subcourse-card__info { flex: 1; }
+.dip-subcourse-card__name { font-size: 14.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
+.dip-subcourse-card__duration { font-size: 12px; color: var(--primary); font-weight: 600; }
+.dip-subcourse-card__desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .dip-hero__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr ;
+  gap: 40px;
+  align-items: start;
+}
+  .dip-enroll-card { position: static; width:100%; max-width: 460px; }
+  .dip-certificate-section { grid-template-columns: 1fr; gap: 32px; padding: 24px; }
+}
+.dip-cert-real {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.dip-cert-real__img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .dip-hero { padding: 32px 16px 28px; }
+  .dip-content { padding: 24px 16px 56px; }
+  .dip-includes-grid { grid-template-columns: repeat(2, 1fr); }
+  .dip-learn-grid { grid-template-columns: 1fr; }
+  .dip-subjects-overview { grid-template-columns: repeat(2, 1fr); }
+  .dip-cert-card { max-width: 100%; }
+  .dip-certificate-section { padding: 20px 16px; }
+  .dip-cert-card__name { font-size: 15px; }
+  .dip-cert-card__course { font-size: 12px; }
 }

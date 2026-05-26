@@ -66,15 +66,27 @@ export default function About() {
     <main>
 
       {/* Hero */}
-      <section className="about-hero">
-        <div className="about-hero__badge">🏛️ About Us</div>
-        <h1 className="about-hero__title">
-          Empowering Maharashtra's Youth<br />Since <span>2010</span>
-        </h1>
-        <p className="about-hero__sub">
-          MAAYA Enterprises is Maharashtra's leading IT education & skill development institute — shaping careers of 50,000+ students.
-        </p>
-      </section>
+      {/* Hero with Slideshow Background */}
+<section className="about-hero" style={{ position:"relative", padding:0, overflow:"hidden" }}>
+  {/* Slideshow as background */}
+  <div className="about-hero__slideshow-bg">
+    <AwardSlideshow background={true} />
+  </div>
+  {/* Dark overlay */}
+  <div className="about-hero__overlay" />
+  {/* Text on top */}
+  <div className="about-hero__content">
+    <div className="about-hero__badge">🏛️ About Us</div>
+    <h1 className="about-hero__title">
+      Empowering Maharashtra's Youth<br />
+      Since <span>2010</span>
+    </h1>
+    <p className="about-hero__sub">
+      MAAYA Enterprises is Maharashtra's leading IT education & skill development institute — shaping careers of 50,000+ students.
+    </p>
+  </div>
+</section>
+    
 
       {/* Our Story */}
       <section className="about-story">
@@ -178,7 +190,7 @@ export default function About() {
           </div>
         </div>
       </section>
-      <AwardSlideshow />
+      
 
     </main>
   );

@@ -7,19 +7,96 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import EnquiryForm from "../../Components/sections/EnquiryForm";
+import accountingCert from "../../assets/certificates/accounting.jpg";
+import programmingCert from "../../assets/certificates/programming.jpg";
+import designingCert from "../../assets/certificates/designing.jpg";
+import hardwareCert from "../../assets/certificates/hardware.jpg";
 import "./DiplomaDetail.css";
+
+// ── Certificate data per course type ─────────────────────────
+const CERTIFICATE_DATA = {
+  default: {
+    title: "Certificate of Completion",
+    body: "has successfully completed the program",
+    seal: "🎓 MAAYA Enterprises · MKCL Certified",
+    color: "#1E293B",
+    accent: "#D4AF37",
+  },
+  accounting: {
+    title: "Certificate in Accounting",
+    body: "has successfully completed Diploma in Accounting",
+    seal: "📊 MAAYA Enterprises · Tally Certified",
+    color: "#064E3B",
+    accent: "#10B981",
+  },
+  programming: {
+    title: "Certificate in Programming",
+    body: "has successfully completed Diploma in Programming",
+    seal: "💻 MAAYA Enterprises · MKCL Certified",
+    color: "#1E3A5F",
+    accent: "#3B82F6",
+  },
+  designing: {
+    title: "Certificate in Graphic Design",
+    body: "has successfully completed Diploma in Designing",
+    seal: "🎨 MAAYA Enterprises · Design Certified",
+    color: "#4A044E",
+    accent: "#EC4899",
+  },
+  hardware: {
+    title: "Certificate in IT Hardware",
+    body: "has successfully completed Diploma in Hardware & Networking",
+    seal: "🖥️ MAAYA Enterprises · Hardware Certified",
+    color: "#431407",
+    accent: "#F97316",
+  },
+  workfromhome: {
+    title: "Certificate in Work From Home",
+    body: "has successfully completed Work From Home Program",
+    seal: "🏠 MAAYA Enterprises · MKCL Certified",
+    color: "#1E293B",
+    accent: "#8B5CF6",
+  },
+  online: {
+    title: "Certificate of Online Completion",
+    body: "has successfully completed the Online Course",
+    seal: "🌐 MAAYA Enterprises · Online Certified",
+    color: "#0C4A6E",
+    accent: "#0EA5E9",
+  },
+};
+
+const CERTIFICATE_IMAGES = {
+  // accounting: accountingCert,
+  // programming: programmingCert,
+  // designing: designingCert,
+  hardware: hardwareCert,
+};
+
+// ── Get certificate based on course track ────────────────────
+const getCertificate = (diploma) => {
+  if (!diploma) return CERTIFICATE_DATA.default;
+  const track = (diploma.track || "").toLowerCase();
+  if (track.includes("account"))   return CERTIFICATE_DATA.accounting;
+  if (track.includes("program"))   return CERTIFICATE_DATA.programming;
+  if (track.includes("design"))    return CERTIFICATE_DATA.designing;
+  if (track.includes("hardware"))  return CERTIFICATE_DATA.hardware;
+  if (track.includes("home"))      return CERTIFICATE_DATA.workfromhome;
+  if (diploma.isOnline)            return CERTIFICATE_DATA.online;
+  return CERTIFICATE_DATA.default;
+};
 
 export default function DiplomaDetail() {
 
   const { id }   = useParams();
   const navigate = useNavigate();
 
-  const [diploma,  setDiploma]  = useState(null);
-  const [loading,  setLoading]  = useState(true);
-  const [tab,      setTab]      = useState("Overview");
-  const [openMods, setOpenMods] = useState({});
-  const [openSubj, setOpenSubj] = useState({});
-  const [showForm, setShowForm] = useState(false);
+  const [diploma,    setDiploma]    = useState(null);
+  const [loading,    setLoading]    = useState(true);
+  const [tab,        setTab]        = useState("Overview");
+  const [openMods,   setOpenMods]   = useState({});
+  const [openSubj,   setOpenSubj]   = useState({});
+  const [showForm,   setShowForm]   = useState(false);
 
   // ── Fetch ──────────────────────────────────────────────────
   useEffect(() => {
@@ -38,95 +115,67 @@ export default function DiplomaDetail() {
     })();
   }, [id]);
 
-  // ── Auto open first module when Syllabus tab opens manually ──
+  // ── Auto open first module when Syllabus tab opens ─────────
   useEffect(() => {
-    if (
-      tab === "Syllabus" &&
-      diploma?.syllabus?.length > 0 &&
-      Object.keys(openMods).length === 0
-    ) {
+    if (tab === "Syllabus" && diploma?.syllabus?.length > 0 && Object.keys(openMods).length === 0) {
       setOpenMods({ 0: true });
     }
   }, [tab, diploma]);
 
   if (loading) return (
-    <div style={{ textAlign: "center", padding: "100px 24px" }}>
-      <span style={{ fontSize: 40 }}>⏳</span>
-      <p style={{ marginTop: 16, color: "var(--text-muted)" }}>Loading...</p>
+    <div style={{ textAlign:"center", padding:"100px 24px" }}>
+      <span style={{ fontSize:40 }}>⏳</span>
+      <p style={{ marginTop:16, color:"var(--text-muted)" }}>Loading...</p>
     </div>
   );
 
   if (!diploma) return (
-    <div style={{ textAlign: "center", padding: "80px 24px" }}>
+    <div style={{ textAlign:"center", padding:"80px 24px" }}>
       <h2>Program Not Found</h2>
-      <Link to="/courses" className="btn-back" style={{ marginTop: 20, display: "inline-block" }}>
+      <Link to="/courses" className="btn-back" style={{ marginTop:20, display:"inline-block" }}>
         ← Back to Courses
       </Link>
     </div>
   );
 
-  // ── Tabs ───────────────────────────────────────────────────
   const TABS = ["Overview"];
   if ((diploma.subjects || []).length > 0) TABS.push("Subjects");
   TABS.push("Syllabus", "Who Should Join");
 
-  // ── Toggle — only one open at a time ──────────────────────
   const toggleMod  = (i) => setOpenMods(prev => ({ [i]: !prev[i] }));
   const toggleSubj = (i) => setOpenSubj(prev => ({ [i]: !prev[i] }));
 
-  // ── Enroll ─────────────────────────────────────────────────
   const handleEnroll = () => {
     if (diploma.isOnline) navigate(`/enroll/${diploma.id}`);
     else setShowForm(true);
   };
 
-  // ── Include card click → open that module in Syllabus ──────
+  // ── Include card → open syllabus module ───────────────────
   const handleIncludeClick = (subCourseName) => {
     if (!diploma?.syllabus?.length) return;
-
-    // Normalize strings for better matching
-    const normalize = (str) =>
-      str
-        .toLowerCase()
-        .replace(/&/g, "and")
-        .replace(/[^\w\s]/g, "")
-        .trim();
-
+    const normalize = (str) => str.toLowerCase().replace(/&/g,"and").replace(/[^\w\s]/g,"").trim();
     const normalized = normalize(subCourseName);
-    
-    // Handle special case: "Artificial Intelligence" matches "AI for Designers" or "AI in Hardware & IT"
-    const isAICard = subCourseName.toLowerCase().includes("artificial intelligence") || 
-                     subCourseName.toLowerCase().includes("ai");
-
+    const isAI = subCourseName.toLowerCase().includes("artificial intelligence") || subCourseName.toLowerCase().includes("ai");
     const moduleIndex = diploma.syllabus.findIndex((mod) => {
       if (!mod.moduleTitle) return false;
-      const modNormalized = normalize(mod.moduleTitle);
-      
-      // Special handling for AI variations
-      if (isAICard) {
-        return modNormalized.includes("ai");
-      }
-      
-      // Try exact match first
-      if (modNormalized === normalized) return true;
-      
-      // Try inclusion match (part of title)
-      const subCourseParts = normalized.split(/\s+/);
-      return subCourseParts.some(
-        (part) => part.length > 3 && modNormalized.includes(part)
-      );
+      const modN = normalize(mod.moduleTitle);
+      if (isAI) return modN.includes("ai");
+      if (modN === normalized) return true;
+      return normalized.split(/\s+/).some(p => p.length > 3 && modN.includes(p));
     });
-
     if (moduleIndex === -1) return;
-
     setTab("Syllabus");
     setOpenMods({ [moduleIndex]: true });
-
     setTimeout(() => {
       const el = document.getElementById(`module-${moduleIndex}`);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (el) el.scrollIntoView({ behavior:"smooth", block:"center" });
     }, 250);
   };
+
+  const cert = getCertificate(diploma);
+  const certificateImage = hardwareCert;
+//   console.log(diploma.certificateType);
+// console.log(certificateImage);
 
   // ══════════════════════════════════════════════════════════
   return (
@@ -136,7 +185,7 @@ export default function DiplomaDetail() {
       <section className={`dip-hero ${diploma.gradient || "grad-blue"}`}>
         <div className="dip-hero__inner">
 
-          {/* Left — course info */}
+          {/* Left */}
           <div>
             <div className="dip-hero__rating">
               <span className="dip-hero__stars">★★★★★</span>
@@ -147,10 +196,41 @@ export default function DiplomaDetail() {
             <h1 className="dip-hero__title">{diploma.title}</h1>
             <p className="dip-hero__sub">{diploma.overview}</p>
             <div className="dip-hero__duration">📅 {diploma.duration}</div>
+
+            {(diploma.subjects || []).length > 0 && (
+              <div className="dip-hero__subject-pills">
+                {diploma.subjects.map(s => (
+                  <span key={s.name} className="dip-hero__subject-pill">
+                    {s.icon} {s.name.replace(/^[^\w]*/, "")}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {diploma.isOnline && diploma.price && (
+              <div className="dip-hero__price-row">
+                {diploma.originalPrice && <span className="dip-hero__price-old">₹{diploma.originalPrice}</span>}
+                <span className="dip-hero__price-now">₹{diploma.price}</span>
+              </div>
+            )}
           </div>
 
           {/* Right — Enroll Card */}
           <div className="dip-enroll-card">
+
+            {/* YouTube video — add your YouTube video ID in Firebase as diploma.youtubeId */}
+            {(diploma.youtubeId || true )&& (
+              <div className="dip-enroll-card__video">
+                <iframe
+                  width="100%" height="100%"
+                 src={`https://www.youtube.com/embed/${diploma.youtubeId || "T1qMQTMu4tM"}`}
+                  title={diploma.title}
+                  frameBorder="0"
+                  allowFullScreen
+                />
+              </div>
+            )}
+
             {diploma.isOnline ? (
               <>
                 <h3 className="dip-enroll-card__title">🌐 Enroll in this Course</h3>
@@ -159,9 +239,7 @@ export default function DiplomaDetail() {
                 </p>
                 {diploma.price && (
                   <div className="dip-enroll-card__price-box">
-                    {diploma.originalPrice && (
-                      <div className="dip-enroll-card__price-old">₹{diploma.originalPrice}</div>
-                    )}
+                    {diploma.originalPrice && <div className="dip-enroll-card__price-old">₹{diploma.originalPrice}</div>}
                     <div className="dip-enroll-card__price-now">₹{diploma.price}</div>
                     <div className="dip-enroll-card__duration">⏱ {diploma.duration}</div>
                   </div>
@@ -169,29 +247,19 @@ export default function DiplomaDetail() {
                 <button className="btn-enroll-diploma online" onClick={handleEnroll}>
                   Enroll Now — Fill the Form →
                 </button>
-                <p className="dip-enroll-card__note">
-                  📞 Questions? Call: <strong>9420277373</strong>
-                </p>
+                <p className="dip-enroll-card__note">📞 Questions? Call: <strong>9420277373</strong></p>
               </>
             ) : (
               <>
-                <h3 className="dip-enroll-card__title">Interested in this Program?</h3>
-                <p className="dip-enroll-card__sub">
-                  Fill a quick form — our counsellor will call you within 24 hours and guide you through the admission process.
-                </p>
-                <button className="btn-enroll-diploma" onClick={handleEnroll}>
-                  Enroll Now — It's Free to Enquire!
-                </button>
-                <p className="dip-enroll-card__note">
-                  📞 Or call us: <strong>9420277373</strong>
-                </p>
+                <EnquiryForm
+      preSelectedCourse={diploma.title}
+      inline={true}
+      onClose={() => {}}
+    />
               </>
             )}
 
-            {/* Features list */}
-            <ul className="dip-features-list">
-              {(diploma.features || []).map(f => <li key={f}>✅ {f}</li>)}
-            </ul>
+            
           </div>
 
         </div>
@@ -201,14 +269,9 @@ export default function DiplomaDetail() {
       <div className="dip-tabs-bar">
         <div className="dip-tabs-inner">
           {TABS.map(t => (
-            <button
-              key={t}
+            <button key={t}
               className={`dip-tab ${tab === t ? "active" : ""}`}
-              onClick={() => {
-                setTab(t);
-                if (t !== "Syllabus") setOpenMods({});
-              }}
-            >
+              onClick={() => { setTab(t); if (t !== "Syllabus") setOpenMods({}); }}>
               {t}
             </button>
           ))}
@@ -222,24 +285,21 @@ export default function DiplomaDetail() {
         {tab === "Overview" && (
           <div>
 
-            {/* What's Included — diploma sub-courses */}
+            {/* What's Included */}
             {!diploma.isOnline && (diploma.includes || []).length > 0 && (
               <>
                 <h2 className="dip-content-title">What's Included</h2>
                 <div className="dip-includes-grid">
                   {diploma.includes.map(item => (
-                    <div
-                      key={item.name}
-                      className="dip-include-card"
+                    <div key={item.name} className="dip-include-card"
                       onClick={() => handleIncludeClick(item.name)}
-                      style={{ cursor: "pointer", transition: "all 0.2s ease" }}
+                      style={{ cursor:"pointer" }}
                       onMouseEnter={e => e.currentTarget.style.transform = "translateY(-4px)"}
-                      onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
-                    >
+                      onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>
                       <span className="dip-include-card__icon">{item.icon}</span>
                       <div className="dip-include-card__name">{item.name}</div>
                       <div className="dip-include-card__duration">📅 {item.duration}</div>
-                      <div style={{ fontSize: "0.85rem", color: "#2563EB", marginTop: "0.5rem", fontWeight: 600 }}>
+                      <div style={{ fontSize:"0.85rem", color:"#2563EB", marginTop:"0.5rem", fontWeight:600 }}>
                         View Syllabus →
                       </div>
                     </div>
@@ -252,32 +312,26 @@ export default function DiplomaDetail() {
             {(diploma.subjects || []).length > 0 && (
               <>
                 <h2 className="dip-content-title">📚 What's Covered in This Course</h2>
-                <p style={{ color: "var(--text-muted)", fontSize: 14, marginBottom: 20 }}>
+                <p style={{ color:"var(--text-muted)", fontSize:14, marginBottom:20 }}>
                   {diploma.subjects.length} subjects · Click on a subject to see its modules
                 </p>
                 <div className="dip-subjects-overview">
                   {diploma.subjects.map((subj, si) => (
-                    <div
-                      key={si}
+                    <div key={si}
                       className={`dip-subject-card ${subj.color || "grad-blue"}`}
                       onClick={() => {
                         setTab("Subjects");
                         setOpenSubj({ [si]: true });
-                        setTimeout(() => {
-                          document.querySelector(".dip-tabs-bar")?.scrollIntoView({ behavior: "smooth" });
-                        }, 50);
+                        setTimeout(() => document.querySelector(".dip-tabs-bar")?.scrollIntoView({ behavior:"smooth" }), 50);
                       }}
-                      style={{ cursor: "pointer" }}
-                    >
+                      style={{ cursor:"pointer" }}>
                       <div className="dip-subject-card__icon">{subj.icon}</div>
                       <div className="dip-subject-card__name">{subj.name}</div>
-                      {subj.subCourses?.length > 0 ? (
-                        <div className="dip-subject-card__count">
-                          {subj.subCourses.length} sub-course{subj.subCourses.length > 1 ? "s" : ""}
-                        </div>
-                      ) : (
-                        <div className="dip-subject-card__count">Core subject</div>
-                      )}
+                      <div className="dip-subject-card__count">
+                        {subj.subCourses?.length > 0
+                          ? `${subj.subCourses.length} sub-course${subj.subCourses.length > 1 ? "s" : ""}`
+                          : "Core subject"}
+                      </div>
                       <div className="dip-subject-card__cta">View Details →</div>
                     </div>
                   ))}
@@ -285,10 +339,10 @@ export default function DiplomaDetail() {
               </>
             )}
 
-            {/* ── What You'll Learn ── */}
+            {/* What You'll Learn */}
             {(diploma.whatYouLearn || []).length > 0 && (
               <>
-                <h2 className="dip-content-title" style={{ marginTop: 40 }}>What You'll Learn</h2>
+                <h2 className="dip-content-title" style={{ marginTop:40 }}>What You'll Learn</h2>
                 <div className="dip-learn-grid">
                   {diploma.whatYouLearn.map(item => (
                     <div key={item} className="dip-learn-item">{item}</div>
@@ -297,17 +351,54 @@ export default function DiplomaDetail() {
               </>
             )}
 
-            {/* Online course tags */}
+            {/* ── CERTIFICATE SECTION ── */}
+            <div className="dip-certificate-section">
+              <div className="dip-certificate-left">
+                <h2 className="dip-content-title">🏆 Career Support That Works</h2>
+                <div className="dip-certificate-points">
+                  {[
+                    { icon:"✅", title:"MKCL Certified Program", desc:"Government recognized certification accepted by top companies across India" },
+                    { icon:"✅", title:"Placement Assistance", desc:"Our counsellors help you with job preparation, resume building and placement" },
+                    { icon:"✅", title:"Verified Digital Certificate", desc:"Get a digital certificate with QR code verification after course completion" },
+                  ].map(p => (
+                    <div key={p.title} className="dip-certificate-point">
+                      <span className="dip-certificate-point__icon">{p.icon}</span>
+                      <div>
+                        <strong>{p.title}</strong>
+                        <p>{p.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Certificate Preview Card */}
+              <div className="dip-certificate-right">
+                <div className="dip-cert-real">
+            {certificateImage ? (    
+          <img
+          src={certificateImage}
+          alt="Certificate"
+          className="dip-cert-real__img"
+         />
+            ):(<p style={{color:"red"}}>Image not found</p>
+
+            )}
+        </div>
+              
+                <p className="dip-cert-card__note">
+                  🔒 Certificate includes QR code for instant verification
+                </p>
+              </div>
+            </div>
+
+            {/* Online tags */}
             {diploma.isOnline && (diploma.tags || []).length > 0 && (
-              <div style={{ marginTop: 24, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <div style={{ marginTop:24, display:"flex", flexWrap:"wrap", gap:8 }}>
                 {diploma.tags.map(t => (
                   <span key={t} style={{
-                    padding: "4px 14px",
-                    background: "var(--primary-light)",
-                    color: "var(--primary)",
-                    borderRadius: 20,
-                    fontSize: 13,
-                    fontWeight: 600,
+                    padding:"4px 14px", background:"var(--primary-light)",
+                    color:"var(--primary)", borderRadius:20, fontSize:13, fontWeight:600,
                   }}>{t}</span>
                 ))}
               </div>
@@ -320,17 +411,14 @@ export default function DiplomaDetail() {
         {tab === "Subjects" && (
           <div>
             <h2 className="dip-content-title">📚 Subjects & Sub-Courses</h2>
-            <p style={{ color: "var(--text-muted)", fontSize: 14, marginBottom: 24 }}>
+            <p style={{ color:"var(--text-muted)", fontSize:14, marginBottom:24 }}>
               Click on each subject to see its sub-courses and details
             </p>
-
             {(diploma.subjects || []).map((subj, si) => (
               <div key={si} className="dip-subject-accordion">
-
                 <button
                   className={`dip-subject-accordion__header ${openSubj[si] ? "open" : ""}`}
-                  onClick={() => toggleSubj(si)}
-                >
+                  onClick={() => toggleSubj(si)}>
                   <div className="dip-subject-accordion__left">
                     <span className="dip-subject-accordion__icon">{subj.icon}</span>
                     <span className="dip-subject-accordion__name">{subj.name}</span>
@@ -339,15 +427,11 @@ export default function DiplomaDetail() {
                     <span className="dip-subject-accordion__count">
                       {subj.subCourses?.length > 0
                         ? `${subj.subCourses.length} sub-course${subj.subCourses.length > 1 ? "s" : ""}`
-                        : "Core subject"
-                      }
+                        : "Core subject"}
                     </span>
-                    <span className="dip-subject-accordion__arrow">
-                      {openSubj[si] ? "∧" : "∨"}
-                    </span>
+                    <span className="dip-subject-accordion__arrow">{openSubj[si] ? "∧" : "∨"}</span>
                   </div>
                 </button>
-
                 {openSubj[si] && (
                   <div className="dip-subject-accordion__body">
                     {subj.subCourses?.length > 0 ? (
@@ -360,9 +444,7 @@ export default function DiplomaDetail() {
                               <div className="dip-subcourse-card__duration">⏱ {sc.duration}</div>
                             </div>
                           </div>
-                          {sc.description && (
-                            <p className="dip-subcourse-card__desc">{sc.description}</p>
-                          )}
+                          {sc.description && <p className="dip-subcourse-card__desc">{sc.description}</p>}
                         </div>
                       ))
                     ) : (
@@ -391,17 +473,14 @@ export default function DiplomaDetail() {
         {tab === "Syllabus" && (
           <div>
             <h2 className="dip-content-title">Course Syllabus</h2>
-            <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 20 }}>
+            <p style={{ fontSize:14, color:"var(--text-muted)", marginBottom:20 }}>
               {diploma.syllabus?.length} modules · Click to expand chapters
             </p>
-
             {(diploma.syllabus || []).map((mod, i) => (
               <div key={i} id={`module-${i}`} className="accordion-module">
-
                 <button
                   className={`accordion-module__header ${openMods[i] ? "open" : ""}`}
-                  onClick={() => toggleMod(i)}
-                >
+                  onClick={() => toggleMod(i)}>
                   <span className="accordion-module__title">
                     <span className="accordion-module__num">{i + 1}</span>
                     {mod.moduleTitle}
@@ -409,13 +488,11 @@ export default function DiplomaDetail() {
                   <span className="accordion-module__meta">{mod.chapters?.length || 0} chapters</span>
                   <span className="accordion-module__arrow">{openMods[i] ? "∧" : "∨"}</span>
                 </button>
-
                 {openMods[i] && (
                   <ul className="accordion-module__chapters">
                     {(mod.chapters || []).map((ch, ci) => (
                       <li key={ci} className="accordion-module__chapter">
-                        <span className="accordion-module__dot">•</span>
-                        {ch}
+                        <span className="accordion-module__dot">•</span>{ch}
                       </li>
                     ))}
                   </ul>
@@ -430,51 +507,36 @@ export default function DiplomaDetail() {
           <div>
             <h2 className="dip-content-title">Who Should Join?</h2>
             <ul className="dip-who-list">
-              {(diploma.whoShouldJoin || []).map(item => (
-                <li key={item}>{item}</li>
-              ))}
+              {(diploma.whoShouldJoin || []).map(item => <li key={item}>{item}</li>)}
             </ul>
-
             <div style={{
-              background: "var(--primary-light)",
-              border: "1.5px solid var(--primary)",
-              borderRadius: "var(--radius-lg)",
-              padding: "24px",
-              marginTop: 32,
-              textAlign: "center",
+              background:"var(--primary-light)", border:"1.5px solid var(--primary)",
+              borderRadius:"var(--radius-lg)", padding:"24px", marginTop:32, textAlign:"center",
             }}>
-              <h3 style={{ fontFamily: "var(--font-heading)", fontSize: 18, fontWeight: 800, marginBottom: 8 }}>
+              <h3 style={{ fontFamily:"var(--font-heading)", fontSize:18, fontWeight:800, marginBottom:8 }}>
                 Ready to start your journey?
               </h3>
-              <p style={{ fontSize: 14, color: "var(--text-muted)", marginBottom: 16 }}>
-                {diploma.isOnline
-                  ? "Enroll now — pay & get instant course access!"
-                  : "Enquire now — our counsellor will call you within 24 hours!"}
+              <p style={{ fontSize:14, color:"var(--text-muted)", marginBottom:16 }}>
+                {diploma.isOnline ? "Enroll now — pay & get instant course access!" : "Enquire now — our counsellor will call you within 24 hours!"}
               </p>
               <button
                 className={`btn-enroll-diploma ${diploma.isOnline ? "online" : ""}`}
-                style={{ maxWidth: 280, margin: "0 auto" }}
-                onClick={handleEnroll}
-              >
+                style={{ maxWidth:280, margin:"0 auto" }}
+                onClick={handleEnroll}>
                 {diploma.isOnline ? "Enroll Now →" : "Enquire Now →"}
               </button>
             </div>
           </div>
         )}
 
-        {/* Back button */}
-        <Link to="/courses" className="btn-back" style={{ marginTop: 32, display: "inline-flex" }}>
+        <Link to="/courses" className="btn-back" style={{ marginTop:32, display:"inline-flex" }}>
           ← Back to Courses
         </Link>
-
       </div>
 
       {/* Enquiry Modal */}
       {showForm && !diploma.isOnline && (
-        <EnquiryForm
-          preSelectedCourse={diploma.title}
-          onClose={() => setShowForm(false)}
-        />
+        <EnquiryForm preSelectedCourse={diploma.title} onClose={() => setShowForm(false)} />
       )}
 
     </main>

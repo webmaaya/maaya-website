@@ -1,8 +1,8 @@
 /* ============================================================
-   EnquiryForm.css — Enquiry Modal
+   EnquiryForm.css — Enquiry Modal + Inline Form
    ============================================================ */
 
-/* Overlay */
+/* ── POPUP MODE ──────────────────────────────────────────── */
 .enquiry-overlay {
   position: fixed;
   inset: 0;
@@ -21,7 +21,6 @@
   to   { opacity: 1; }
 }
 
-/* Modal box */
 .enquiry-modal {
   background: white;
   border-radius: var(--radius-xl);
@@ -40,7 +39,6 @@
   to   { transform: translateY(0);    opacity: 1; }
 }
 
-/* Close button */
 .enquiry-modal__close {
   position: absolute;
   top: 16px; right: 16px;
@@ -56,9 +54,7 @@
 }
 .enquiry-modal__close:hover { background: var(--border); color: var(--text-primary); }
 
-/* Header */
 .enquiry-modal__icon { font-size: 40px; margin-bottom: 10px; }
-
 .enquiry-modal__title {
   font-family: var(--font-heading);
   font-size: 20px;
@@ -66,38 +62,79 @@
   color: var(--text-primary);
   margin-bottom: 4px;
 }
-
 .enquiry-modal__sub {
   font-size: 13.5px;
   color: var(--text-muted);
   margin-bottom: 24px;
 }
 
-/* Form groups */
-.eq-group {
-  margin-bottom: 14px;
+/* ── INLINE MODE ─────────────────────────────────────────── */
+.eq-inline {
+  padding: 20px;
+  background: white;
+  border-top: 1px solid var(--border);
 }
+
+/* Inline header */
+.eq-inline-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.eq-inline-header__icon {
+  font-size: 28px;
+  width: 44px; height: 44px;
+  background: var(--primary-light);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.eq-inline-header__title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.eq-inline-header__sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Inline success */
+.enquiry-success--inline {
+  padding: 16px 0;
+}
+
+/* ── SHARED FORM STYLES ──────────────────────────────────── */
+.eq-group { margin-bottom: 12px; }
 
 .eq-label {
   display: block;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .eq-input,
 .eq-select {
   width: 100%;
-  padding: 11px 14px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   border: 1.5px solid var(--border);
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-family: var(--font-body);
   color: var(--text-primary);
-  background: var(--bg-base);
+  background: var(--bg-base, #F8FAFC);
   outline: none;
   transition: var(--transition);
+  box-sizing: border-box;
 }
 
 .eq-input:focus,
@@ -107,41 +144,182 @@
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-/* Two col row */
 .eq-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 0;
 }
 
-/* Submit button */
 .btn-eq-submit {
   width: 100%;
-  padding: 14px;
+  padding: 13px;
   background: var(--primary);
   color: white;
   border-radius: var(--radius-md);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   border: none;
   cursor: pointer;
   transition: var(--transition);
-  margin-top: 6px;
+  margin-top: 8px;
+  font-family: var(--font-body);
 }
 .btn-eq-submit:hover { background: var(--primary-dark); box-shadow: var(--shadow-blue); }
 .btn-eq-submit:disabled { background: var(--border); cursor: not-allowed; }
 
 /* Success state */
-.enquiry-success {
-  text-align: center;
-  padding: 20px 0;
-}
+.enquiry-success { text-align: center; padding: 20px 0; }
 .enquiry-success__icon  { font-size: 56px; display: block; margin-bottom: 16px; }
-.enquiry-success__title { font-family: var(--font-heading); font-size: 22px; font-weight: 800; color: var(--success); margin-bottom: 10px; }
-.enquiry-success__text  { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+.enquiry-success__title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--success, #16A34A);
+  margin-bottom: 10px;
+}
+.enquiry-success__text { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
 
 @media (max-width: 500px) {
   .enquiry-modal { padding: 28px 20px; }
   .eq-row { grid-template-columns: 1fr; }
+  .eq-inline { padding: 16px; }
+}
+/* ============================================================
+   MOBILE RESPONSIVE FIXES
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  .enquiry-overlay {
+    padding: 14px;
+    align-items: flex-end;
+  }
+
+  .enquiry-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 24px 24px 0 0;
+    padding: 26px 18px;
+    animation: mobileSlideUp 0.28s ease;
+  }
+
+  .enquiry-modal__title {
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .enquiry-modal__sub {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .eq-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .eq-group {
+    margin-bottom: 14px;
+  }
+
+  .eq-input,
+  .eq-select {
+    font-size: 16px; /* prevents iOS zoom */
+    padding: 12px 14px;
+    min-height: 48px;
+  }
+
+  .btn-eq-submit {
+    min-height: 50px;
+    font-size: 15px;
+    margin-top: 10px;
+  }
+
+  .eq-inline {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .eq-inline-header {
+    gap: 10px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+
+  .eq-inline-header__icon {
+    width: 42px;
+    height: 42px;
+    font-size: 24px;
+  }
+
+  .eq-inline-header__title {
+    font-size: 14px;
+  }
+
+  .eq-inline-header__sub {
+    font-size: 11px;
+  }
+
+  .enquiry-success {
+    padding: 14px 0;
+  }
+
+  .enquiry-success__icon {
+    font-size: 48px;
+  }
+
+  .enquiry-success__title {
+    font-size: 20px;
+  }
+
+  .enquiry-success__text {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+/* ============================================================
+   EXTRA SMALL DEVICES
+   ============================================================ */
+
+@media (max-width: 380px) {
+
+  .enquiry-modal {
+    padding: 22px 14px;
+  }
+
+  .enquiry-modal__title {
+    font-size: 17px;
+  }
+
+  .eq-input,
+  .eq-select {
+    padding: 11px 12px;
+  }
+
+  .btn-eq-submit {
+    font-size: 14px;
+  }
+
+  .eq-inline {
+    padding: 14px;
+  }
+}
+
+/* ============================================================
+   MOBILE BOTTOM SHEET ANIMATION
+   ============================================================ */
+
+@keyframes mobileSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(80px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

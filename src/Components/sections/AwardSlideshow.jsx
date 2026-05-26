@@ -13,6 +13,11 @@ import photo1 from "../../assets/slideshow/photo1.jpeg"; // TODO: Add real image
 import photo2 from "../../assets/slideshow/photo2.png";
 import photo3 from "../../assets/slideshow/photo3.jpg";
 import photo4 from "../../assets/slideshow/photo4.jpg";
+import photo5 from "../../assets/slideshow/photo5.jpeg";
+import photo6 from "../../assets/slideshow/photo6.jpeg";
+import photo7 from "../../assets/slideshow/photo7.jpeg";
+import photo8 from "../../assets/slideshow/photo8.jpeg";
+
 import "./AwardSlideshow.css";
 
 // ── Slides Data — 4 slots ─────────────────────────────────────
@@ -24,9 +29,13 @@ const SLIDES = [
   { id: 2, image: photo2, alt: "Award Photo 2", label: "Achievement" },
   { id: 3, image: photo3, alt: "Award Photo 3", label: "Recognition" },
   { id: 4, image: photo4, alt: "Award Photo 4", label: "Celebration" },
+  { id: 5, image: photo5, alt: "Award Photo 5", label: "Milestone" },
+  { id: 6, image: photo8, alt: "Award Photo 6", label: "Success" },
+  { id: 7, image: photo7, alt: "Award Photo 7", label: "Excellence" },
+  { id: 8, image: photo6, alt: "Award Photo 8", label: "Pride" },
 ];
 
-export default function AwardSlideshow() {
+export default function AwardSlideshow({background = false}) {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -62,13 +71,22 @@ export default function AwardSlideshow() {
   return (
     <section>
       {/* Header */}
-      <div className="about-slideshow__header">
-        <div className="section-badge" style={{ marginBottom: 12 }}>📸 Our Moments</div>
-        <h2 className="section-title">Awards & Achievements</h2>
-        <p className="section-sub">
-          Celebrating our journey of excellence in education
-        </p>
-      </div>
+       {/* Header */}
+{!background && (
+  <div className="about-slideshow__header">
+    <div className="section-badge" style={{ marginBottom: 12 }}>
+      📸 Our Moments
+    </div>
+
+    <h2 className="section-title">
+      Awards & Achievements
+    </h2>
+
+    <p className="section-sub">
+      Celebrating our journey of excellence in education
+    </p>
+  </div>
+)}
 
       {/* Slideshow — full width */}
       <div className="slideshow"

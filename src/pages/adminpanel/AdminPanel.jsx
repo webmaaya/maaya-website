@@ -26,7 +26,7 @@ const GRADIENTS = [
 const BADGES = ["","Most Popular","Trending","New","Hot","Job Ready","Creative"];
 
 const EMPTY_FORM = {
-  title:"", track:"Accounting", icon:"📚", gradient:"grad-blue", badge:"",
+  title:"", track:"Accounting", icon:"📚", gradient:"grad-blue", badge:"",certificateImage:"",
   isOnline:false, overview:"", duration:"", price:"", originalPrice:"",
   includes:[{ icon:"📘", name:"", duration:"" }],
   whatYouLearn:[""], whoShouldJoin:[""], features:[""],
@@ -99,7 +99,7 @@ export default function AdminPanel() {
 
   const buildDoc = () => {
     const base = {
-      title:form.title.trim(), track:form.track, icon:form.icon.trim()||"📚",
+      title:form.title.trim(), track:form.track, icon:form.icon.trim()||"📚",certificateImage: form.certificateImage,
       gradient:form.gradient, badge:form.badge, isOnline:form.isOnline,
       overview:form.overview.trim(), duration:form.duration.trim(),
       price:form.price.trim(), originalPrice:form.originalPrice.trim(),
@@ -147,7 +147,7 @@ export default function AdminPanel() {
     setEditId(c.id); setEditCol(col);
     setForm({
       title:c.title||"", track:c.track||"Accounting", icon:c.icon||"📚",
-      gradient:c.gradient||"grad-blue", badge:c.badge||"",
+      gradient:c.gradient||"grad-blue", badge:c.badge||"",certificateImage:c.certificateImage || "",
       isOnline:c.isOnline||false, overview:c.overview||"",
       duration:c.duration||"", price:c.price||"", originalPrice:c.originalPrice||"",
       features:c.features?.length ? c.features : [""],
@@ -265,6 +265,20 @@ export default function AdminPanel() {
                 value={form.originalPrice} onChange={e=>set("originalPrice",e.target.value)} />
             </div>
           </div>
+            {/* Certificate Image */}
+<div className="admin__group">
+  <label className="admin__label">
+    Certificate Image Key
+  </label>
+
+  <input
+    className="admin__input"
+    placeholder="e.g. accounting"
+    value={form.certificateImage}
+    onChange={(e)=>set("certificateImage",e.target.value)}
+  />
+</div>
+
 
           {/* Overview */}
           <div className="admin__group">
