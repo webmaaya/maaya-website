@@ -7,88 +7,126 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import EnquiryForm from "../../Components/sections/EnquiryForm";
-import accountingCert from "../../assets/certificates/accounting.jpg";
-import programmingCert from "../../assets/certificates/programming.jpg";
-import designingCert from "../../assets/certificates/designing.jpg";
+import accountingCert from "../../assets/certificates/accounting.jpeg";
+import programmingCert from "../../assets/certificates/programming.jpeg";
+import designingCert from "../../assets/certificates/designing.jpeg";
 import hardwareCert from "../../assets/certificates/hardware.jpg";
+import mscitCert from "../../assets/certificates/mscit.jpeg";
 import "./DiplomaDetail.css";
 
 // ── Certificate data per course type ─────────────────────────
 const CERTIFICATE_DATA = {
   default: {
-    title: "Certificate of Completion",
-    body: "has successfully completed the program",
-    seal: "🎓 MAAYA Enterprises · MKCL Certified",
-    color: "#1E293B",
-    accent: "#D4AF37",
-  },
+    image : programmingCert,
+    },
+
   accounting: {
-    title: "Certificate in Accounting",
-    body: "has successfully completed Diploma in Accounting",
-    seal: "📊 MAAYA Enterprises · Tally Certified",
-    color: "#064E3B",
-    accent: "#10B981",
+    image: accountingCert,
   },
+
   programming: {
-    title: "Certificate in Programming",
-    body: "has successfully completed Diploma in Programming",
-    seal: "💻 MAAYA Enterprises · MKCL Certified",
-    color: "#1E3A5F",
-    accent: "#3B82F6",
-  },
+    image: programmingCert,
+ },
+
   designing: {
-    title: "Certificate in Graphic Design",
-    body: "has successfully completed Diploma in Designing",
-    seal: "🎨 MAAYA Enterprises · Design Certified",
-    color: "#4A044E",
-    accent: "#EC4899",
+    image: designingCert,
+
   },
   hardware: {
-    title: "Certificate in IT Hardware",
-    body: "has successfully completed Diploma in Hardware & Networking",
-    seal: "🖥️ MAAYA Enterprises · Hardware Certified",
-    color: "#431407",
-    accent: "#F97316",
+   image: hardwareCert,
   },
+
   workfromhome: {
-    title: "Certificate in Work From Home",
-    body: "has successfully completed Work From Home Program",
-    seal: "🏠 MAAYA Enterprises · MKCL Certified",
-    color: "#1E293B",
-    accent: "#8B5CF6",
+    image: programmingCert,
   },
+
   online: {
-    title: "Certificate of Online Completion",
-    body: "has successfully completed the Online Course",
-    seal: "🌐 MAAYA Enterprises · Online Certified",
-    color: "#0C4A6E",
-    accent: "#0EA5E9",
+    image: programmingCert,
   },
+  
+  mscit:{
+    image: mscitCert,
+  },
+
+
 };
 
-const CERTIFICATE_IMAGES = {
-  // accounting: accountingCert,
-  // programming: programmingCert,
-  // designing: designingCert,
-  hardware: hardwareCert,
-};
+
 
 // ── Get certificate based on course track ────────────────────
 const getCertificate = (diploma) => {
-  if (!diploma) return CERTIFICATE_DATA.default;
-  const track = (diploma.track || "").toLowerCase();
-  if (track.includes("account"))   return CERTIFICATE_DATA.accounting;
-  if (track.includes("program"))   return CERTIFICATE_DATA.programming;
-  if (track.includes("design"))    return CERTIFICATE_DATA.designing;
-  if (track.includes("hardware"))  return CERTIFICATE_DATA.hardware;
-  if (track.includes("home"))      return CERTIFICATE_DATA.workfromhome;
-  if (diploma.isOnline)            return CERTIFICATE_DATA.online;
+
+  if (!diploma)
+    return CERTIFICATE_DATA.default;
+
+  // Firebase certificate type
+  const explicitType =
+    (diploma.certificateType || "").toLowerCase();
+
+  // Direct firebase match
+  if (CERTIFICATE_DATA[explicitType]) {
+    return CERTIFICATE_DATA[explicitType];
+  }
+
+  // Fallback track matching
+  const track =
+    (diploma.track || "").toLowerCase();
+
+ if (
+  track.includes("account") ||
+  track.includes("finance")
+)
+  return CERTIFICATE_DATA.accounting;
+
+if (
+  track.includes("program") ||
+  track.includes("development")
+)
+  return CERTIFICATE_DATA.programming;
+
+if (
+  track.includes("design") ||
+  track.includes("multimedia")
+)
+  return CERTIFICATE_DATA.designing;
+
+if (
+  track.includes("hardware") ||
+  track.includes("network")
+)
+  return CERTIFICATE_DATA.hardware;
+
+if (
+  track.includes("it and computer") ||
+  track.includes("computer")
+)
+  return CERTIFICATE_DATA.mscit;
+
+if (
+  track.includes("professional")
+)
+  return CERTIFICATE_DATA.workfromhome;
+
+if (
+  track.includes("online")
+)
+  return CERTIFICATE_DATA.online;
+
+  if (diploma.isOnline)
+    return CERTIFICATE_DATA.online;
+
   return CERTIFICATE_DATA.default;
 };
 
+
+
+
 export default function DiplomaDetail() {
 
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
   const { id }   = useParams();
+
   const navigate = useNavigate();
 
   const [diploma,    setDiploma]    = useState(null);
@@ -150,31 +188,85 @@ export default function DiplomaDetail() {
     else setShowForm(true);
   };
 
-  // ── Include card → open syllabus module ───────────────────
-  const handleIncludeClick = (subCourseName) => {
-    if (!diploma?.syllabus?.length) return;
-    const normalize = (str) => str.toLowerCase().replace(/&/g,"and").replace(/[^\w\s]/g,"").trim();
-    const normalized = normalize(subCourseName);
-    const isAI = subCourseName.toLowerCase().includes("artificial intelligence") || subCourseName.toLowerCase().includes("ai");
-    const moduleIndex = diploma.syllabus.findIndex((mod) => {
-      if (!mod.moduleTitle) return false;
-      const modN = normalize(mod.moduleTitle);
-      if (isAI) return modN.includes("ai");
-      if (modN === normalized) return true;
-      return normalized.split(/\s+/).some(p => p.length > 3 && modN.includes(p));
-    });
-    if (moduleIndex === -1) return;
-    setTab("Syllabus");
-    setOpenMods({ [moduleIndex]: true });
-    setTimeout(() => {
-      const el = document.getElementById(`module-${moduleIndex}`);
-      if (el) el.scrollIntoView({ behavior:"smooth", block:"center" });
-    }, 250);
-  };
-
   const cert = getCertificate(diploma);
-  const certificateImage = hardwareCert;
-//   console.log(diploma.certificateType);
+  console.log(diploma);
+console.log(diploma.track);
+console.log(diploma.certificateType);
+console.log(cert);
+const certificateImage = cert.image;
+
+  // ── Include card → open syllabus module ───────────────────
+ const handleIncludeClick = (subCourseName) => {
+
+  if (!diploma?.syllabus?.length) return;
+
+  const normalize = (str = "") =>
+    str
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[^\w\s]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const search = normalize(subCourseName);
+
+  // EXACT MATCH FIRST
+  let moduleIndex = diploma.syllabus.findIndex((mod) =>
+    normalize(mod.moduleTitle) === search
+  );
+
+  // PARTIAL MATCH
+  if (moduleIndex === -1) {
+    moduleIndex = diploma.syllabus.findIndex((mod) =>
+      normalize(mod.moduleTitle).includes(search)
+    );
+  }
+
+  // REVERSE PARTIAL MATCH
+  if (moduleIndex === -1) {
+    moduleIndex = diploma.syllabus.findIndex((mod) =>
+      search.includes(normalize(mod.moduleTitle))
+    );
+  }
+
+  // AI SPECIAL CASE
+  if (
+    moduleIndex === -1 &&
+    (search.includes("ai") ||
+      search.includes("artificial intelligence"))
+  ) {
+    moduleIndex = diploma.syllabus.findIndex((mod) => {
+      const title = normalize(mod.moduleTitle);
+      return (
+        title.includes("ai") ||
+        title.includes("artificial intelligence")
+      );
+    });
+  }
+
+  if (moduleIndex === -1) {
+    console.log("No syllabus module found for:", subCourseName);
+    return;
+  }
+
+  setTab("Syllabus");
+
+  setOpenMods({ [moduleIndex]: true });
+
+  setTimeout(() => {
+    const el = document.getElementById(`module-${moduleIndex}`);
+
+    if (el) {
+      el.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, 250);
+};
+
+  
+  
 // console.log(certificateImage);
 
   // ══════════════════════════════════════════════════════════
@@ -216,51 +308,89 @@ export default function DiplomaDetail() {
           </div>
 
           {/* Right — Enroll Card */}
-          <div className="dip-enroll-card">
+         <div className="dip-enroll-card">
 
-            {/* YouTube video — add your YouTube video ID in Firebase as diploma.youtubeId */}
-            {(diploma.youtubeId || true )&& (
-              <div className="dip-enroll-card__video">
-                <iframe
-                  width="100%" height="100%"
-                 src={`https://www.youtube.com/embed/${diploma.youtubeId || "T1qMQTMu4tM"}`}
-                  title={diploma.title}
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-            )}
+  {/* YouTube Video */}
+  {(diploma.youtubeId || true) && (
+    <div className="dip-enroll-card__video">
 
-            {diploma.isOnline ? (
-              <>
-                <h3 className="dip-enroll-card__title">🌐 Enroll in this Course</h3>
-                <p className="dip-enroll-card__sub">
-                  Complete the enrollment form, pay the fees, and get instant access!
-                </p>
-                {diploma.price && (
-                  <div className="dip-enroll-card__price-box">
-                    {diploma.originalPrice && <div className="dip-enroll-card__price-old">₹{diploma.originalPrice}</div>}
-                    <div className="dip-enroll-card__price-now">₹{diploma.price}</div>
-                    <div className="dip-enroll-card__duration">⏱ {diploma.duration}</div>
-                  </div>
-                )}
-                <button className="btn-enroll-diploma online" onClick={handleEnroll}>
-                  Enroll Now — Fill the Form →
-                </button>
-                <p className="dip-enroll-card__note">📞 Questions? Call: <strong>9420277373</strong></p>
-              </>
-            ) : (
-              <>
-                <EnquiryForm
-      preSelectedCourse={diploma.title}
-      inline={true}
-      onClose={() => {}}
-    />
-              </>
-            )}
+      {/* Thumbnail / Loader */}
+      <div className="dip-video-loader">
+        <img
+          src={`https://img.youtube.com/vi/${diploma.youtubeId || "T1qMQTMu4tM"}/hqdefault.jpg`}
+          alt={diploma.title}
+          className="dip-video-thumb"
+        />
 
-            
+        <div className="dip-video-overlay">
+          <div className="dip-video-spinner"></div>
+        </div>
+      </div>
+
+      {/* Real iframe */}
+      <iframe
+        width="100%"
+        height="100%"
+        src={`https://www.youtube.com/embed/${diploma.youtubeId || "T1qMQTMu4tM"}`}
+        title={diploma.title}
+        frameBorder="0"
+        allowFullScreen
+        loading="lazy"
+        className="dip-video-iframe"
+      />
+    </div>
+  )}
+
+  {diploma.isOnline ? (
+    <>
+      <h3 className="dip-enroll-card__title">
+        🌐 Enroll in this Course
+      </h3>
+
+      <p className="dip-enroll-card__sub">
+        Complete the enrollment form, pay the fees, and get instant access!
+      </p>
+
+      {diploma.price && (
+        <div className="dip-enroll-card__price-box">
+          {diploma.originalPrice && (
+            <div className="dip-enroll-card__price-old">
+              ₹{diploma.originalPrice}
+            </div>
+          )}
+
+          <div className="dip-enroll-card__price-now">
+            ₹{diploma.price}
           </div>
+
+          <div className="dip-enroll-card__duration">
+            ⏱ {diploma.duration}
+          </div>
+        </div>
+      )}
+
+      <button
+        className="btn-enroll-diploma online"
+        onClick={handleEnroll}
+      >
+        Enroll Now — Fill the Form →
+      </button>
+
+      <p className="dip-enroll-card__note">
+        📞 Questions? Call: <strong>9420277373</strong>
+      </p>
+    </>
+  ) : (
+    <>
+      <EnquiryForm
+        preSelectedCourse={diploma.title}
+        inline={true}
+        onClose={() => {}}
+      />
+    </>
+  )}
+
+</div>
 
         </div>
       </section>
@@ -375,19 +505,19 @@ export default function DiplomaDetail() {
               {/* Certificate Preview Card */}
               <div className="dip-certificate-right">
                 <div className="dip-cert-real">
-            {certificateImage ? (    
+              
           <img
           src={certificateImage}
           alt="Certificate"
           className="dip-cert-real__img"
          />
-            ):(<p style={{color:"red"}}>Image not found</p>
+          
 
-            )}
+            
         </div>
               
                 <p className="dip-cert-card__note">
-                  🔒 Certificate includes QR code for instant verification
+                  🔒 Certificate includes QR code for  instant verification
                 </p>
               </div>
             </div>

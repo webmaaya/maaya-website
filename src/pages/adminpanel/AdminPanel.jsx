@@ -14,7 +14,7 @@ import {
 import { db } from "../../firebase";
 import "./AdminPanel.css";
 
-const TRACKS = ["Accounting","Programming","Designing","IT Hardware","Work From Home","Other"];
+const TRACKS = ["Accounting","Programming","Designing","IT Hardware","Work From Home","IT and Computer","Professional Courses","Online Courses","Development","Multimedia","Other"];
 const GRADIENTS = [
   { label:"Blue",   value:"grad-blue"   },
   { label:"Purple", value:"grad-purple" },

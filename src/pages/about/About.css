@@ -308,3 +308,26 @@
     font-size: 20px;
   }
 }
+
+@media (max-width: 640px) {
+
+  .about-hero__content{
+    padding: 40px 20px 28px;
+  }
+
+  .about-hero__title{
+    margin-bottom: 10px;
+    line-height: 1.15;
+  }
+
+  .about-hero__sub{
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
+  .about-hero__slideshow-bg > *{
+    min-height: 520px;
+  }
+
+}

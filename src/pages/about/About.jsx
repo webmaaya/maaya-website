@@ -16,8 +16,8 @@ import AwardSlideshow from "../../Components/sections/AwardSlideshow";
 import "./About.css";
 
 const STATS = [
-  { icon: "🎓", num: "50,000+", label: "Students Trained" },
-  { icon: "📚", num: "20+",     label: "Courses Offered" },
+  { icon: "🎓", num: "28,000+", label: "Students Trained" },
+  { icon: "📚", num: "120+",     label: "Courses Offered" },
   { icon: "🏆", num: "15+",     label: "Years Experience" },
   { icon: "🤝", num: "500+",    label: "Placement Partners" },
 ];
@@ -39,7 +39,7 @@ const ACHIEVEMENTS = [
   { icon: "🥇", text: "Best Computer Training Institute — Nashik 2023" },
   { icon: "🏅", text: "MKCL Excellence Award 2022" },
   { icon: "⭐", text: "98% Student Satisfaction Rate" },
-  { icon: "🎖️", text: "ISO Certified Institute" },
+  { icon: "🎖️", text: "Certificate Of Excellence" },
   { icon: "📜", text: "Govt. of Maharashtra Approved" },
 ];
 
