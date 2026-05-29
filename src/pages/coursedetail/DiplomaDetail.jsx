@@ -12,7 +12,9 @@ import programmingCert from "../../assets/certificates/programming.jpeg";
 import designingCert from "../../assets/certificates/designing.jpeg";
 import hardwareCert from "../../assets/certificates/hardware.jpg";
 import mscitCert from "../../assets/certificates/mscit.jpeg";
+
 import "./DiplomaDetail.css";
+import mscitLogo from "../../assets/logo/mscit logo.png";
 
 // ── Certificate data per course type ─────────────────────────
 const CERTIFICATE_DATA = {
@@ -49,6 +51,10 @@ const CERTIFICATE_DATA = {
   },
 
 
+};
+
+const THUMB_LOGOS = {
+  mscit: mscitLogo,
 };
 
 

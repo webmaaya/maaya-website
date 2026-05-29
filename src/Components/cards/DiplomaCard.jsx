@@ -5,6 +5,11 @@
 
 import { useNavigate } from "react-router-dom";
 import "./DiplomaCard.css";
+import mscitLogo from "../../assets/logo/mscit logo.png";
+
+const THUMB_LOGOS = {
+  mscit: mscitLogo,
+};
 
 export default function DiplomaCard({ diploma }) {
   const navigate = useNavigate();
@@ -15,14 +20,25 @@ export default function DiplomaCard({ diploma }) {
 
   return (
     <div className="diploma-card" onClick={handleClick}>
+<div className={`diploma-card__thumb ${diploma.gradient || "grad-blue"}`}>
 
-      {/* Thumbnail */}
-      <div className={`diploma-card__thumb ${diploma.gradient || "grad-blue"}`}>
-        <span>{diploma.icon}</span>
-        {diploma.badge && (
-          <span className="diploma-card__badge">{diploma.badge}</span>
-        )}
-      </div>
+  {diploma.thumbLogo && THUMB_LOGOS[diploma.thumbLogo] ? (
+    <img
+      src={THUMB_LOGOS[diploma.thumbLogo]}
+      alt={diploma.title}
+      className="diploma-card__thumb-logo"
+    />
+  ) : (
+    <span>{diploma.icon}</span>
+  )}
+
+  {diploma.badge && (
+    <span className="diploma-card__badge">
+      {diploma.badge}
+    </span>
+  )}
+
+</div>
 
       {/* Body */}
       <div className="diploma-card__body">

@@ -13,6 +13,11 @@ import { useNavigate } from "react-router-dom";
 import DiplomaCard from "../../Components/cards/DiplomaCard";
 import EnquiryForm from "../../Components/sections/EnquiryForm";
 import "./Courses.css";
+import mscitLogo from "../../assets/logo/mscit logo.png";
+
+const THUMB_LOGOS = {
+  mscit: mscitLogo,
+};
 
 const TRACKS = ["All","Accounting","Programming","Designing","IT Hardware","Work From Home"];
 
@@ -121,7 +126,16 @@ export default function Courses() {
                 <div key={c.id} className="online-course-card"
                   onClick={() => navigate(`/diploma/${c.id}`)}>
                   <div className={`online-course-card__thumb ${c.gradient || "grad-blue"}`}>
-                    <span>{c.icon}</span>
+                    {c.thumbLogo && THUMB_LOGOS[c.thumbLogo] ? (
+                      <img
+                        src={THUMB_LOGOS[c.thumbLogo]}
+                        alt={c.title}
+                        className="diploma-card__thumb-logo"
+                        style={{ width: "284px", height: "auto" }}
+                      />
+                    ) : (
+                      <span>{c.icon}</span>
+                    )}
                     {c.badge && <span className="online-course-card__badge">{c.badge}</span>}
                     <span className="online-course-card__online-pill">🌐 Online</span>
                   </div>

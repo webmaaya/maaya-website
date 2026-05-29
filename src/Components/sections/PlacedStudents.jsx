@@ -268,7 +268,7 @@ export default function PlacedStudents() {
     >
       {/* ── Header ── */}
       <div className="placed__header">
-        <div className="section-badge">🎓 SUCCESS STORIES</div>
+        {/* <div className="section-badge">🎓 SUCCESS STORIES</div> */}
         <h2 className="section-title">Our Success Highlights</h2>
         <p className="placed__count">500+ students successfully placed</p>
       </div>

@@ -1,0 +1,39 @@
+.announce-bar {
+  background: linear-gradient(90deg, #DC2626, #EA580C, #DC2626);
+  background-size: 200% 100%;
+  animation: gradientShift 4s ease infinite;
+  overflow: hidden;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  position:sticky;
+  top:0;
+  z-index: 1001;
+  height: 45px;
+  cursor: pointer;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.announce-bar__track {
+  display: flex;
+  white-space: nowrap;
+  animation: marqueeScroll 20s linear infinite;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.announce-bar__text {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  padding: 0 40px;
+  letter-spacing: 0.5px;
+}

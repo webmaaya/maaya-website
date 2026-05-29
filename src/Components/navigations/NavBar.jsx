@@ -5,6 +5,7 @@ import { auth } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/logo/MAAYA.png";
 import { NAV_LINKS } from "../../constants/data";
+import AnnouncementBar from "../sections/AnnouncementBar";
 import "./NavBar.css";
 
 export default function NavBar() {
@@ -35,6 +36,12 @@ export default function NavBar() {
   };
 
   return (
+      <>
+    <AnnouncementBar   onOpenPopup={() => {
+    const event = new CustomEvent("openContactPopup");
+    window.dispatchEvent(event);
+  }} />
+
     <header className="navbar">
       <div className="navbar__inner">
 
@@ -222,5 +229,6 @@ export default function NavBar() {
         </div>
       )}
     </header>
+    </>
   );
 }

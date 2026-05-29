@@ -135,7 +135,27 @@
   box-shadow: var(--shadow-blue);
 }
 
+.diploma-card__thumb-logo{
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
 /* ── No Price tag anywhere — by design ── */
+.diploma-card__thumb{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diploma-card__thumb-logo{
+  width: 284px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+
+}
+
 
 @media (max-width: 640px) {
   .diploma-card__thumb { height: 130px; font-size: 44px; }

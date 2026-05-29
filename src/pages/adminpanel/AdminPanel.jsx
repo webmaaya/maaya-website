@@ -14,6 +14,8 @@ import {
 import { db } from "../../firebase";
 import "./AdminPanel.css";
 
+
+
 const TRACKS = ["Accounting","Programming","Designing","IT Hardware","Work From Home","IT and Computer","Professional Courses","Online Courses","Development","Multimedia","Other"];
 const GRADIENTS = [
   { label:"Blue",   value:"grad-blue"   },
@@ -26,7 +28,7 @@ const GRADIENTS = [
 const BADGES = ["","Most Popular","Trending","New","Hot","Job Ready","Creative"];
 
 const EMPTY_FORM = {
-  title:"", track:"Accounting", icon:"📚", gradient:"grad-blue", badge:"",certificateImage:"",
+  title:"", track:"Accounting", icon:"📚", gradient:"grad-blue", badge:"",certificateImage:"",thumbLogo:"",
   isOnline:false, overview:"", duration:"", price:"", originalPrice:"",
   includes:[{ icon:"📘", name:"", duration:"" }],
   whatYouLearn:[""], whoShouldJoin:[""], features:[""],
@@ -35,6 +37,9 @@ const EMPTY_FORM = {
 };
 
 export default function AdminPanel() {
+const [announcements, setAnnouncements] = useState([]);
+const [annForm, setAnnForm] = useState({ text:"", startDate:"", endDate:"", active:true });
+const [annLoading, setAnnLoading] = useState(false);
   const [form,     setForm]     = useState(EMPTY_FORM);
   const [diplomas, setDiplomas] = useState([]);
   const [online,   setOnline]   = useState([]);
@@ -48,14 +53,18 @@ export default function AdminPanel() {
   const fetchAll = async () => {
     setFetching(true);
     try {
-      const [d, o] = await Promise.all([
+      const [d, o,ann] = await Promise.all([
         getDocs(collection(db, "diplomaCourses")),
         getDocs(collection(db, "onlineCourses")),
+        getDocs(collection(db, "announcements")),
       ]);
       setDiplomas(d.docs.map(x => ({ id:x.id, ...x.data() })));
       setOnline(o.docs.map(x => ({ id:x.id, ...x.data() })));
+      setAnnouncements(ann.docs.map(x => ({ id:x.id, ...x.data() })));
     } catch(e) { showToast("Fetch error","error"); }
     setFetching(false);
+  //   const ann = await getDocs(collection(db, "announcements"));
+  //  setAnnouncements(ann.docs.map(x => ({ id:x.id, ...x.data() })));
   };
 
   useEffect(() => { fetchAll(); }, []);
@@ -100,6 +109,7 @@ export default function AdminPanel() {
   const buildDoc = () => {
     const base = {
       title:form.title.trim(), track:form.track, icon:form.icon.trim()||"📚",certificateImage: form.certificateImage,
+      thumbLogo: form.thumbLogo,
       gradient:form.gradient, badge:form.badge, isOnline:form.isOnline,
       overview:form.overview.trim(), duration:form.duration.trim(),
       price:form.price.trim(), originalPrice:form.originalPrice.trim(),
@@ -148,6 +158,7 @@ export default function AdminPanel() {
     setForm({
       title:c.title||"", track:c.track||"Accounting", icon:c.icon||"📚",
       gradient:c.gradient||"grad-blue", badge:c.badge||"",certificateImage:c.certificateImage || "",
+      thumbLogo:c.thumbLogo || "",
       isOnline:c.isOnline||false, overview:c.overview||"",
       duration:c.duration||"", price:c.price||"", originalPrice:c.originalPrice||"",
       features:c.features?.length ? c.features : [""],
@@ -227,6 +238,19 @@ export default function AdminPanel() {
                 style={{ textAlign:"center", fontSize:20 }} />
             </div>
           </div>
+          {/* Thumbnail Logo */}
+<div className="admin__group">
+  <label className="admin__label">
+    Thumbnail Logo URL
+  </label>
+
+  <input
+    className="admin__input"
+    placeholder="Paste image URL"
+    value={form.thumbLogo}
+    onChange={(e)=>set("thumbLogo",e.target.value)}
+  />
+</div>
 
           {/* Gradient + Badge */}
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
@@ -403,55 +427,336 @@ export default function AdminPanel() {
               onClick={()=>setListTab("diploma")}>🎓 Diploma ({diplomas.length})</button>
             <button className={`admin__list-tab ${listTab==="online"?"active":""}`}
               onClick={()=>setListTab("online")}>🌐 Online ({online.length})</button>
+              <button className={`admin__list-tab ${listTab==="announce"?"active":""}`}
+  onClick={()=>setListTab("announce")}>📢 Announcements</button>
+          </div>
+        
+        {fetching ? (
+  <div className="admin__status">
+    <span className="admin__status-icon">⏳</span>
+    <p>Loading...</p>
+  </div>
+
+) : listTab==="diploma" ? (
+
+  diplomas.length===0
+    ? <div className="admin__status">
+        <span className="admin__status-icon">📭</span>
+        <p>No diploma courses yet</p>
+      </div>
+
+    : diplomas.map(c=>(
+        <div key={c.id} className="admin__course-row">
+          <div className="admin__course-row-left">
+            <div className="admin__course-row-name">
+              {c.icon} {c.title}
+              {c.badge && <span className="admin__badge-tag">{c.badge}</span>}
+            </div>
+
+            <div className="admin__course-row-meta">
+              <span>{c.track}</span>
+
+              {c.duration && <>
+                <span>·</span>
+                <span>⏱ {c.duration}</span>
+              </>}
+
+              {c.price && <>
+                <span>·</span>
+                <span style={{color:"#34D399"}}>₹{c.price}</span>
+              </>}
+            </div>
           </div>
 
-          {fetching ? (
-            <div className="admin__status"><span className="admin__status-icon">⏳</span><p>Loading...</p></div>
-          ) : listTab==="diploma" ? (
-            diplomas.length===0
-              ? <div className="admin__status"><span className="admin__status-icon">📭</span><p>No diploma courses yet</p></div>
-              : diplomas.map(c=>(
-                <div key={c.id} className="admin__course-row">
-                  <div className="admin__course-row-left">
-                    <div className="admin__course-row-name">
-                      {c.icon} {c.title}
-                      {c.badge && <span className="admin__badge-tag">{c.badge}</span>}
-                    </div>
-                    <div className="admin__course-row-meta">
-                      <span>{c.track}</span>
-                      {c.duration && <><span>·</span><span>⏱ {c.duration}</span></>}
-                      {c.price    && <><span>·</span><span style={{color:"#34D399"}}>₹{c.price}</span></>}
-                    </div>
-                  </div>
-                  <div className="admin__course-row-actions">
-                    <button className="btn-icon" onClick={()=>handleEdit(c,"diplomaCourses")}>✏️</button>
-                    <button className="btn-icon danger" onClick={()=>handleDelete(c.id,c.title,"diplomaCourses")}>🗑️</button>
-                  </div>
-                </div>
-              ))
-          ) : (
-            online.length===0
-              ? <div className="admin__status"><span className="admin__status-icon">📭</span><p>No online courses yet</p></div>
-              : online.map(c=>(
-                <div key={c.id} className="admin__course-row">
-                  <div className="admin__course-row-left">
-                    <div className="admin__course-row-name">
-                      {c.icon} {c.title}
-                      <span className="admin__online-tag">🌐 Online</span>
-                    </div>
-                    <div className="admin__course-row-meta">
-                      <span>{c.track}</span>
-                      {c.duration && <><span>·</span><span>⏱ {c.duration}</span></>}
-                      {c.price    && <><span>·</span><span style={{color:"#34D399"}}>₹{c.price}</span></>}
-                    </div>
-                  </div>
-                  <div className="admin__course-row-actions">
-                    <button className="btn-icon" onClick={()=>handleEdit(c,"onlineCourses")}>✏️</button>
-                    <button className="btn-icon danger" onClick={()=>handleDelete(c.id,c.title,"onlineCourses")}>🗑️</button>
-                  </div>
-                </div>
-              ))
-          )}
+          <div className="admin__course-row-actions">
+            <button
+              className="btn-icon"
+              onClick={()=>handleEdit(c,"diplomaCourses")}
+            >
+              ✏️
+            </button>
+
+            <button
+              className="btn-icon danger"
+              onClick={()=>handleDelete(c.id,c.title,"diplomaCourses")}
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      ))
+
+) : listTab==="online" ? (
+
+  online.length===0
+    ? <div className="admin__status">
+        <span className="admin__status-icon">📭</span>
+        <p>No online courses yet</p>
+      </div>
+
+    : online.map(c=>(
+        <div key={c.id} className="admin__course-row">
+
+          <div className="admin__course-row-left">
+            <div className="admin__course-row-name">
+              {c.icon} {c.title}
+              <span className="admin__online-tag">🌐 Online</span>
+            </div>
+
+            <div className="admin__course-row-meta">
+              <span>{c.track}</span>
+
+              {c.duration && <>
+                <span>·</span>
+                <span>⏱ {c.duration}</span>
+              </>}
+
+              {c.price && <>
+                <span>·</span>
+                <span style={{color:"#34D399"}}>₹{c.price}</span>
+              </>}
+            </div>
+          </div>
+
+          <div className="admin__course-row-actions">
+            <button
+              className="btn-icon"
+              onClick={()=>handleEdit(c,"onlineCourses")}
+            >
+              ✏️
+            </button>
+
+            <button
+              className="btn-icon danger"
+              onClick={()=>handleDelete(c.id,c.title,"onlineCourses")}
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      ))
+
+) : listTab==="announce" ? (
+
+  <div>
+
+    {/* Add new announcement form */}
+    <div style={{
+      background:"#1e293b",
+      borderRadius:10,
+      padding:16,
+      marginBottom:20
+    }}>
+
+      <div style={{
+        fontSize:13,
+        fontWeight:700,
+        color:"#60A5FA",
+        marginBottom:12
+      }}>
+        📢 Add New Announcement
+      </div>
+
+      <div className="admin__group">
+        <label className="admin__label">
+          Announcement Text *
+        </label>
+
+        <input
+          className="admin__input"
+          placeholder="e.g. 🎉 New batch starting June 2026!"
+          value={annForm.text}
+          onChange={e =>
+            setAnnForm(p => ({
+              ...p,
+              text:e.target.value
+            }))
+          }
+        />
+      </div>
+
+      <div style={{
+        display:"grid",
+        gridTemplateColumns:"1fr 1fr",
+        gap:10
+      }}>
+
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">Start Date</label>
+
+          <input
+            className="admin__input"
+            type="date"
+            value={annForm.startDate}
+            onChange={e =>
+              setAnnForm(p => ({
+                ...p,
+                startDate:e.target.value
+              }))
+            }
+          />
+        </div>
+
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">End Date</label>
+
+          <input
+            className="admin__input"
+            type="date"
+            value={annForm.endDate}
+            onChange={e =>
+              setAnnForm(p => ({
+                ...p,
+                endDate:e.target.value
+              }))
+            }
+          />
+        </div>
+      </div>
+
+      <div style={{
+        display:"flex",
+        alignItems:"center",
+        gap:8,
+        margin:"12px 0"
+      }}>
+        <input
+          type="checkbox"
+          id="annActive"
+          checked={annForm.active}
+          onChange={e =>
+            setAnnForm(p => ({
+              ...p,
+              active:e.target.checked
+            }))
+          }
+          style={{ width:16, height:16 }}
+        />
+
+        <label
+          htmlFor="annActive"
+          style={{
+            fontSize:13,
+            color:"#94A3B8",
+            fontWeight:600
+          }}
+        >
+          Active (show on website)
+        </label>
+      </div>
+
+      <button
+        className="btn-admin-primary"
+        disabled={annLoading}
+
+        onClick={async () => {
+
+          if (!annForm.text.trim())
+            return showToast("Text required!","error");
+
+          if (!annForm.endDate)
+            return showToast("End date required!","error");
+
+          setAnnLoading(true);
+
+          try {
+
+            await addDoc(collection(db, "announcements"), {
+              ...annForm,
+              createdAt: serverTimestamp(),
+            });
+
+            showToast("✅ Announcement added!");
+
+            setAnnForm({
+              text:"",
+              startDate:"",
+              endDate:"",
+              active:true
+            });
+
+            fetchAll();
+
+          } catch(e) {
+
+            showToast("Error: "+e.message,"error");
+
+          }
+
+          setAnnLoading(false);
+        }}
+      >
+        {annLoading ? "Saving..." : "📢 Add Announcement"}
+      </button>
+    </div>
+
+    {/* List */}
+    {announcements.length === 0 ? (
+
+      <div className="admin__status">
+        <span className="admin__status-icon">📭</span>
+        <p>No announcements yet</p>
+      </div>
+
+    ) : announcements.map(a => (
+
+      <div key={a.id} className="admin__course-row">
+
+        <div className="admin__course-row-left">
+
+          <div
+            className="admin__course-row-name"
+            style={{ fontSize:13 }}
+          >
+            {a.text}
+          </div>
+
+          <div className="admin__course-row-meta">
+
+            <span>
+              {a.startDate || "—"} → {a.endDate}
+            </span>
+
+            <span>·</span>
+
+            <span style={{
+              color: a.active ? "#34D399" : "#EF4444"
+            }}>
+              {a.active ? "✅ Active" : "❌ Inactive"}
+            </span>
+          </div>
+        </div>
+
+        <div className="admin__course-row-actions">
+
+          <button
+            className="btn-icon danger"
+
+            onClick={async () => {
+
+              if (!window.confirm("Delete this announcement?"))
+                return;
+
+              await deleteDoc(
+                doc(db, "announcements", a.id)
+              );
+
+              showToast("🗑️ Deleted");
+
+              fetchAll();
+            }}
+          >
+            🗑️
+          </button>
+
+        </div>
+      </div>
+    ))}
+  </div>
+
+) : null}
+
+          
         </div>
       </div>
 

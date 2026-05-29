@@ -10,24 +10,68 @@ import PlacedStudents from "../../Components/sections/PlacedStudents";
 import Features from "../../Components/features/Features";
 import ContactPopup from "../../Components/sections/ContactPopup";
 
+
 export default function Home() {
   const [showContactPopup, setShowContactPopup] = useState(false);
 
-  useEffect(() => {
-    // Show popup only once per session
-    const popupShown = sessionStorage.getItem("contactPopupShown");
+  // useEffect(() => {
+  //   // Show popup only once per session
+  //   const popupShown = sessionStorage.getItem("contactPopupShown");
     
-    if (!popupShown) {
-      const timer = setTimeout(() => {
-        setShowContactPopup(true);
-        sessionStorage.setItem("contactPopupShown", "true");
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
+  //   if (!popupShown) {
+  //     const timer = setTimeout(() => {
+  //       setShowContactPopup(true);
+  //       sessionStorage.setItem("contactPopupShown", "true");
+  //     }, 1000);
+  //     return () => clearTimeout(timer);
+  //   }
+
+  //     const openPopup = () => {
+  //   setShowContactPopup(true);
+  // };
+
+  // window.addEventListener("openContactPopup", openPopup);
+
+  // return () => {
+  //   window.removeEventListener("openContactPopup", openPopup);
+  // };
+
+
+  // }, []);
+
+useEffect(() => {
+
+  const popupShown = sessionStorage.getItem("contactPopupShown");
+
+  let timer;
+
+  if (!popupShown) {
+    timer = setTimeout(() => {
+      setShowContactPopup(true);
+      sessionStorage.setItem("contactPopupShown", "true");
+    }, 1000);
+  }
+
+  // announcement bar click popup
+  const openPopup = () => {
+    setShowContactPopup(true);
+  };
+
+  window.addEventListener("openContactPopup", openPopup);
+
+  return () => {
+    if (timer) clearTimeout(timer);
+    window.removeEventListener("openContactPopup", openPopup);
+  };
+
+}, []);
+
 
   return (
     <main>
+      
+     
+
       {/* Contact Popup on Landing */}
       {showContactPopup && (
         <ContactPopup onClose={() => setShowContactPopup(false)} />

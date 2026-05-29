@@ -2,16 +2,13 @@
 //  About.jsx — MAAYA Enterprises About Page
 //  Added: Affiliated With section at bottom
 // ============================================================
-import IAFlogo from "../../assets/logo/IAF logo.jpg";
+
 import EUASlogo from "../../assets/logo/EUAS logo.png";
-import UAFlogo from "../../assets/logo/UAF logo.jpeg";
-import UTGEClogo from "../../assets/logo/Utgec logo.png";
 import SkillIndialogo from "../../assets/logo/Skill india logo.png";
-import NSDClogo from "../../assets/logo/Nsdc logo.png";
 import Ycmoulogo from "../../assets/logo/Ycmou logo.jpg";
 import Kliclogo from "../../assets/logo/Klic logo.png";
 import Mkcllogo from "../../assets/logo/Mkcl logo.png";
-import TrickFastlogo from "../../assets/logo/Trick Fast logo.png";
+import mscitlogo from "../../assets/logo/mscit logo.png";
 import AwardSlideshow from "../../Components/sections/AwardSlideshow";
 import "./About.css";
 
@@ -52,13 +49,11 @@ const AFFILIATIONS = [
   { id: 1,  name: "MKCL",                                          icon: "🏛️", image: Mkcllogo },
   { id: 2,  name: "KLiC Courses",                                  icon: "📚", image: Kliclogo },
   { id: 3,  name: "Yashwantrao Chavan Maharashtra Open University", icon: "🎓", image: Ycmoulogo },
-  { id: 4,  name: "NSDC — National Skill Development Corporation",  icon: "🇮🇳", image: NSDClogo },
-  { id: 5,  name: "Skill India",                                    icon: "⭐", image: SkillIndialogo },
-  { id: 6,  name: "EUAS — Euro Universal Accreditation Systems",    icon: "🌍", image: EUASlogo },
-  { id: 7,  name: "UTGEC",                                          icon: "🏅", image: UTGEClogo },
-  { id: 8,  name: "UAF — United Accreditation Foundation",         icon: "📋", image: UAFlogo },
-  { id: 9,  name: "IAF — International Accreditation Forum",       icon: "🌐", image: IAFlogo },
-  { id: 10, name: "TrickFast Digital Smart Learning",               icon: "💡", image: TrickFastlogo },
+
+  { id:4,  name: "Skill India",                                    icon: "⭐", image: SkillIndialogo },
+  { id:5,  name: "EUAS — Euro Universal Accreditation Systems",    icon: "🌍", image: EUASlogo },
+  { id:6,  name: "MSCIT",                                          icon: "💻", image: mscitlogo }
+ 
 ];
 
 export default function About() {
