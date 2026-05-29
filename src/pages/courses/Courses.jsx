@@ -131,7 +131,7 @@ export default function Courses() {
                         src={THUMB_LOGOS[c.thumbLogo]}
                         alt={c.title}
                         className="diploma-card__thumb-logo"
-                        style={{ width: "284px", height: "auto" }}
+                        style={{ width: "200px", height: "auto" }}
                       />
                     ) : (
                       <span>{c.icon}</span>
