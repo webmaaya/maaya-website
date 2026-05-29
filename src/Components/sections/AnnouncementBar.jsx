@@ -3,7 +3,7 @@ import { collection, getDocs,} from "firebase/firestore";
 import { db } from "../../firebase";
 import "./AnnouncementBar.css";
 
-export default function AnnouncementBar({onOpenPopup}) {
+export default function AnnouncementBar({onOpenPopup,  onAnnouncementChange,}) {
   const [announcement, setAnnouncement] = useState(null);
 
   useEffect(() => {
@@ -15,9 +15,14 @@ export default function AnnouncementBar({onOpenPopup}) {
         .map(d => d.data())
         .filter(a => a.active === true && a.endDate >= today);
       if (active.length > 0) {
-        setAnnouncement(active[0]);
-      }
-    } catch(e) { console.error(e); }
+  setAnnouncement(active[0]);
+  onAnnouncementChange?.(true);
+} else {
+  onAnnouncementChange?.(false);
+}
+    } catch(e) { console.error(e);
+      onAnnouncementChange?.(false);
+     }
   };
   fetch();
 }, []);

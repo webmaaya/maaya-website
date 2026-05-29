@@ -11,6 +11,7 @@ import "./NavBar.css";
 export default function NavBar() {
   const [menuOpen,     setMenuOpen]     = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [hasAnnouncement, setHasAnnouncement] = useState(false);
   const location = useLocation();
   const { currentUser, isAdmin } = useAuth();
   const dropdownRef = useRef(null);
@@ -40,9 +41,14 @@ export default function NavBar() {
     <AnnouncementBar   onOpenPopup={() => {
     const event = new CustomEvent("openContactPopup");
     window.dispatchEvent(event);
-  }} />
+  }}  onAnnouncementChange={setHasAnnouncement}/>
 
-    <header className="navbar">
+    <header
+  className="navbar"
+  style={{
+    top: hasAnnouncement ? "38px" : "0px"
+  }}
+>
       <div className="navbar__inner">
 
         {/* Logo */}

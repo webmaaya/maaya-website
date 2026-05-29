@@ -62,7 +62,7 @@ export default function Footer() {
               <li><a href="#">📍 {CONTACT_INFO.address}</a></li>
               <li><a href={`tel:${CONTACT_INFO.phone}`}>📞 {CONTACT_INFO.phone}</a></li>
               <li><a href={`mailto:${CONTACT_INFO.email}`}>✉️ {CONTACT_INFO.email}</a></li>
-              <li><a href="#">🕐 Mon–Sat 9AM–7PM</a></li>
+              <li><a href="#">🕐 Mon–Sat 8:30AM–6:30PM</a></li>
             </ul>
           </div>
         </div>

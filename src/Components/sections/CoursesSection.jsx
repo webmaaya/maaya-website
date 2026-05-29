@@ -158,7 +158,7 @@ export default function CoursesSection() {
               >
 
                 <Link
-                  to="/courses"
+                  to="/courses#diploma"
                   className="btn-view-all"
                 >
                   View All Free Courses →
@@ -235,7 +235,7 @@ export default function CoursesSection() {
             <div className="courses-section__footer">
 
               <Link
-                to="/online-courses"
+                to="/courses#online"
                 className="btn-view-all"
               >
                 View All Online Courses →
@@ -314,7 +314,7 @@ export default function CoursesSection() {
           <div className="courses-section__footer">
 
             <Link
-              to="/courses"
+              to="/courses#free"
               className="btn-view-all"
             >
               View All Programs →

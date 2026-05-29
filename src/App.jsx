@@ -50,6 +50,7 @@ export default function App() {
        <Route path="/"           element={<Home/>} />
         <Route path="/courses"    element={<Courses/> }/>
         <Route path="/diploma/:id" element={<DiplomaDetail />} /> */
+        <Route path="/online-courses" element={<Courses />} />
 
         <Route path="/about"    element={<About/>} />
         <Route path="/contact"  element={<Contact/>} />

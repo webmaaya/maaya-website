@@ -28,7 +28,7 @@ const MVV = [
 const TEAM = [
   { initials: "HC", name: "Harshad Chavan", role: "Founder & Owner", bio: "Visionary leader with a passion for empowering students through quality education and skill-based training for real-world success.", color: "#1D4ED8" },
   { initials: "HC", name: "Harshada Chavan",      role: "Academic Head",      bio:"Dedicated educator with a focus on student success and innovative teaching methods.", color: "#059669" },
-  { initials: "SS", name: "Shreya Shirsat",      role: "Assistant Manager", bio: "Committed educator who simplifies complex concepts and supports students with practical, easy-to-understand teaching methods.", color: "#7C3AED" },
+  { initials: "SS", name: "Shreya Shirsat",      role: "Co-ordinator", bio: "Committed educator who simplifies complex concepts and supports students with practical, easy-to-understand teaching methods.", color: "#7C3AED" },
   { initials: "DN", name: "Durva Narvekar",      role: "Programming Professor", bio: "Passionate programming mentor helping students build strong coding skills through hands-on practice and real-world projects.", color: "#D97706" },
 ];
 
@@ -71,7 +71,7 @@ export default function About() {
   <div className="about-hero__overlay" />
   {/* Text on top */}
   <div className="about-hero__content">
-    <div className="about-hero__badge">🏛️ About Us</div>
+    {/* <div className="about-hero__badge">🏛️ About Us</div> */}
     <h1 className="about-hero__title">
       Empowering Maharashtra's Youth<br />
       Since <span>2010</span>

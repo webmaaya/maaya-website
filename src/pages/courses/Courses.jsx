@@ -9,7 +9,7 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import DiplomaCard from "../../Components/cards/DiplomaCard";
 import EnquiryForm from "../../Components/sections/EnquiryForm";
 import "./Courses.css";
@@ -31,6 +31,7 @@ export default function Courses() {
   const [selCourse,   setSelCourse]   = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -51,6 +52,26 @@ export default function Courses() {
     };
     fetchAll();
   }, []);
+
+  useEffect(() => {
+  const scrollToSection = () => {
+    if (location.hash) {
+      const el = document.querySelector(location.hash);
+
+      if (el) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }
+  };
+
+  // wait until data renders
+  setTimeout(scrollToSection, 500);
+
+}, [location, diplomas, onlineCourses, freeCourses]);
+
 
   const filteredDiplomas = diplomas.filter(d =>
     track === "All" || d.track === track
@@ -93,7 +114,7 @@ export default function Courses() {
         {/* ══════════════════════════════════════
             1. DIPLOMA PROGRAMS
         ══════════════════════════════════════ */}
-        <div style={{ marginBottom: 56 }}>
+        <div id="diploma" style={{ marginBottom: 56 }}>
           <div className="section-header" style={{ textAlign:"left", marginBottom:24 }}>
             <div className="section-badge">🎓 Diploma Programs</div>
             <h2 className="section-title">Diploma Courses</h2>
@@ -114,7 +135,7 @@ export default function Courses() {
             2. ONLINE COURSES (show only if exist)
         ══════════════════════════════════════ */}
         {!loading && filteredOnline.length > 0 && (
-          <div style={{ marginBottom: 56 }}>
+          <div id="online" style={{ marginBottom: 56 }}>
             <div className="section-header" style={{ textAlign:"left", marginBottom:24 }}>
               <div className="section-badge">🌐 Online Programs</div>
               <h2 className="section-title">Online Courses</h2>
@@ -179,7 +200,7 @@ export default function Courses() {
         ══════════════════════════════════════ */}
         {track === "All" && (
           <div>
-            <div className="section-header" style={{ textAlign:"left", marginBottom:24 }}>
+            <div id="free" className="section-header" style={{ textAlign:"left", marginBottom:24 }}>
               <div className="section-badge">🆓 Free Programs</div>
               <h2 className="section-title">Free Courses</h2>
               <p className="section-sub">Enroll for free — fill a quick form!</p>
