@@ -345,6 +345,33 @@
   transition: var(--transition);
 }
 .btn-enroll.free:hover { background: #047857; }
+/* Free course price row */
+.free-course-card__price-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.free-course-card__price-new {
+  font-size: 15px;
+  font-weight: 800;
+  color: #16A34A;
+}
+
+.free-course-card__price-old {
+  font-size: 13px;
+  color: #94A3B8;
+  text-decoration: line-through;
+  font-weight: 600;
+}
+
+.free-course-card__discount {
+  font-size: 13px;
+  font-weight: 800;
+  color: #DC2626;
+}
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 640px) {

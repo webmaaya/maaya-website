@@ -97,7 +97,7 @@ export default function DiplomaCard({ diploma }) {
             <span className="diploma-card__price-now">₹{formatPrice(price)}</span>
             {discount && (
               <span className="diploma-card__price-discount">
-                {discount}% OFF
+                {/* {discount}% OFF */}
               </span>
             )}
           </div>

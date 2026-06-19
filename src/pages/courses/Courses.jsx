@@ -217,6 +217,15 @@ export default function Courses() {
                     <h3 className="free-course-card__title">{fc.title}</h3>
                     <p className="free-course-card__desc">{fc.description}</p>
                     <p className="free-course-card__whom">👤 {fc.forWhom}</p>
+                    {fc.price !== undefined && (
+                    <div className="free-course-card__price-row">
+                    <span className="free-course-card__price-new">₹0.00</span>
+                    {fc.originalPrice && (
+                    <span className="free-course-card__price-old">₹{fc.originalPrice}</span>
+                     )}
+                     <span className="free-course-card__discount">| 100% OFF</span>
+                     </div>
+                     )}
                     <button className="btn-enroll free" onClick={() => openForm(fc.title)}>
                       Register Free →
                     </button>
