@@ -6,7 +6,8 @@ import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/logo/MAAYA.png";
 import { NAV_LINKS } from "../../constants/data";
 import AnnouncementBar from "../sections/AnnouncementBar";
-import SearchBar from "../sections/SearchBar"; {/* 🆕 Search bar import */}
+import SearchBar from "../sections/SearchBar"; 
+
 import "./NavBar.css";
 
 export default function NavBar() {
