@@ -94,7 +94,7 @@ export default function CoursesSection() {
               </div>
 
               <h2 className="section-title">
-                Free Courses
+                Learn <span style={{color:"#2563EB"}}>100% Free</span> Computer Courses
               </h2>
 
               <p className="section-sub">
@@ -134,6 +134,14 @@ export default function CoursesSection() {
                     <p className="free-course-card__whom">
                       👤 {fc.forWhom}
                     </p>
+
+                    {fc.originalPrice && (
+                      <p className="free-course-card__pricing">
+                        <span style={{color:"#34D399"}}>₹ 0.00</span> 
+                        <span style={{color:"#94A3B8", textDecoration:"line-through"}}> ₹{fc.originalPrice} </span>
+                        <span style={{color:"#EF4444"}}>| 100% OFF</span>
+                      </p>
+                    )}
 
                     <button
                       className="btn-enroll free"
@@ -185,7 +193,7 @@ export default function CoursesSection() {
               </div>
 
               <h2 className="section-title">
-                Online Courses
+                Online Courses 
               </h2>
 
               <p className="section-sub">
@@ -258,7 +266,7 @@ export default function CoursesSection() {
             </div>
 
             <h2 className="section-title">
-              Diploma Programs
+              Internship Diploma Courses
             </h2>
 
             <p className="section-sub">

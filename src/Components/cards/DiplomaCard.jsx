@@ -1,6 +1,5 @@
 // ============================================================
 //  DiplomaCard.jsx — Diploma Course Card
-//  No price shown — only title, track, included courses, duration
 // ============================================================
 
 import { useNavigate } from "react-router-dom";
@@ -11,8 +10,36 @@ const THUMB_LOGOS = {
   mscit: mscitLogo,
 };
 
+const formatPrice = (value = "") => {
+  const text = String(value).trim();
+  const digits = text.replace(/\D/g, "");
+  if (!digits) return text;
+
+  const lastThree = digits.slice(-3);
+  const otherDigits = digits.slice(0, -3);
+  return otherDigits
+    ? `${otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ",")},${lastThree}`
+    : lastThree;
+};
+
 export default function DiplomaCard({ diploma }) {
   const navigate = useNavigate();
+  const price = diploma.price;
+  const originalPrice =
+    diploma.originalPrice ||
+    diploma.oldPrice ||
+    diploma.mrp ||
+    diploma.original_price;
+
+  const calculateDiscount = () => {
+    if (!originalPrice || !price) return null;
+    const orig = parseInt(String(originalPrice).replace(/\D/g, ""));
+    const curr = parseInt(String(price).replace(/\D/g, ""));
+    if (orig <= 0 || curr > orig) return null;
+    return Math.round(((orig - curr) / orig) * 100);
+  };
+
+  const discount = calculateDiscount();
 
   const handleClick = () => {
     navigate(`/diploma/${diploma.id}`);
@@ -59,6 +86,22 @@ export default function DiplomaCard({ diploma }) {
             </span>
           )}
         </div>
+
+        {price && (
+          <div className="diploma-card__price">
+            {originalPrice && (
+              <span className="diploma-card__price-old">
+                ₹{formatPrice(originalPrice)}
+              </span>
+            )}
+            <span className="diploma-card__price-now">₹{formatPrice(price)}</span>
+            {discount && (
+              <span className="diploma-card__price-discount">
+                {discount}% OFF
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Footer */}
         <div className="diploma-card__footer">

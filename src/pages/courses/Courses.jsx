@@ -116,8 +116,8 @@ export default function Courses() {
         ══════════════════════════════════════ */}
         <div id="diploma" style={{ marginBottom: 56 }}>
           <div className="section-header" style={{ textAlign:"left", marginBottom:24 }}>
-            <div className="section-badge">🎓 Diploma Programs</div>
-            <h2 className="section-title">Diploma Courses</h2>
+            <div className="section-badge">🎓 Internship Programs</div>
+            <h2 className="section-title">Internship Diploma Courses</h2>
           </div>
 
           {loading ? (
@@ -202,7 +202,7 @@ export default function Courses() {
           <div>
             <div id="free" className="section-header" style={{ textAlign:"left", marginBottom:24 }}>
               <div className="section-badge">🆓 Free Programs</div>
-              <h2 className="section-title">Free Courses</h2>
+              <h2 className="section-title">Learn 100% Free Computer Courses</h2>
               <p className="section-sub">Enroll for free — fill a quick form!</p>
             </div>
 

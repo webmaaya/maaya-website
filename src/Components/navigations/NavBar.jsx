@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/logo/MAAYA.png";
 import { NAV_LINKS } from "../../constants/data";
 import AnnouncementBar from "../sections/AnnouncementBar";
+import SearchBar from "../sections/SearchBar"; {/* 🆕 Search bar import */}
 import "./NavBar.css";
 
 export default function NavBar() {
@@ -68,6 +69,9 @@ export default function NavBar() {
             ))}
           </ul>
         </nav>
+
+        {/* 🆕 Search Bar — between nav links and CTA */}
+        <SearchBar />
 
         {/* Desktop Right Side */}
         <div className="navbar__cta">
@@ -182,6 +186,11 @@ export default function NavBar() {
               Register Free
             </Link>
           )}
+        </div>
+
+        {/* Mobile Search Icon — visible only on mobile, before hamburger */}
+        <div className="navbar__mobile-search-slot">
+          <SearchBar />
         </div>
 
         {/* Hamburger */}

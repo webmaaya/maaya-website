@@ -44,7 +44,7 @@ export default function Hero() {
       <div className="hero__stats">
         <div className="hero__stat">
           {/* TODO: Update numbers from real data */}
-          <span className="hero__stat-num">50,000+</span>
+          <span className="hero__stat-num">52,430+</span>
           <span className="hero__stat-label">Students Enrolled</span>
         </div>
         <div className="hero__stat">

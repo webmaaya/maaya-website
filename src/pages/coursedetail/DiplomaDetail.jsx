@@ -12,6 +12,7 @@ import programmingCert from "../../assets/certificates/programming.jpeg";
 import designingCert from "../../assets/certificates/designing.jpeg";
 import hardwareCert from "../../assets/certificates/hardware.jpg";
 import mscitCert from "../../assets/certificates/mscit.jpeg";
+import CoursePlacedStudents from "../../Components/sections/CoursePlacedStudents";
 
 import "./DiplomaDetail.css";
 import mscitLogo from "../../assets/logo/mscit logo.png";
@@ -55,6 +56,18 @@ const CERTIFICATE_DATA = {
 
 const THUMB_LOGOS = {
   mscit: mscitLogo,
+};
+
+const formatPrice = (value = "") => {
+  const text = String(value).trim();
+  const digits = text.replace(/\D/g, "");
+  if (!digits) return text;
+
+  const lastThree = digits.slice(-3);
+  const otherDigits = digits.slice(0, -3);
+  return otherDigits
+    ? `${otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ",")},${lastThree}`
+    : lastThree;
 };
 
 
@@ -195,10 +208,12 @@ export default function DiplomaDetail() {
   };
 
   const cert = getCertificate(diploma);
-  console.log(diploma);
-console.log(diploma.track);
-console.log(diploma.certificateType);
-console.log(cert);
+  const originalPrice =
+    diploma.originalPrice ||
+    diploma.oldPrice ||
+    diploma.mrp ||
+    diploma.original_price;
+  
 const certificateImage = cert.image;
 
   // ── Include card → open syllabus module ───────────────────
@@ -305,10 +320,10 @@ const certificateImage = cert.image;
               </div>
             )}
 
-            {diploma.isOnline && diploma.price && (
+            {diploma.price && (
               <div className="dip-hero__price-row">
-                {diploma.originalPrice && <span className="dip-hero__price-old">₹{diploma.originalPrice}</span>}
-                <span className="dip-hero__price-now">₹{diploma.price}</span>
+                {originalPrice && <span className="dip-hero__price-old">₹{formatPrice(originalPrice)}</span>}
+                <span className="dip-hero__price-now">₹{formatPrice(diploma.price)}</span>
               </div>
             )}
           </div>
@@ -359,14 +374,14 @@ const certificateImage = cert.image;
 
       {diploma.price && (
         <div className="dip-enroll-card__price-box">
-          {diploma.originalPrice && (
+          {originalPrice && (
             <div className="dip-enroll-card__price-old">
-              ₹{diploma.originalPrice}
+              ₹{formatPrice(originalPrice)}
             </div>
           )}
 
           <div className="dip-enroll-card__price-now">
-            ₹{diploma.price}
+            ₹{formatPrice(diploma.price)}
           </div>
 
           <div className="dip-enroll-card__duration">
@@ -527,6 +542,9 @@ const certificateImage = cert.image;
                 </p>
               </div>
             </div>
+
+            {/* ── PLACED STUDENTS SCROLL ── */}
+            <CoursePlacedStudents track={diploma.track} />
 
             {/* Online tags */}
             {diploma.isOnline && (diploma.tags || []).length > 0 && (

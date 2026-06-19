@@ -6,10 +6,10 @@
 //  Structure matches DiplomaDetail.jsx exactly
 // ============================================================
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   collection, addDoc, getDocs,
-  updateDoc, deleteDoc, doc, serverTimestamp
+  updateDoc, deleteDoc, doc, serverTimestamp, setDoc
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import "./AdminPanel.css";
@@ -27,13 +27,28 @@ const GRADIENTS = [
 ];
 const BADGES = ["","Most Popular","Trending","New","Hot","Job Ready","Creative"];
 
+const sanitizePriceInput = (value = "") =>
+  value.replace(/[^\d,]/g, "");
+
+const formatIndianPrice = (value = "") => {
+  const digits = String(value).replace(/\D/g, "");
+  if (!digits) return "";
+
+  const lastThree = digits.slice(-3);
+  const otherDigits = digits.slice(0, -3);
+
+  return otherDigits
+    ? `${otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ",")},${lastThree}`
+    : lastThree;
+};
+
 const EMPTY_FORM = {
   title:"", track:"Accounting", icon:"📚", gradient:"grad-blue", badge:"",certificateImage:"",thumbLogo:"",
-  isOnline:false, overview:"", duration:"", price:"", originalPrice:"",
+  isOnline:false, isFree:false, overview:"", duration:"", price:"", originalPrice:"",
   includes:[{ icon:"📘", name:"", duration:"" }],
   whatYouLearn:[""], whoShouldJoin:[""], features:[""],
   syllabus:[{ moduleTitle:"", chapters:[""] }],
-  description:"", tags:"",
+  description:"", tags:"", forWhom:"",
 };
 
 export default function AdminPanel() {
@@ -43,23 +58,27 @@ const [annLoading, setAnnLoading] = useState(false);
   const [form,     setForm]     = useState(EMPTY_FORM);
   const [diplomas, setDiplomas] = useState([]);
   const [online,   setOnline]   = useState([]);
+  const [freeCourses, setFreeCourses] = useState([]);
   const [editId,   setEditId]   = useState(null);
   const [editCol,  setEditCol]  = useState("diplomaCourses");
   const [loading,  setLoading]  = useState(false);
   const [fetching, setFetching] = useState(true);
   const [toast,    setToast]    = useState(null);
   const [listTab,  setListTab]  = useState("diploma");
+  const toastTimer = useRef(null);
 
   const fetchAll = async () => {
     setFetching(true);
     try {
-      const [d, o,ann] = await Promise.all([
+      const [d, o, f, ann] = await Promise.all([
         getDocs(collection(db, "diplomaCourses")),
         getDocs(collection(db, "onlineCourses")),
+        getDocs(collection(db, "freeCourses")),
         getDocs(collection(db, "announcements")),
       ]);
       setDiplomas(d.docs.map(x => ({ id:x.id, ...x.data() })));
       setOnline(o.docs.map(x => ({ id:x.id, ...x.data() })));
+      setFreeCourses(f.docs.map(x => ({ id:x.id, ...x.data() })));
       setAnnouncements(ann.docs.map(x => ({ id:x.id, ...x.data() })));
     } catch(e) { showToast("Fetch error","error"); }
     setFetching(false);
@@ -69,12 +88,21 @@ const [annLoading, setAnnLoading] = useState(false);
 
   useEffect(() => { fetchAll(); }, []);
 
-  const showToast = (msg, type="success") => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 3500);
+  const showToast = (msg, type="success", action=null, timeoutMs=5000) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast({ msg, type, action });
+    toastTimer.current = setTimeout(() => setToast(null), timeoutMs);
   };
 
+  const confirmAction = (message) => window.confirm(message);
+
+  const withUndo = (msg, undo) =>
+    showToast(msg, "success", { label:"Undo", run:undo }, 10000);
+
   const set = (f, v) => setForm(p => ({ ...p, [f]:v }));
+  const setPrice = (field, value) => set(field, sanitizePriceInput(value));
+  const formatPriceField = (field) =>
+    setForm(p => ({ ...p, [field]: formatIndianPrice(p[field]) }));
 
   // Array field helpers
   const setArr = (f, idx, v) => {
@@ -110,9 +138,10 @@ const [annLoading, setAnnLoading] = useState(false);
     const base = {
       title:form.title.trim(), track:form.track, icon:form.icon.trim()||"📚",certificateImage: form.certificateImage,
       thumbLogo: form.thumbLogo,
-      gradient:form.gradient, badge:form.badge, isOnline:form.isOnline,
+      gradient:form.gradient, badge:form.badge, isOnline:form.isOnline, isFree:form.isFree,
       overview:form.overview.trim(), duration:form.duration.trim(),
-      price:form.price.trim(), originalPrice:form.originalPrice.trim(),
+      price:form.isFree ? "0" : formatIndianPrice(form.price),
+      originalPrice:formatIndianPrice(form.originalPrice),
       features:form.features.map(f=>f.trim()).filter(Boolean),
       whoShouldJoin:form.whoShouldJoin.map(w=>w.trim()).filter(Boolean),
       whatYouLearn:form.whatYouLearn.map(w=>w.trim()).filter(Boolean),
@@ -121,7 +150,10 @@ const [annLoading, setAnnLoading] = useState(false);
         .filter(m=>m.moduleTitle),
       createdAt:serverTimestamp(),
     };
-    if (!form.isOnline) {
+    if (form.isFree) {
+      base.forWhom = form.forWhom.trim();
+      base.description = form.description.trim();
+    } else if (!form.isOnline) {
       base.includes = form.includes
         .map(i=>({ icon:i.icon.trim(), name:i.name.trim(), duration:i.duration.trim() }))
         .filter(i=>i.name);
@@ -135,18 +167,38 @@ const [annLoading, setAnnLoading] = useState(false);
   const handleSubmit = async () => {
     if (!form.title.trim())    return showToast("Title required!","error");
     if (!form.duration.trim()) return showToast("Duration required!","error");
-    if (!form.price.trim())    return showToast("Price required!","error");
+    if (form.isFree) {
+      if (!form.originalPrice.trim()) return showToast("Original Price required for free courses!","error");
+    } else {
+      if (!form.price.trim())    return showToast("Price required!","error");
+    }
+
+    const actionName = editId ? "update" : "add";
+    if (!confirmAction(`Are you sure you want to ${actionName} "${form.title.trim()}"?`))
+      return;
+
     setLoading(true);
     try {
       const data = buildDoc();
-      const col  = editId ? editCol : (form.isOnline ? "onlineCourses" : "diplomaCourses");
+      const col  = editId ? editCol : (form.isFree ? "freeCourses" : form.isOnline ? "onlineCourses" : "diplomaCourses");
       if (editId) {
+        const previousCourse = [...diplomas, ...online, ...freeCourses].find(c => c.id === editId);
+        const { id: _prevId, ...previousData } = previousCourse || {};
         const { createdAt, ...upd } = data;
         await updateDoc(doc(db, col, editId), upd);
-        showToast("✅ Course updated!");
+        withUndo("Course updated.", async () => {
+          if (!previousCourse) return showToast("Previous course data not found.","error");
+          await updateDoc(doc(db, col, editId), previousData);
+          showToast("Update undone.");
+          fetchAll();
+        });
       } else {
-        await addDoc(collection(db, col), data);
-        showToast(`✅ ${form.isOnline ? "Online" : "Diploma"} course added to website!`);
+        const ref = await addDoc(collection(db, col), data);
+        withUndo(`${form.isFree ? "Free" : form.isOnline ? "Online" : "Diploma"} course added.`, async () => {
+          await deleteDoc(doc(db, col, ref.id));
+          showToast("Added course removed.");
+          fetchAll();
+        });
       }
       resetForm(); fetchAll();
     } catch(e) { showToast("Error: "+e.message,"error"); }
@@ -154,29 +206,96 @@ const [annLoading, setAnnLoading] = useState(false);
   };
 
   const handleEdit = (c, col) => {
+    if (!confirmAction(`Are you sure you want to edit "${c.title}"?`))
+      return;
+
     setEditId(c.id); setEditCol(col);
     setForm({
       title:c.title||"", track:c.track||"Accounting", icon:c.icon||"📚",
       gradient:c.gradient||"grad-blue", badge:c.badge||"",certificateImage:c.certificateImage || "",
       thumbLogo:c.thumbLogo || "",
-      isOnline:c.isOnline||false, overview:c.overview||"",
-      duration:c.duration||"", price:c.price||"", originalPrice:c.originalPrice||"",
+      isOnline:c.isOnline||false, isFree:c.isFree||false, overview:c.overview||"",
+      duration:c.duration||"", price:formatIndianPrice(c.price||""), originalPrice:formatIndianPrice(c.originalPrice||""),
       features:c.features?.length ? c.features : [""],
       whoShouldJoin:c.whoShouldJoin?.length ? c.whoShouldJoin : [""],
       whatYouLearn:c.whatYouLearn?.length ? c.whatYouLearn : [""],
       syllabus:c.syllabus?.length ? c.syllabus : [{moduleTitle:"",chapters:[""]}],
       includes:c.includes?.length ? c.includes : [{icon:"📘",name:"",duration:""}],
-      description:c.description||"", tags:(c.tags||[]).join(", "),
+      description:c.description||"", tags:(c.tags||[]).join(", "), forWhom:c.forWhom||"",
     });
     window.scrollTo({ top:0, behavior:"smooth" });
   };
 
-  const handleDelete = async (id, name, col) => {
-    if (!window.confirm(`Delete "${name}"?`)) return;
+  const handleDelete = async (course, col) => {
+    if (!confirmAction(`Are you sure you want to delete "${course.title}"?`)) return;
+    const { id, ...restoreData } = course;
     try {
       await deleteDoc(doc(db, col, id));
-      showToast("🗑️ Deleted"); fetchAll();
+      withUndo("Course deleted.", async () => {
+        await setDoc(doc(db, col, id), restoreData);
+        showToast("Deleted course restored.");
+        fetchAll();
+      });
+      fetchAll();
     } catch(e) { showToast("Error: "+e.message,"error"); }
+  };
+
+  const handleAddAnnouncement = async () => {
+    if (!annForm.text.trim())
+      return showToast("Text required!","error");
+
+    if (!annForm.endDate)
+      return showToast("End date required!","error");
+
+    if (!confirmAction("Are you sure you want to add this announcement?"))
+      return;
+
+    setAnnLoading(true);
+
+    try {
+      const ref = await addDoc(collection(db, "announcements"), {
+        ...annForm,
+        createdAt: serverTimestamp(),
+      });
+
+      withUndo("Announcement added.", async () => {
+        await deleteDoc(doc(db, "announcements", ref.id));
+        showToast("Added announcement removed.");
+        fetchAll();
+      });
+
+      setAnnForm({
+        text:"",
+        startDate:"",
+        endDate:"",
+        active:true
+      });
+
+      fetchAll();
+    } catch(e) {
+      showToast("Error: "+e.message,"error");
+    }
+
+    setAnnLoading(false);
+  };
+
+  const handleDeleteAnnouncement = async (announcement) => {
+    if (!confirmAction("Are you sure you want to delete this announcement?"))
+      return;
+
+    const { id, ...restoreData } = announcement;
+
+    try {
+      await deleteDoc(doc(db, "announcements", id));
+      withUndo("Announcement deleted.", async () => {
+        await setDoc(doc(db, "announcements", id), restoreData);
+        showToast("Deleted announcement restored.");
+        fetchAll();
+      });
+      fetchAll();
+    } catch(e) {
+      showToast("Error: "+e.message,"error");
+    }
   };
 
   const resetForm = () => { setForm(EMPTY_FORM); setEditId(null); setEditCol("diplomaCourses"); };
@@ -191,7 +310,7 @@ const [annLoading, setAnnLoading] = useState(false);
           <span className="admin__topbar-badge">Courses Manager</span>
         </div>
         <span style={{ fontSize:13, color:"#64748B" }}>
-          {diplomas.length} diploma · {online.length} online
+          {diplomas.length} diploma · {online.length} online · {freeCourses.length} free
         </span>
       </div>
 
@@ -205,13 +324,17 @@ const [annLoading, setAnnLoading] = useState(false);
 
           {/* Type Toggle */}
           <div className="admin__type-toggle">
-            <button className={`admin__type-btn ${!form.isOnline?"active-offline":""}`}
-              onClick={() => set("isOnline",false)}>🏫 Diploma / Offline</button>
-            <button className={`admin__type-btn ${form.isOnline?"active-online":""}`}
-              onClick={() => set("isOnline",true)}>🌐 Online Course</button>
+            <button className={`admin__type-btn ${!form.isOnline && !form.isFree?"active-offline":""}`}
+              onClick={() => { set("isOnline",false); set("isFree",false); }}>🏫 Diploma</button>
+            <button className={`admin__type-btn ${form.isOnline && !form.isFree?"active-online":""}`}
+              onClick={() => { set("isOnline",true); set("isFree",false); }}>🌐 Online Course</button>
+            <button className={`admin__type-btn ${form.isFree?"active-free":""}`}
+              onClick={() => { set("isFree",true); set("isOnline",false); set("price","0"); }}>🆓 Free Course</button>
           </div>
 
-          {form.isOnline
+          {form.isFree
+            ? <div className="admin__free-note">🎁 Will appear in <strong>Free Courses</strong> section on website</div>
+            : form.isOnline
             ? <div className="admin__online-note">💡 Will appear in <strong>Online Courses</strong> section on website</div>
             : <div className="admin__offline-note">🎓 Will appear in <strong>Diploma Programs</strong> section on website</div>
           }
@@ -278,16 +401,33 @@ const [annLoading, setAnnLoading] = useState(false);
                   value={form.duration} onChange={e=>set("duration",e.target.value)} />
               </div>
               <div className="admin__group" style={{ margin:0 }}>
-                <label className="admin__label">Price ₹ *</label>
-                <input className="admin__input" placeholder="e.g. 4500"
-                  value={form.price} onChange={e=>set("price",e.target.value)} />
+                <label className="admin__label">{form.isFree ? "Original Price ₹" : "Price ₹"} *</label>
+                <input
+                  className="admin__input"
+                  placeholder={form.isFree ? "e.g. 4000 (for 100% OFF display)" : "e.g. 10,000"}
+                  value={form.isFree ? form.originalPrice : form.price}
+                  onChange={e=> form.isFree ? setPrice("originalPrice",e.target.value) : setPrice("price",e.target.value)}
+                  onBlur={()=> form.isFree ? formatPriceField("originalPrice") : formatPriceField("price")}
+                />
               </div>
             </div>
-            <div className="admin__group" style={{ marginTop:10, marginBottom:0 }}>
-              <label className="admin__label">Original Price ₹ (optional — strikethrough)</label>
-              <input className="admin__input" placeholder="e.g. 6000"
-                value={form.originalPrice} onChange={e=>set("originalPrice",e.target.value)} />
-            </div>
+            {!form.isFree && (
+              <div className="admin__group" style={{ marginTop:10, marginBottom:0 }}>
+                <label className="admin__label">Original Price ₹ (optional — strikethrough)</label>
+                <input
+                  className="admin__input"
+                  placeholder="e.g. 15,000"
+                  value={form.originalPrice}
+                  onChange={e=>setPrice("originalPrice",e.target.value)}
+                  onBlur={()=>formatPriceField("originalPrice")}
+                />
+              </div>
+            )}
+            {form.isFree && (
+              <div className="admin__group" style={{ marginTop:10, marginBottom:0 }}>
+                <label className="admin__label" style={{color:"#34D399"}}>✅ Free Course (₹0.00 will be displayed with {form.originalPrice ? "100% OFF" : "price"})</label>
+              </div>
+            )}
           </div>
             {/* Certificate Image */}
 <div className="admin__group">
@@ -311,6 +451,15 @@ const [annLoading, setAnnLoading] = useState(false);
               placeholder="Course overview shown on detail page"
               value={form.overview} onChange={e=>set("overview",e.target.value)} />
           </div>
+
+          {/* For Whom - Free courses only */}
+          {form.isFree && (
+            <div className="admin__group">
+              <label className="admin__label">For Whom (e.g. Students and Professionals)</label>
+              <input className="admin__input" placeholder="e.g. Students and Professionals"
+                value={form.forWhom} onChange={e=>set("forWhom",e.target.value)} />
+            </div>
+          )}
 
           {/* Online extras */}
           {form.isOnline && (<>
@@ -413,7 +562,7 @@ const [annLoading, setAnnLoading] = useState(false);
 
           <button className="btn-admin-primary" onClick={handleSubmit} disabled={loading}>
             {loading ? "Saving..." : editId ? "💾 Update Course"
-              : form.isOnline ? "🌐 Add Online Course" : "🎓 Add Diploma Course"}
+              : form.isFree ? "🆓 Add Free Course" : form.isOnline ? "🌐 Add Online Course" : "🎓 Add Diploma Course"}
           </button>
           {editId && (
             <button className="btn-admin-secondary" onClick={resetForm}>Cancel</button>
@@ -427,6 +576,8 @@ const [annLoading, setAnnLoading] = useState(false);
               onClick={()=>setListTab("diploma")}>🎓 Diploma ({diplomas.length})</button>
             <button className={`admin__list-tab ${listTab==="online"?"active":""}`}
               onClick={()=>setListTab("online")}>🌐 Online ({online.length})</button>
+            <button className={`admin__list-tab ${listTab==="free"?"active":""}`}
+              onClick={()=>setListTab("free")}>🆓 Free ({freeCourses.length})</button>
               <button className={`admin__list-tab ${listTab==="announce"?"active":""}`}
   onClick={()=>setListTab("announce")}>📢 Announcements</button>
           </div>
@@ -463,7 +614,12 @@ const [annLoading, setAnnLoading] = useState(false);
 
               {c.price && <>
                 <span>·</span>
-                <span style={{color:"#34D399"}}>₹{c.price}</span>
+                {c.originalPrice && (
+                  <span style={{color:"#94A3B8", textDecoration:"line-through"}}>
+                    ₹{formatIndianPrice(c.originalPrice)}
+                  </span>
+                )}
+                <span style={{color:"#34D399"}}>₹{formatIndianPrice(c.price)}</span>
               </>}
             </div>
           </div>
@@ -478,7 +634,7 @@ const [annLoading, setAnnLoading] = useState(false);
 
             <button
               className="btn-icon danger"
-              onClick={()=>handleDelete(c.id,c.title,"diplomaCourses")}
+              onClick={()=>handleDelete(c,"diplomaCourses")}
             >
               🗑️
             </button>
@@ -513,7 +669,12 @@ const [annLoading, setAnnLoading] = useState(false);
 
               {c.price && <>
                 <span>·</span>
-                <span style={{color:"#34D399"}}>₹{c.price}</span>
+                {c.originalPrice && (
+                  <span style={{color:"#94A3B8", textDecoration:"line-through"}}>
+                    ₹{formatIndianPrice(c.originalPrice)}
+                  </span>
+                )}
+                <span style={{color:"#34D399"}}>₹{formatIndianPrice(c.price)}</span>
               </>}
             </div>
           </div>
@@ -528,7 +689,58 @@ const [annLoading, setAnnLoading] = useState(false);
 
             <button
               className="btn-icon danger"
-              onClick={()=>handleDelete(c.id,c.title,"onlineCourses")}
+              onClick={()=>handleDelete(c,"onlineCourses")}
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      ))
+
+) : listTab==="free" ? (
+
+  freeCourses.length===0
+    ? <div className="admin__status">
+        <span className="admin__status-icon">📭</span>
+        <p>No free courses yet</p>
+      </div>
+
+    : freeCourses.map(c=>(
+        <div key={c.id} className="admin__course-row">
+
+          <div className="admin__course-row-left">
+            <div className="admin__course-row-name">
+              {c.icon} {c.title}
+              <span style={{background:"#34D399", color:"#0f172a", padding:"2px 8px", borderRadius:4, fontSize:11, fontWeight:700, marginLeft:8}}>🆓 FREE</span>
+            </div>
+
+            <div className="admin__course-row-meta">
+              <span>{c.track}</span>
+
+              {c.duration && <>
+                <span>·</span>
+                <span>⏱ {c.duration}</span>
+              </>}
+
+              {c.originalPrice && (
+                <span style={{color:"#34D399"}}>
+                  ₹0.00 <span style={{color:"#94A3B8", textDecoration:"line-through"}}>₹{formatIndianPrice(c.originalPrice)}</span> | 100% OFF
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="admin__course-row-actions">
+            <button
+              className="btn-icon"
+              onClick={()=>handleEdit(c,"freeCourses")}
+            >
+              ✏️
+            </button>
+
+            <button
+              className="btn-icon danger"
+              onClick={()=>handleDelete(c,"freeCourses")}
             >
               🗑️
             </button>
@@ -648,43 +860,7 @@ const [annLoading, setAnnLoading] = useState(false);
       <button
         className="btn-admin-primary"
         disabled={annLoading}
-
-        onClick={async () => {
-
-          if (!annForm.text.trim())
-            return showToast("Text required!","error");
-
-          if (!annForm.endDate)
-            return showToast("End date required!","error");
-
-          setAnnLoading(true);
-
-          try {
-
-            await addDoc(collection(db, "announcements"), {
-              ...annForm,
-              createdAt: serverTimestamp(),
-            });
-
-            showToast("✅ Announcement added!");
-
-            setAnnForm({
-              text:"",
-              startDate:"",
-              endDate:"",
-              active:true
-            });
-
-            fetchAll();
-
-          } catch(e) {
-
-            showToast("Error: "+e.message,"error");
-
-          }
-
-          setAnnLoading(false);
-        }}
+        onClick={handleAddAnnouncement}
       >
         {annLoading ? "Saving..." : "📢 Add Announcement"}
       </button>
@@ -731,20 +907,7 @@ const [annLoading, setAnnLoading] = useState(false);
 
           <button
             className="btn-icon danger"
-
-            onClick={async () => {
-
-              if (!window.confirm("Delete this announcement?"))
-                return;
-
-              await deleteDoc(
-                doc(db, "announcements", a.id)
-              );
-
-              showToast("🗑️ Deleted");
-
-              fetchAll();
-            }}
+            onClick={() => handleDeleteAnnouncement(a)}
           >
             🗑️
           </button>
@@ -760,7 +923,27 @@ const [annLoading, setAnnLoading] = useState(false);
         </div>
       </div>
 
-      {toast && <div className={`admin__toast ${toast.type}`}>{toast.msg}</div>}
+      {toast && (
+        <div className={`admin__toast ${toast.type}`}>
+          <span>{toast.msg}</span>
+          {toast.action && (
+            <button
+              className="admin__toast-action"
+              onClick={async () => {
+                const action = toast.action;
+                setToast(null);
+                try {
+                  await action.run();
+                } catch(e) {
+                  showToast("Undo failed: "+e.message, "error");
+                }
+              }}
+            >
+              {toast.action.label}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

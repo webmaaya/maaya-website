@@ -74,7 +74,7 @@
 /* ── Course Type Toggle ──────────────────────────────────── */
 .admin__type-toggle {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 0;
   border: 1.5px solid #334155;
   border-radius: 10px;
@@ -96,6 +96,7 @@
 
 .admin__type-btn.active-offline { background: #1e3a5f; color: #60A5FA; }
 .admin__type-btn.active-online  { background: #14532d; color: #34D399; }
+.admin__type-btn.active-free    { background: #7C2D12; color: #FDBA74; }
 
 .admin__online-note {
   font-size: 12px;
@@ -114,6 +115,16 @@
   border-radius: 8px;
   padding: 8px 12px;
   color: #93C5FD;
+  margin-bottom: 16px;
+}
+
+.admin__free-note {
+  font-size: 12px;
+  background: #7C2D1233;
+  border: 1px solid #EA580C;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #FDBA74;
   margin-bottom: 16px;
 }
 
@@ -438,9 +449,27 @@
   font-weight: 600;
   z-index: 9999;
   animation: fadeInUp 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 .admin__toast.success { background: #065F46; color: #A7F3D0; border: 1px solid #10B981; }
 .admin__toast.error   { background: #7F1D1D; color: #FECACA; border: 1px solid #EF4444; }
+
+.admin__toast-action {
+  border: 1px solid currentColor;
+  background: rgba(255,255,255,0.12);
+  color: inherit;
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin__toast-action:hover {
+  background: rgba(255,255,255,0.2);
+}
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(10px); }

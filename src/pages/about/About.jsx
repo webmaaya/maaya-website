@@ -13,7 +13,7 @@ import AwardSlideshow from "../../Components/sections/AwardSlideshow";
 import "./About.css";
 
 const STATS = [
-  { icon: "🎓", num: "28,000+", label: "Students Trained" },
+  { icon: "🎓", num: "28,720+", label: "Students Trained" },
   { icon: "📚", num: "120+",     label: "Courses Offered" },
   { icon: "🏆", num: "15+",     label: "Years Experience" },
   { icon: "🤝", num: "500+",    label: "Placement Partners" },
