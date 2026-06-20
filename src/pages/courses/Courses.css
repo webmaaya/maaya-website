@@ -374,9 +374,43 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 640px) {
+/* @media (max-width: 640px) {
   .courses-page { padding: 36px 16px 56px; }
   .courses-page__grid          { grid-template-columns: 1fr; }
   .online-courses-grid         { grid-template-columns: 1fr; }
   .free-courses-grid           { grid-template-columns: 1fr; }
+} */
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .courses-page { padding: 36px 16px 56px; }
+
+  /* Turn grids into horizontal flex sliders */
+  .courses-page__grid,
+  .online-courses-grid,
+  .free-courses-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  /* Hide scrollbars for a clean native-app feel */
+  .courses-page__grid::-webkit-scrollbar,
+  .online-courses-grid::-webkit-scrollbar,
+  .free-courses-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Force each card to take up 85% width so the next one visibly peaks out */
+  .courses-page__grid > *,
+  .online-courses-grid > *,
+  .free-courses-grid > * {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+  }
 }

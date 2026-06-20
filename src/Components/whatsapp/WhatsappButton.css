@@ -38,4 +38,6 @@
 
 @media (max-width: 640px) {
   .whatsapp-btn { bottom: 20px; right: 20px; width: 52px; height: 52px; }
-}
+} 
+
+/* React Global CSS ya Module file mein */
