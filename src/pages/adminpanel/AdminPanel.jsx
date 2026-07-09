@@ -53,7 +53,7 @@ const EMPTY_FORM = {
 
 export default function AdminPanel() {
 const [announcements, setAnnouncements] = useState([]);
-const [annForm, setAnnForm] = useState({ text:"", startDate:"", endDate:"", active:true });
+const [annForm, setAnnForm] = useState({ text:"", startDate:"", endDate:"", active:true, link:"" });
 const [annLoading, setAnnLoading] = useState(false);
   const [form,     setForm]     = useState(EMPTY_FORM);
   const [diplomas, setDiplomas] = useState([]);
@@ -268,7 +268,8 @@ const [annLoading, setAnnLoading] = useState(false);
         text:"",
         startDate:"",
         endDate:"",
-        active:true
+        active:true,
+        link:"",
       });
 
       fetchAll();
@@ -786,6 +787,22 @@ const [annLoading, setAnnLoading] = useState(false);
           }
         />
       </div>
+{/* 
+  To add link to the announcement, you can use the optional "Link" field below. If you leave it blank, clicking the announcement will open a contact popup instead of navigating to a link. */}
+  <div className="admin__group">
+  <label className="admin__label">
+    Link (optional)
+  </label>
+  <input
+    className="admin__input"
+    placeholder="e.g. /courses or https://example.com (blank = Contact popup)"
+    value={annForm.link}
+    onChange={e => setAnnForm(p => ({ ...p, link: e.target.value }))}
+  />
+  <span style={{ fontSize:11, color:"#64748B", marginTop:4, display:"block" }}>
+    💡 Leave blank → Contact popup will open on click
+  </span>
+</div>
 
       <div style={{
         display:"grid",

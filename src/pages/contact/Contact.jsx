@@ -95,7 +95,7 @@ export default function Contact() {
       <section className="contact-hero">
         <div className="contact-hero__badge">📞 Contact Us</div>
         <h1 className="contact-hero__title">
-          Get In Touch With<br /><span>MAAYA Enterprises</span>
+          Get In Touch With<br /><span>MAAYA</span>
         </h1>
         <p className="contact-hero__sub">
           Have questions about a course? Want to enroll? We're here to help —

@@ -33,8 +33,8 @@ export default function Hero() {
           Explore Courses
         </Link>
         {/* TODO: Replace "#" with a demo video link or modal */}
-        <a href="https://klic.mkcl.org/counseling/" target="_blank" rel="noreferrer noopener" className="hero__btn-outline">
-           🎯 Free Career Counselling →
+        <a href="https://ms-cit-portfolio-hub.vercel.app/" target="_blank" rel="noreferrer noopener" className="hero__btn-outline">
+        🧠  Explore Our Creative Students Works →
         </a>
       
       

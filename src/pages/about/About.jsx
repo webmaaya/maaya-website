@@ -77,7 +77,7 @@ export default function About() {
       Since <span>2010</span>
     </h1>
     <p className="about-hero__sub">
-      MAAYA Enterprises is Maharashtra's leading IT education & skill development institute — shaping careers of 50,000+ students.
+      MAAYA Enterprises is Maharashtra's leading IT education & skill development institute — shaping careers of 28,720+ students.
     </p>
   </div>
 </section>
@@ -89,7 +89,7 @@ export default function About() {
           <div className="about-story__content">
             <div className="section-badge">📖 Our Story</div>
             <h2>From a Small Centre to Maharashtra's Most Trusted Institute</h2>
-            <p>MAAYA Enterprises was founded in 2010 with a simple mission — to bring quality computer education to every student in Maharashtra, regardless of their background or financial situation.</p>
+            <p>MAAYA was founded in 2010 with a simple mission — to bring quality computer education to every student in Maharashtra, regardless of their background or financial situation.</p>
             <p>What started as a small training centre in Sawantwadi has today grown into a full-scale educational institution offering 20+ courses in IT, skill development, business and language — all at affordable fees.</p>
       
           </div>

@@ -30,7 +30,22 @@ export default function AnnouncementBar({onOpenPopup,  onAnnouncementChange,}) {
   if (!announcement) return null;
 
   return (
-    <div className="announce-bar" onClick={onOpenPopup}>
+    <div className="announce-bar"
+     style={{ cursor: "pointer" }}
+     onClick={() => {
+    if (announcement.link) {
+      // Internal link
+    if (announcement.link.startsWith("/")) {
+        window.location.href = announcement.link;
+      } else {
+        window.open(announcement.link, "_blank");
+      }
+    } else {
+      // Default — open contact popup
+      if (onOpenPopup) onOpenPopup();
+    }
+  }}
+  > 
       <div className="announce-bar__track">
         {[...Array(4)].map((_, i) => (
           <span key={i} className="announce-bar__text">

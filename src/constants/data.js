@@ -24,7 +24,7 @@ export const CONTACT_INFO = {
 export const SOCIAL_LINKS = {
   facebook:  "https://www.facebook.com/share/1BVxQs32kg/",
   instagram: "https://www.instagram.com/maaya.skill/",
-  youtube:   "/* TODO: YouTube channel URL */",
+  youtube:   "https://youtube.com/@maayaenterprises4664?si=BWT471l691Xc9Evq",
   twitter:   "/* TODO: Twitter/X URL */",
 };
 
@@ -39,14 +39,6 @@ export const CATEGORIES = [
   "Finance",
 ];
 
-// ── 20 Courses Data ─────────────────────────────────────────
-// Har course mein yeh fields hain:
-//   id, title, category, level, duration, students,
-//   rating, price, originalPrice, isFree, isPremium,
-//   thumbnail (color gradient class), tags, badge,
-//   description, overview, highlights, stats, syllabus,
-//   eligibility, features
-// ─────────────────────────────────────────────────────────────
 export const COURSES = [
   {
     id: 1,
