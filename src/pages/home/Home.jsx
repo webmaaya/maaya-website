@@ -9,55 +9,42 @@ import CoursesSection from "../../Components/sections/CoursesSection";
 import PlacedStudents from "../../Components/sections/PlacedStudents";
 import Features from "../../Components/features/Features";
 import ContactPopup from "../../Components/sections/ContactPopup";
+import AIPopup from "../../Components/sections/AIPopup";
 
+// Ad runs until this date (inclusive)
+const AD_END_DATE = new Date("2026-07-30T23:59:59");
 
 export default function Home() {
   const [showContactPopup, setShowContactPopup] = useState(false);
+  const [showAIPopup,      setShowAIPopup]      = useState(false);
 
-  // useEffect(() => {
-  //   // Show popup only once per session
-  //   const popupShown = sessionStorage.getItem("contactPopupShown");
-    
-  //   if (!popupShown) {
-  //     const timer = setTimeout(() => {
-  //       setShowContactPopup(true);
-  //       sessionStorage.setItem("contactPopupShown", "true");
-  //     }, 1000);
-  //     return () => clearTimeout(timer);
-  //   }
-
-  //     const openPopup = () => {
-  //   setShowContactPopup(true);
-  // };
-
-  // window.addEventListener("openContactPopup", openPopup);
-
-  // return () => {
-  //   window.removeEventListener("openContactPopup", openPopup);
-  // };
-
-
-  // }, []);
 
 useEffect(() => {
 
   const popupShown = sessionStorage.getItem("contactPopupShown");
-
+  const now        = new Date();
+  const showAd     = now <= AD_END_DATE;
   let timer;
 
   if (!popupShown) {
     timer = setTimeout(() => {
-      setShowContactPopup(true);
+      if (showAd){
+        setShowAIPopup(true);
+      }
+      else{
+        setShowContactPopup(true);
+      }
+      
       sessionStorage.setItem("contactPopupShown", "true");
     }, 1000);
   }
 
   // announcement bar click popup
-  const openPopup = () => {
-    setShowContactPopup(true);
-  };
-
-  window.addEventListener("openContactPopup", openPopup);
+    const openPopup = () => {
+      if (showAd) setShowAIPopup(true);
+      else setShowContactPopup(true);
+    };
+    window.addEventListener("openContactPopup", openPopup);
 
   return () => {
     if (timer) clearTimeout(timer);
@@ -69,7 +56,11 @@ useEffect(() => {
 
   return (
     <main>
-      
+      {/* AI Ad Popup — till 30 July 2026 */}
+      {showAIPopup && (
+        <AIPopup onClose={() => setShowAIPopup(false)} />
+      )}
+
      
 
       {/* Contact Popup on Landing */}
