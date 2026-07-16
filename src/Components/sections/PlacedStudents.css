@@ -201,9 +201,10 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 4px;
-  white-space: nowrap;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
+  /* text-overflow: ellipsis; */
   line-height: 1.2;
 }
 

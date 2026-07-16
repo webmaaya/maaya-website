@@ -32,6 +32,8 @@ import shubhamPhoto from "../../assets/students/shubhamPhoto.jpeg";
 import karanPhoto from "../../assets/students/karanPhoto.jpeg";
 import chaitanyaPhoto from "../../assets/students/chaitanyaPhoto.jpeg";
 import athangPhoto from "../../assets/students/athangPhoto.jpeg";
+import rajPhoto from "../../assets/students/rajPhoto.jpg";
+import sujalPhoto from "../../assets/students/sujalPhoto.jpg";
 import "./CoursePlacedStudents.css";
 import { track } from "@vercel/analytics";
 
@@ -63,21 +65,34 @@ const ALL_PLACED = [
 
   // ── Programming ─────────────────────────────────────────────
  
-  {
-    track: "Programming", photo: karanPhoto,
-  },
    {
     track: "Programming", photo: eshaPhoto,
+    projectLink: "https://jovial-bonbon-0668dc.netlify.app/",
+  },
+   {
+    track: "Programming", photo: rajPhoto,
+    projectLink: "https://github.com/chaitanya123",
   },
   {
     track: "Programming", photo: chaitanyaPhoto,
-    
+    projectLink: "https://chaitanya-projectfolio.netlify.app",
   },
+   {
+    track: "Programming", photo: sujalPhoto,
+    projectLink: "https://glittering-figolla-cefbe1.netlify.app/",
+   },
   {
     track: "Programming", photo: athangPhoto,
+     projectLink: "https://spontaneous-taiyaki-f088ee.netlify.app/",
+  },
+    {
+    track: "Programming", photo: karanPhoto,
+    projectLink: "https://jovial-bonbon-0668dc.netlify.app/",
   },
   {
     track: "Programming", photo: shraddhaPhoto,
+    projectLink: "https://glittering-figolla-cefbe1.netlify.app/",
+    
   },
 
   // ── IT Hardware ─────────────────────────────────────────────
@@ -137,18 +152,63 @@ const ALL_PLACED = [
 //   },
 
   // ── IT & Computer / Online ───────────────────────────────────
-//   {
-//     id: 15, name: "Yuvaraj Naik",
-//     course: "MS-CIT",
-//     role: "Computer Operator", company: "",
-//     track: "IT and Computer", photo: null,
-//   },
-//   {
-//     id: 16, name: "Ramchandra Velip",
-//     course: "MS-CIT",
-//     role: "Office Assistant", company: "",
-//     track: "IT and Computer", photo: null,
-//   },
+  {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784179137/AyushP_t31v9y.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=101",
+  },
+   {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181600/DipaS_uddchh.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=104",
+  },
+   {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181600/GiteshN_vqmnog.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=106",
+  },
+   {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181600/ChaitadnyaZ_tu4mij.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=103",
+  },
+   {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181600/GaurangS_lydyfc.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=105",
+  },
+   {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181610/MahekS_digjnq.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=110",
+  },
+   {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181601/ChaitanyaN_jlyj1m.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=102",
+  },
+   {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181611/MaitrayiS_m9wbwe.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=111",
+  },
+   {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181604/HimanshuV_nq8gjj.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=107",
+  },
+    {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181613/SaishriP_w8o6ei.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=117",
+  },
+      {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181609/NeelB_tbckkb.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=114",
+  },
+     {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181612/PriyaD_myzrco.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=116",
+  },
+    {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181617/ShlokS_ztu8yq.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=118",
+  },
+    {
+    track: "IT and Computer", photo: "https://res.cloudinary.com/dgtzaqsze/image/upload/v1784181619/ShreyasG_sjlhrl.jpg",
+    projectLink: "https://ms-cit-portfolio-hub.vercel.app/student.html?id=119",
+  },
+
 ];
 
 // ── Track aliases — map diploma.track → our student track keys ─
@@ -159,8 +219,9 @@ const TRACK_MAP = {
   "Designing":        "Designing",
   "Work From Home":   "Work From Home",
   "IT and Computer":  "IT and Computer",
-  "Professional Courses": "IT and Computer",
+  "Professional Courses": "IT & Computer",
 };
+
 
 // ── Avatar initials color palette ────────────────────────────
 const AVATAR_COLORS = [
@@ -176,6 +237,17 @@ export default function CoursePlacedStudents({ track }) {
   // Need at least 1 student to show section
   if (students.length === 0) return null;
 
+const isMscit = mappedTrack === "IT and Computer";
+
+const sectionTitle = isMscit
+  ? "Congratulations On Completing MS-CIT Course"
+  : "Congratulations On Successful Placement";
+
+const sectionSub = isMscit
+  ? "Students who successfully completed the MS-CIT program"
+  : "Students who completed this program and got placed";
+
+
   // Duplicate for seamless infinite loop (need at least 6 cards)
   const loopStudents = students.length < 4
     ? [...students, ...students, ...students, ...students]
@@ -189,8 +261,8 @@ export default function CoursePlacedStudents({ track }) {
       {/* Header */}
       <div className="cps__header">
         <div className="cps__badge">🎓 Success Stories</div>
-        <h2 className="cps__title">Congratulations On Successful Placement</h2>
-        <p className="cps__sub">Students who completed this program and got placed</p>
+        <h2 className="cps__title">{sectionTitle}</h2>
+        <p className="cps__sub">{sectionSub}</p>
       </div>
 
       {/* Scroll track */}
@@ -217,7 +289,9 @@ export default function CoursePlacedStudents({ track }) {
                     {getInitials(student.name)}
                   </div>
                 )}
-                <span className="cps__card-placed">✓ PLACED</span>
+                {! isMscit && (
+                  <span className="cps__card-placed">✓ PLACED</span>
+                )}
               </div>
 
               {/* Info */}
@@ -226,6 +300,18 @@ export default function CoursePlacedStudents({ track }) {
                 {/* <span className="cps__card-course">{student.course}</span> */}
                 <div className="cps__card-divider" />
                 {/* <div className="cps__card-role">{student.role}</div> */}
+                {/* View Projects button — sirf tab dikhe jab link ho */}
+{student.projectLink && (
+  <a
+    href={student.projectLink}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="cps__card-project-btn"
+    onClick={e => e.stopPropagation()}
+  >
+    🔗 View My Projects
+  </a>
+)}
                 {student.company && (
                   <p className="cps__card-company">🏢 {student.company}</p>
                 )}

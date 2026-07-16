@@ -28,27 +28,8 @@ import sanketPhoto from "../../assets/students/sanketPhoto.jpg";
 
 
 
- // Example photo import
- // Example photo import
+ 
 
-// ============================================================
-//  STUDENTS DATA — 20 students
-//  TODO: Replace EVERY student entry with real data:
-//    name    → student ka naam
-//    course  → course jo unhone kiya
-//    role    → job role jisme place hua
-//    company → company name (optional — rakhna hai toh "" mat karo)
-//    photo   → import karke yahan daalo (niche example hai)
-//
-//  Photo kaise add karein:
-//    1. Photo ko src/assets/students/ folder mein daalo
-//       jaise: vikrant.jpg
-//    2. Is file ke upar import karo:
-//       import vikrantPhoto from "../../assets/students/vikrant.jpg";
-//    3. Niche student object mein:
-//       photo: vikrantPhoto
-//
-//  Abhi photo: null rakha hai — placeholder emoji dikhega
 // ============================================================
 
 const STUDENTS = [
@@ -311,7 +292,7 @@ export default function PlacedStudents() {
             {/* Info */}
             <div className="student-card__body">
               <h3 className="student-card__name">{student.name}</h3>
-              <span className="student-card__course">{student.course}</span>
+              {/* <span className="student-card__course">{student.course}</span> */}
               <div className="student-card__divider" />
               <div className="student-card__role">💼 {student.role}</div>
               {student.company && (
