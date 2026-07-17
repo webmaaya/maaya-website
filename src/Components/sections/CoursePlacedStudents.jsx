@@ -71,7 +71,7 @@ const ALL_PLACED = [
   },
    {
     track: "Programming", photo: rajPhoto,
-    projectLink: "https://prhub.netlify.app.",
+    projectLink: "https://prhub.netlify.app",
   },
   {
     track: "Programming", photo: chaitanyaPhoto,
