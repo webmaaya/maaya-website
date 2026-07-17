@@ -24,6 +24,33 @@ import { auth } from "../../firebase";
 import logo from "../../assets/logo/MAAYA.png";
 import "./Register.css";
 
+// Sanitize input — remove HTML tags & dangerous characters
+const sanitize = (str) =>
+  String(str || "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/[<>"'`]/g, "")
+    .replace(/javascript:/gi, "")
+    .trim()
+    .slice(0, 100); // Names usually don't need to be long
+
+// Rate limit — max 3 registrations per 1 hour (Registration needs stricter limits)
+const checkRateLimit = () => {
+  const key = "reg_submissions";
+  const now = Date.now();
+  const window_ms = 60 * 60 * 1000; // 1 hour
+  const max_tries = 3;
+
+  const stored = JSON.parse(localStorage.getItem(key) || "[]");
+  const recent = stored.filter(t => now - t < window_ms);
+
+  if (recent.length >= max_tries) {
+    const waitMin = Math.ceil((window_ms - (now - recent[0])) / 60000);
+    return { allowed: false, waitMin };
+  }
+  recent.push(now);
+  localStorage.setItem(key, JSON.stringify(recent));
+  return { allowed: true };
+};
 // ── Password validation rules ─────────────────────────────────
 const RULES = [
   { id: "len",     label: "At least 8 characters",          test: (p) => p.length >= 8 },
@@ -67,6 +94,13 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+   const { allowed, waitMin } = checkRateLimit();
+    if (!allowed) {
+      setError(`Too many attempts. Please try again in ${waitMin} minutes.`);
+      return;
+    }
+
     const err = validate();
     if (err) { setError(err); return; }
 
@@ -74,16 +108,18 @@ export default function Register() {
     setError("");
 
     try {
+      const cleanName = sanitize(form.fullName);
+      const cleanEmail = form.email.trim();
       // Create user with Firebase Auth
       const { user } = await createUserWithEmailAndPassword(
         auth,
-        form.email.trim(),
+        cleanEmail,
         form.password
       );
 
       // Save full name to Firebase profile
       await updateProfile(user, {
-        displayName: form.fullName.trim(),
+        displayName: cleanName,
       });
 
       // ✅ Registered + logged in → go to Home
@@ -106,7 +142,7 @@ export default function Register() {
 
         {/* Logo */}
         <div className="auth-card__logo">
-          {/* TODO: Replace with real logo */}
+  
           <img src={logo} alt="MAAYA" /> 
           {/* <div className="auth-card__logo-placeholder">
             MAAYA<br />
@@ -218,7 +254,7 @@ export default function Register() {
           <Link to="/login">Sign In</Link>
         </div>
 
-        <Link to="/" className="auth-back">← Back to Website</Link>
+        <Link to="/" className="auth-back">← Back to home</Link>
       </div>
     </div>
   );

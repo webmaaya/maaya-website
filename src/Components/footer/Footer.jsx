@@ -27,7 +27,7 @@ export default function Footer() {
               <a href={SOCIAL_LINKS.facebook}  className="footer__social-btn">f</a>
               <a href={SOCIAL_LINKS.instagram} className="footer__social-btn">in</a>
               <a href={SOCIAL_LINKS.youtube}   className="footer__social-btn">yt</a>
-              <a href={SOCIAL_LINKS.twitter}   className="footer__social-btn">tw</a>
+              {/* <a href={SOCIAL_LINKS.twitter}   className="footer__social-btn">tw</a> */}
             </div>
           </div>
 

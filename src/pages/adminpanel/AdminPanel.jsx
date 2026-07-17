@@ -49,6 +49,7 @@ const EMPTY_FORM = {
   whatYouLearn:[""], whoShouldJoin:[""], features:[""],
   syllabus:[{ moduleTitle:"", chapters:[""] }],
   description:"", tags:"", forWhom:"",
+  syllabusPdfLink: "",
 };
 
 export default function AdminPanel() {
@@ -145,6 +146,7 @@ const [annLoading, setAnnLoading] = useState(false);
       features:form.features.map(f=>f.trim()).filter(Boolean),
       whoShouldJoin:form.whoShouldJoin.map(w=>w.trim()).filter(Boolean),
       whatYouLearn:form.whatYouLearn.map(w=>w.trim()).filter(Boolean),
+      syllabusPdfLink: form.syllabusPdfLink?.trim() || "",
       syllabus:form.syllabus
         .map(m=>({ moduleTitle:m.moduleTitle.trim(), chapters:m.chapters.map(c=>c.trim()).filter(Boolean) }))
         .filter(m=>m.moduleTitle),
@@ -222,6 +224,7 @@ const [annLoading, setAnnLoading] = useState(false);
       syllabus:c.syllabus?.length ? c.syllabus : [{moduleTitle:"",chapters:[""]}],
       includes:c.includes?.length ? c.includes : [{icon:"📘",name:"",duration:""}],
       description:c.description||"", tags:(c.tags||[]).join(", "), forWhom:c.forWhom||"",
+   syllabusPdfLink: c.syllabusPdfLink || "",
     });
     window.scrollTo({ top:0, behavior:"smooth" });
   };
@@ -430,6 +433,19 @@ const [annLoading, setAnnLoading] = useState(false);
               </div>
             )}
           </div>
+          {/* Syllabus PDF Download Link */}
+<div className="admin__group">
+  <label className="admin__label">📄 Syllabus PDF Link (optional)</label>
+  <input
+    className="admin__input"
+    placeholder="e.g. https://drive.google.com/file/d/..."
+    value={form.syllabusPdfLink || ""}
+    onChange={e => set("syllabusPdfLink", e.target.value)}
+  />
+  <span style={{ fontSize:11, color:"#64748B", marginTop:4, display:"block" }}>
+    💡 Google Drive link — if given, Download Syllabus button will appear on website
+  </span>
+</div>
             {/* Certificate Image */}
 <div className="admin__group">
   <label className="admin__label">

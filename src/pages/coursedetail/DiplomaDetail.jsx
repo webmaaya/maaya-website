@@ -13,7 +13,7 @@ import designingCert from "../../assets/certificates/designing.jpeg";
 import hardwareCert from "../../assets/certificates/hardware.jpg";
 import mscitCert from "../../assets/certificates/mscit.jpeg";
 import CoursePlacedStudents from "../../Components/sections/CoursePlacedStudents";
-
+import Company from "../../Components/sections/Company";
 import "./DiplomaDetail.css";
 import mscitLogo from "../../assets/logo/mscit logo.png";
 
@@ -310,6 +310,16 @@ const certificateImage = cert.image;
             <p className="dip-hero__sub">{diploma.overview}</p>
             <div className="dip-hero__duration">📅 {diploma.duration}</div>
 
+            {diploma.syllabusPdfLink && (
+            <a
+            href={diploma.syllabusPdfLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="dip-download-btn">
+            📥 Download Syllabus
+            </a>
+             )}
+
             {(diploma.subjects || []).length > 0 && (
               <div className="dip-hero__subject-pills">
                 {diploma.subjects.map(s => (
@@ -545,6 +555,7 @@ const certificateImage = cert.image;
 
             {/* ── PLACED STUDENTS SCROLL ── */}
             <CoursePlacedStudents track={diploma.track} />
+            <Company/>
 
             {/* Online tags */}
             {diploma.isOnline && (diploma.tags || []).length > 0 && (

@@ -21,6 +21,36 @@ const HOURS = [
 
 // ── Get all course titles from COURSES data ──────────────────
 const COURSE_OPTIONS = COURSES.map(course => course.title);
+// ── Security Utils ────────────────────────────────────────
+// Sanitize input — remove HTML tags & dangerous characters
+const sanitize = (str) =>
+  String(str || "")
+    .replace(/<[^>]*>/g, "")           // remove HTML tags
+    .replace(/[<>"'`]/g, "")           // remove dangerous chars
+    .replace(/javascript:/gi, "")      // remove js injection
+    .trim()
+    .slice(0, 500);                    // max 500 chars
+
+// Rate limit — max 3 submissions per 10 minutes
+const checkRateLimit = () => {
+  const key       = "contact_submissions";
+  const now       = Date.now();
+  const window_ms = 10 * 60 * 1000;   // 10 minutes
+  const max_tries = 3;
+
+  const stored = JSON.parse(localStorage.getItem(key) || "[]");
+  // Remove old timestamps outside window
+  const recent = stored.filter(t => now - t < window_ms);
+
+  if (recent.length >= max_tries) {
+    const waitMin = Math.ceil((window_ms - (now - recent[0])) / 60000);
+    return { allowed: false, waitMin };
+  }
+
+  recent.push(now);
+  localStorage.setItem(key, JSON.stringify(recent));
+  return { allowed: true };
+};
 
 export default function Contact() {
   // ── Form state ────────────────────────────────────────────
@@ -35,58 +65,72 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  //Validator Function For Sanitization
+  const validate = () => {
+    const cleanPhone = form.phone.replace(/\s/g, "");
+    
+    if (!form.name.trim()) return "Please enter your full name";
+    if (form.name.trim().length < 2) return "Name must be at least 2 characters";
+    if (!form.phone.trim()) return "Please enter your phone number";
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) return "Enter valid 10-digit Indian mobile number";
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "Enter valid email address";
+    if (form.message && form.message.length > 1000) return "Message too long (max 1000 characters)";
+    
+    return null;
+  };
+
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    // Validate form
-    if (!form.name.trim()) {
-      setError("Please enter your full name");
-      return;
-    }
-    if (!form.phone.trim()) {
-      setError("Please enter your phone number");
-      return;
-    }
-    if (form.phone.replace(/\D/g, "").length < 10) {
-      setError("Please enter a valid 10-digit phone number");
-      return;
-    }
+  // 1. Rate Limit Check
+  const { allowed, waitMin } = checkRateLimit();
+  if (!allowed) {
+    setError(`Too many messages. Please wait ${waitMin} minute(s).`);
+    return;
+  }
 
-    setLoading(true);
+  // 2. Validation
+  const validationError = validate();
+  if (validationError) {
+    setError(validationError);
+    return;
+  }
 
-    try {
-      // Dynamic import EmailJS
-      const emailjs = await import("@emailjs/browser");
+  setLoading(true);
 
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_name: form.name,
-          phone:     form.phone,
-          email:     form.email || "Not provided",
-          course:    form.course || "General Enquiry",
-          message:   form.message || "User sent an enquiry from Contact page",
-          std:       "N/A",
-        },
-        EMAILJS_PUBLIC_KEY
-      );
+  try {
+    const emailjs = await import("@emailjs/browser");
 
-      setSubmitted(true);
-      setForm({ name: "", phone: "", email: "", course: "", message: "" });
-    } catch (err) {
-      console.error("EmailJS error:", err);
-      setError("Failed to send message. Please try again or contact us directly.");
-    }
+    await emailjs.send(
+      EMAILJS_SERVICE_ID,
+      EMAILJS_TEMPLATE_ID,
+      {
+        // 3. Sanitized Inputs
+        from_name: sanitize(form.name),
+        phone:     sanitize(form.phone),
+        email:     sanitize(form.email),
+        course:    form.course || "General Enquiry",
+        message:   sanitize(form.message),
+        std:       "N/A",
+      },
+      EMAILJS_PUBLIC_KEY
+    );
 
-    setLoading(false);
-  };
+    setSubmitted(true);
+    setForm({ name: "", phone: "", email: "", course: "", message: "" });
+  } catch (err) {
+    console.error("EmailJS error:", err);
+    setError("Failed to send message. Please try again or contact us directly.");
+  }
+
+  setLoading(false);
+};
 
   return (
     <main>
@@ -253,7 +297,7 @@ export default function Contact() {
                       onChange={handleChange}
                     >
                       <option value="">-- Select a Course --</option>
-                      {COURSE_OPTIONS.map((c) => (
+                      {COURSES.map((c) => (
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>

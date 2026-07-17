@@ -12,6 +12,34 @@ const EMAILJS_SERVICE_ID  = "service_k35ifgl";
 const EMAILJS_TEMPLATE_ID = "template_ujykcg8";
 const EMAILJS_PUBLIC_KEY  = "kDsxO0icILJAiKwDx";
 
+// Sanitize input
+const sanitize = (str) =>
+  String(str || "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/[<>"'`]/g, "")
+    .replace(/javascript:/gi, "")
+    .trim()
+    .slice(0, 500);
+
+// Rate limit — max 3 submissions per 10 minutes
+const checkRateLimit = () => {
+  const key = "popup_submissions";
+  const now = Date.now();
+  const window_ms = 10 * 60 * 1000;
+  const max_tries = 3;
+
+  const stored = JSON.parse(localStorage.getItem(key) || "[]");
+  const recent = stored.filter(t => now - t < window_ms);
+
+  if (recent.length >= max_tries) {
+    const waitMin = Math.ceil((window_ms - (now - recent[0])) / 60000);
+    return { allowed: false, waitMin };
+  }
+  recent.push(now);
+  localStorage.setItem(key, JSON.stringify(recent));
+  return { allowed: true };
+};
+
 export default function ContactPopup({ onClose }) {
   const [form, setForm] = useState({
     name:    "",
@@ -28,19 +56,20 @@ export default function ContactPopup({ onClose }) {
     setError("");
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Validate form
-    if (!form.name.trim()) {
-      setError("Please enter your full name");
+    // 1. Rate Limit Check
+    const { allowed, waitMin } = checkRateLimit();
+    if (!allowed) {
+      setError(`Too many messages. Please wait ${waitMin} minute(s).`);
       return;
     }
-    if (!form.phone.trim()) {
-      setError("Please enter your phone number");
-      return;
-    }
+
+    // 2. Existing Validation
+    if (!form.name.trim()) { setError("Please enter your full name"); return; }
+    if (!form.phone.trim()) { setError("Please enter your phone number"); return; }
     if (form.phone.replace(/\D/g, "").length < 10) {
       setError("Please enter a valid 10-digit phone number");
       return;
@@ -49,18 +78,18 @@ export default function ContactPopup({ onClose }) {
     setLoading(true);
 
     try {
-      // Dynamic import EmailJS
       const emailjs = await import("@emailjs/browser");
 
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
         {
-          from_name: form.name,
-          phone:     form.phone,
-          email:     form.email || "Not provided",
+          // 3. Apply Sanitization here
+          from_name: sanitize(form.name),
+          phone:     sanitize(form.phone),
+          email:     sanitize(form.email),
           course:    "General Enquiry - Popup",
-          message:   form.message || "User sent an enquiry from home page popup",
+          message:   sanitize(form.message),
           std:       "N/A",
         },
         EMAILJS_PUBLIC_KEY
@@ -69,10 +98,7 @@ export default function ContactPopup({ onClose }) {
       setSubmitted(true);
       setForm({ name: "", phone: "", email: "", message: "" });
       
-      // Auto close after 3 seconds
-      setTimeout(() => {
-        onClose();
-      }, 3000);
+      setTimeout(() => { onClose(); }, 3000);
     } catch (err) {
       console.error("EmailJS error:", err);
       setError("Failed to send message. Please try again or contact us directly.");

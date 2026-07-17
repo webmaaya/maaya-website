@@ -1,10 +1,5 @@
-// ============================================================
-//  EnquiryForm.jsx — Course Enquiry Form
-//  2 modes:
-//    inline={false} (default) → popup modal (free courses)
-//    inline={true}            → embedded in card (diploma detail)
-// ============================================================
 
+import { COURSES } from "../../constants/data";
 import { useState } from "react";
 import "./EnquiryForm.css";
 
@@ -12,23 +7,38 @@ const EMAILJS_SERVICE_ID  = "service_k35ifgl";
 const EMAILJS_TEMPLATE_ID = "template_ujykcg8";
 const EMAILJS_PUBLIC_KEY  = "kDsxO0icILJAiKwDx";
 
-const ALL_COURSES = [
-  "Digital Saheli",
-  "Future Vedh (Career Inclination Test)",
-  "MS-CIT Welcome",
-  "MKCL Soft Skill",
-  "Digital Empowerment for Teachers",
-  "Digital & AI Camp",
-  "SSC Smart Tips (English Medium)",
-  "HSC Exam Smart Tips (Marathi)",
-  "HSC Exam Smart Tips (English)",
-  "Internship in Accounting",
-  "Internship in Programming",
-  "Internship in Designing",
-  "Internship in Hardware & Networking",
-  "Work From Home Program",
-  "Other / General Enquiry",
-];
+// ── Security Utils ────────────────────────────────────────
+// Sanitize input — remove HTML tags & dangerous characters
+const sanitize = (str) =>
+  String(str || "")
+    .replace(/<[^>]*>/g, "")           // remove HTML tags
+    .replace(/[<>"'`]/g, "")           // remove dangerous chars
+    .replace(/javascript:/gi, "")      // remove js injection
+    .trim()
+    .slice(0, 500);                    // max 500 chars
+
+// Rate limit — max 3 submissions per 10 minutes
+const checkRateLimit = () => {
+  const key       = "eq_submissions";
+  const now       = Date.now();
+  const window_ms = 10 * 60 * 1000;   // 10 minutes
+  const max_tries = 3;
+
+  const stored = JSON.parse(localStorage.getItem(key) || "[]");
+  // Remove old timestamps outside window
+  const recent = stored.filter(t => now - t < window_ms);
+
+  if (recent.length >= max_tries) {
+    const waitMin = Math.ceil((window_ms - (now - recent[0])) / 60000);
+    return { allowed: false, waitMin };
+  }
+
+  recent.push(now);
+  localStorage.setItem(key, JSON.stringify(recent));
+  return { allowed: true };
+};
+
+
 
 const STD_OPTIONS = [
   "Below 8th", "8th", "9th", "10th (SSC)",
@@ -51,29 +61,44 @@ export default function EnquiryForm({ onClose, preSelectedCourse = "", inline = 
     setError("");
   };
 
-  const validate = () => {
-    if (!form.name.trim())  return "Please enter your full name";
+ const validate = () => {
+    const cleanPhone = form.phone.replace(/\D/g, ""); 
+    
+    if (!form.name.trim()) return "Please enter your full name";
+    if (form.name.trim().length < 2) return "Name must be at least 2 characters";
     if (!form.phone.trim()) return "Please enter your phone number";
-    if (form.phone.replace(/\D/g, "").length < 10) return "Enter valid 10-digit phone number";
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) return "Enter valid 10-digit Indian mobile number";
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "Enter valid email address";
+    if (form.message && form.message.length > 1000) return "Message too long (max 1000 characters)";
+    
     return null;
   };
 
-  const handleSubmit = async () => {
-    const err = validate();
-    if (err) { setError(err); return; }
-    setLoading(true);
-    setError("");
+const handleSubmit = async () => {
+  // Rate limit check
+  const { allowed, waitMin } = checkRateLimit();
+  if (!allowed) {
+    setError(`Too many submissions. Please wait ${waitMin} minute(s) and try again.`);
+    return;
+  }
+
+  const err = validate();
+  if (err) { setError(err); return; 
+  }
+
+  setLoading(true);
+  setError("");
     try {
       const emailjs = await import("@emailjs/browser");
       await emailjs.send(
         EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,
         {
-          from_name: form.name,
-          std:       form.std,
-          email:     form.email || "Not provided",
-          phone:     form.phone,
-          course:    form.course || "General Enquiry",
-          message:   form.message || "Student is interested in this course.",
+          from_name: sanitize(form.name),
+          std:      sanitize(form.std),
+          email:     sanitize(form.email) || "Not provided",
+          phone:     sanitize(form.phone),
+          course:    sanitize(form.course) || "General Enquiry",
+          message:   sanitize(form.message) || "Student is interested in this course.",
         },
         EMAILJS_PUBLIC_KEY
       );
@@ -163,7 +188,7 @@ export default function EnquiryForm({ onClose, preSelectedCourse = "", inline = 
             <select className="eq-select" value={form.course}
               onChange={e => handleChange("course", e.target.value)}>
               <option value="">-- Select Course --</option>
-              {ALL_COURSES.map(c => <option key={c} value={c}>{c}</option>)}
+              {COURSES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
 

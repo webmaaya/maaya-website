@@ -1,0 +1,153 @@
+/* ===== Company Section ===== */
+.clients2-section {
+  padding: 32px 0;
+  background: var(--background);
+  position: relative;
+  overflow: hidden;
+}
+
+.clients2-heading-wrap {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 0 16px;
+}
+
+.clients2-label {
+     background: var(--primary-light);
+    color: var(--primary);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-radius: 30px;
+    margin-bottom: 14px;
+    padding: 5px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-block;}
+
+.clients2-title {
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  color: #1E293B;
+  margin: 0;
+}
+
+/* Carousel layout */
+.clients2-carousel-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Laurel sides */
+.laurel-left {
+  flex-shrink: 0;
+  padding-left: 8px;
+}
+
+.laurel-right {
+  flex-shrink: 0;
+  padding-right: 8px;
+}
+
+@media (min-width: 1024px) {
+  .laurel-left  { padding-left: 160px; }
+  .laurel-right { padding-right: 160px; }
+}
+
+/* Laurel SVG sizing */
+.laurel-svg {
+  display: block;
+  width: auto;
+  height: 84px;
+}
+
+@media (min-width: 768px) {
+  .laurel-svg { height: 164px; }
+}
+
+/* Logo rows */
+.clients2-rows {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Single logo row */
+.logo-row-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 12px 0;
+}
+
+.logo-fade-left {
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%; width: 60px;
+  background: linear-gradient(to right, hsl(var(--background)), transparent);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.logo-fade-right {
+  position: absolute;
+  right: 0; top: 0;
+  height: 100%; width: 60px;
+  background: linear-gradient(to left, hsl(var(--background)), transparent);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Scrolling track */
+.logo-track {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  width: max-content;
+}
+
+@media (min-width: 1024px) {
+  .logo-track { gap: 64px; }
+}
+
+.logo-track--left  { animation: scroll-left  35s linear infinite; }
+.logo-track--right { animation: scroll-right 35s linear infinite; }
+.logo-track:hover  { animation-play-state: paused; }
+
+/* Logo images */
+/* Every logo sits inside a fixed-size box so they all read as the same
+   visual size on the page, no matter how much transparent padding the
+   original PNG has baked in. */
+.logo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100px;
+  height: 56px;
+}
+
+@media (min-width: 1024px) {
+  .logo-item { width: 160px; height: 88px; }
+}
+
+.logo-img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Keyframes */
+@keyframes scroll-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scroll-right {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}

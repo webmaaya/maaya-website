@@ -103,7 +103,7 @@ export default function Login() {
           <Link to="/register">Register Free</Link>
         </div>
 
-        <Link to="/" className="auth-back">← Back to Website</Link>
+        <Link to="/" className="auth-back">← Back to home</Link>
       </div>
     </div>
   );
