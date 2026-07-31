@@ -12,7 +12,7 @@ import ContactPopup from "../../Components/sections/ContactPopup";
 import AIPopup from "../../Components/sections/AIPopup";
 
 // Ad runs until this date (inclusive)
-const AD_END_DATE = new Date("2026-07-30T23:59:59");
+const AD_END_DATE = new Date("2026-08-16T23:59:59");
 
 export default function Home() {
   const [showContactPopup, setShowContactPopup] = useState(false);
