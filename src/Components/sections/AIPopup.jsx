@@ -43,7 +43,7 @@ export default function AIPopup({ onClose }) {
 
         {/* Expiry note */}
         <p className="aipop__expiry">
-          ⏳ Limited time offer — valid till 30 September 2026
+          ⏳ Limited time offer — valid till 30 October 2026
         </p>
 
       </div>
