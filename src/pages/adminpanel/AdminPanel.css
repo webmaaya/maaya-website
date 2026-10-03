@@ -45,7 +45,7 @@
 /* ── Layout ──────────────────────────────────────────────── */
 .admin__body {
   display: grid;
-  grid-template-columns: 380px 1fr;
+   grid-template-columns: 380px minmax(0, 1fr);
   gap: 0;
   min-height: calc(100vh - 60px);
 }
@@ -55,11 +55,9 @@
   background: #1e293b;
   border-right: 1px solid #334155;
   padding: 24px;
-  overflow-y: auto;
-  max-height: calc(100vh - 60px);
-  position: sticky;
-  top: 60px;
+  align-self: start;
 }
+.admin__list-panel { min-width: 0; }
 
 .admin__form-title {
   font-family: var(--font-heading);
@@ -340,7 +338,7 @@
 /* ── Right Panel — Course List ───────────────────────────── */
 .admin__list-panel {
   padding: 24px;
-  overflow-y: auto;
+   min-width: 0;
 }
 
 /* List Tabs (Diploma / Online) */
@@ -349,13 +347,16 @@
   gap: 0;
   border: 1.5px solid #334155;
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
-
 .admin__list-tab {
-  flex: 1;
-  padding: 10px;
+  flex: 1 0 auto;
+  white-space: nowrap;
+  padding: 10px 16px;
   font-size: 13px;
   font-weight: 700;
   border: none;
@@ -477,7 +478,77 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
+
+/* Safety net: kuch bhi page ko side mein na phailaye */
+.admin { overflow-x: hidden; }
+.admin *, .admin *::before, .admin *::after { box-sizing: border-box; }
+
+/* Inputs hamesha apne container mein rahein */
+.admin input,
+.admin select,
+.admin textarea { min-width: 0; max-width: 100%; }
+
+/* Date picker dark theme + sahi size */
+.admin input[type="date"] { color-scheme: dark; min-height: 42px; }
+
+/* Inline-style wale grids ke andar ke items shrink ho sakein */
+.admin [style*="grid-template-columns"] > * { min-width: 0; }
+
+/* Lamba text/link wrap ho */
+.admin__course-row-name,
+.admin__course-row-meta,
+.admin__course-row-meta span { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+
+/* Tablet */
 @media (max-width: 900px) {
-  .admin__body { grid-template-columns: 1fr; }
-  .admin__form-panel { position: static; max-height: none; }
+  .admin__body { grid-template-columns: minmax(0, 1fr); }
+  .admin__form-panel {
+    position: static;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid #334155;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .admin__topbar {
+    height: auto;
+    min-height: 56px;
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 6px;
+    position: static;
+  }
+  .admin__topbar-title { font-size: 15px; flex-wrap: wrap; }
+
+  .admin__form-panel,
+  .admin__list-panel { padding: 14px; }
+
+  .admin__type-btn { padding: 9px 4px; font-size: 12px; }
+
+  /* Do-do column wale fields mobile par ek ke neeche ek */
+  .admin [style*="1fr 1fr"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  /* Sub-course row: chhoti screen par wrap ho */
+  .admin__include-row { flex-wrap: wrap; }
+  .admin__include-row input[placeholder="Sub-course name"] { flex: 1 1 100%; width: 100% !important; }
+
+  .admin__course-row {
+    padding: 12px;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .admin__course-row-name { font-size: 13.5px; }
+  .admin__course-row-meta { gap: 6px; }
+
+  .admin__toast {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    justify-content: space-between;
+    font-size: 13px;
+  }
 }
