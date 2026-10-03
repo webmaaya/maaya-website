@@ -18,6 +18,48 @@ const TYPE_SPEED   = 70;   // ms per character while typing
 const ERASE_SPEED  = 35;   // ms per character while erasing
 const HOLD_TIME    = 1300; // ms to hold full word before erasing
 
+// Course ke saare fields ko ek text mein jodta hai
+const buildSearchText = (c) => {
+  const parts = [
+    c.title,
+    c.track,
+    c.overview,
+    c.description,
+    ...(c.tags || []),
+    ...(c.features || []),
+    ...(c.whatYouLearn || []),
+    ...(c.whoShouldJoin || []),
+    ...(c.includes || []).map(i => i.name),
+    ...(c.syllabus || []).flatMap(m => [m.moduleTitle, ...(m.chapters || [])]),
+  ];
+  return parts.filter(Boolean).join(" ").toLowerCase();
+};
+
+const findMatchHint = (c, q) => {
+  const hit = (s) => s && s.toLowerCase().includes(q);
+  if (hit(c.title) || hit(c.track)) return null; 
+
+  const inc = (c.includes || []).find(i => hit(i.name));
+  if (inc) return `Includes: ${inc.name}`;
+
+  const learn = (c.whatYouLearn || []).find(hit);
+  if (learn) return `Learn: ${learn}`;
+
+  for (const m of c.syllabus || []) {
+    if (hit(m.moduleTitle)) return `Syllabus: ${m.moduleTitle}`;
+    const ch = (m.chapters || []).find(hit);
+    if (ch) return `Syllabus: ${ch}`;
+  }
+
+  const tag = (c.tags || []).find(hit);
+  if (tag) return `Tag: ${tag}`;
+
+  const feat = (c.features || []).find(hit);
+  if (feat) return `Feature: ${feat}`;
+
+  return "Matches course details";
+};
+
 export default function SearchBar() {
   const navigate = useNavigate();
   const wrapRef  = useRef(null);
@@ -100,11 +142,18 @@ export default function SearchBar() {
   }, []);
 
   // ── Filtered results ────────────────────────────────────────
-  const results = query.trim()
-    ? courses.filter(c =>
-        c.title?.toLowerCase().includes(query.trim().toLowerCase()) ||
-        c.track?.toLowerCase().includes(query.trim().toLowerCase())
-      ).slice(0, 6)
+  const q = query.trim().toLowerCase();
+
+  const results = q
+    ? courses
+        .filter(c => buildSearchText(c).includes(q))
+        // title/track match wale pehle dikhao
+        .sort((a, b) => {
+          const aTop = (a.title?.toLowerCase().includes(q) || a.track?.toLowerCase().includes(q)) ? 0 : 1;
+          const bTop = (b.title?.toLowerCase().includes(q) || b.track?.toLowerCase().includes(q)) ? 0 : 1;
+          return aTop - bTop;
+        })
+        .slice(0, 8)
     : [];
 
   const handleSelect = (course) => {
@@ -180,6 +229,11 @@ export default function SearchBar() {
                   <div className="navsearch__result-meta">
                     {c.track} {c._type === "online" && <span className="navsearch__result-tag">🌐 Online</span>}
                   </div>
+                   {findMatchHint(c, q) && (
+                    <div className="navsearch__result-meta" style={{ color:"#2563eb", marginTop:2 }}>
+                      🔎 {findMatchHint(c, q)}
+                    </div>
+                  )}
                 </div>
                 <span className="navsearch__result-arrow">→</span>
               </div>

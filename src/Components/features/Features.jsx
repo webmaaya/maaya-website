@@ -25,7 +25,7 @@ export default function Features() {
         {/* Header */}
         <div className="section-header">
           <div className="section-badge">✨ Why Choose Us</div>
-          <h2 className="section-title">Why MAAYA Enterprises?</h2>
+          <h2 className="section-title">Why MAAYA?</h2>
           <p className="section-sub">We go beyond certificates — we build careers</p>
         </div>
 

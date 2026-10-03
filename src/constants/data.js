@@ -13,10 +13,10 @@ export const NAV_LINKS = [
 
 // ── Contact Info (Footer & Contact Page) ────────────────────
 export const CONTACT_INFO = {
-  address:   "Panchami Heights, 204, College Rd, near Moti Talav, Sawantwadi, Maharashtra 416510",
-  phone:     "919420277373",
+  address:   "204,  Panchami Heights, S.P.K College Rd, Near Saraswat Bank, Sawantwadi, Maharashtra 416510",
+  phone:     "+91 9420277373",
   email:     "education.maaya@gmail.com",
-  whatsapp:  "919420277373",
+  whatsapp:  "+91 9420277373",
   mapLink:   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d491154.2530500439!2d73.56413236989431!3d15.901598384411846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbff55e1a060675%3A0x4f9b888315408d04!2sMAAYA%20ENTERPRISES!5e0!3m2!1sen!2sin!4v1777992900325!5m2!1sen!2sin",
 };
 

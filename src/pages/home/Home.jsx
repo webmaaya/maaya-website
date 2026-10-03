@@ -68,11 +68,11 @@ useEffect(() => {
         <ContactPopup onClose={() => setShowContactPopup(false)} />
       )}
 
-      {/* 1. Placed Students */}
-       <PlacedStudents />
-
-      {/* 2. Hero banner with headline + stats */}
+       {/* 1. Hero banner with headline + stats */}
       <Hero/>
+
+         {/* 2. Placed Students */}
+       <PlacedStudents />
 
       {/* 3. Featured courses grid (shows first 6) */}
       <CoursesSection/>

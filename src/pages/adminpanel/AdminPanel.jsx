@@ -42,6 +42,21 @@ const formatIndianPrice = (value = "") => {
     : lastThree;
 };
 
+const getStatus = (item) => {
+  const today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD (local time)
+  if (!item.active) return "inactive";
+  if (item.endDate && item.endDate < today) return "expired";
+  if (item.startDate && item.startDate > today) return "scheduled";
+  return "active";
+};
+
+const STATUS_UI = {
+  active:    { label: "✅ Active",    color: "#34D399" },
+  expired:   { label: "⏰ Expired",   color: "#F59E0B" },
+  scheduled: { label: "🕒 Scheduled", color: "#60A5FA" },
+  inactive:  { label: "❌ Inactive",  color: "#EF4444" },
+};
+
 const EMPTY_FORM = {
   title:"", track:"Accounting", icon:"📚", gradient:"grad-blue", badge:"",certificateImage:"",thumbLogo:"",
   isOnline:false, isFree:false, overview:"", duration:"", price:"", originalPrice:"",
@@ -52,10 +67,16 @@ const EMPTY_FORM = {
   syllabusPdfLink: "",
 };
 
+const EMPTY_POPUP = {
+  title: "", message: "", imageUrl: "", videoUrl: "",
+  btnText: "", link: "", startDate: "", endDate: "", active: true,
+};
+
 export default function AdminPanel() {
 const [announcements, setAnnouncements] = useState([]);
 const [annForm, setAnnForm] = useState({ text:"", startDate:"", endDate:"", active:true, link:"" });
 const [annLoading, setAnnLoading] = useState(false);
+const [editingAnnId, setEditingAnnId] = useState(null);
   const [form,     setForm]     = useState(EMPTY_FORM);
   const [diplomas, setDiplomas] = useState([]);
   const [online,   setOnline]   = useState([]);
@@ -66,21 +87,37 @@ const [annLoading, setAnnLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [toast,    setToast]    = useState(null);
   const [listTab,  setListTab]  = useState("diploma");
+  const [heroAds,     setHeroAds]     = useState([]);
+  const [adForm,      setAdForm]      = useState({
+  title: "", description: "", imageUrl: "", videoUrl: "", icon: "🎓",
+  badge: "", note: "", btnText: "", link: "",
+  startDate: "", endDate: "", active: true,});
+  const [adLoading,   setAdLoading]   = useState(false);
+  const [editingAdId, setEditingAdId] = useState(null);
+  const [popups, setPopups] = useState([]);
+  const [popupForm, setPopupForm] = useState(EMPTY_POPUP);
+  const [popupLoading, setPopupLoading] = useState(false);
+  const [editingPopupId, setEditingPopupId] = useState(null);
   const toastTimer = useRef(null);
 
   const fetchAll = async () => {
     setFetching(true);
     try {
-      const [d, o, f, ann] = await Promise.all([
+      const [d, o, f, ann,herosnap,popupSnap] = await Promise.all([
         getDocs(collection(db, "diplomaCourses")),
         getDocs(collection(db, "onlineCourses")),
         getDocs(collection(db, "freeCourses")),
         getDocs(collection(db, "announcements")),
+        getDocs(collection(db, "heroAds")),
+        getDocs(collection(db, "welcomePopups")),
+
       ]);
       setDiplomas(d.docs.map(x => ({ id:x.id, ...x.data() })));
       setOnline(o.docs.map(x => ({ id:x.id, ...x.data() })));
       setFreeCourses(f.docs.map(x => ({ id:x.id, ...x.data() })));
       setAnnouncements(ann.docs.map(x => ({ id:x.id, ...x.data() })));
+      setHeroAds(herosnap.docs.map(x => ({ id:x.id, ...x.data() })));
+      setPopups(popupSnap.docs.map(x => ({ id:x.id, ...x.data() })));
     } catch(e) { showToast("Fetch error","error"); }
     setFetching(false);
   //   const ann = await getDocs(collection(db, "announcements"));
@@ -243,45 +280,47 @@ const [annLoading, setAnnLoading] = useState(false);
     } catch(e) { showToast("Error: "+e.message,"error"); }
   };
 
-  const handleAddAnnouncement = async () => {
-    if (!annForm.text.trim())
-      return showToast("Text required!","error");
+ const handleAddAnnouncement = async () => {
+  if (!annForm.text.trim()) return showToast("Text required!","error");
+  if (!annForm.endDate)     return showToast("End date required!","error");
 
-    if (!annForm.endDate)
-      return showToast("End date required!","error");
+  const isEdit = !!editingAnnId;
+  if (!confirmAction(`Are you sure you want to ${isEdit ? "update" : "add"} this announcement?`))
+    return;
 
-    if (!confirmAction("Are you sure you want to add this announcement?"))
-      return;
-
-    setAnnLoading(true);
-
-    try {
+  setAnnLoading(true);
+  try {
+    if (isEdit) {
+      const prev = announcements.find(x => x.id === editingAnnId);
+      const { id: _pid, ...prevData } = prev || {};
+      await updateDoc(doc(db, "announcements", editingAnnId), {
+        ...annForm,
+        updatedAt: serverTimestamp(),
+      });
+      const editedId = editingAnnId;
+      withUndo("Announcement updated.", async () => {
+        await setDoc(doc(db, "announcements", editedId), prevData);
+        showToast("Update undone.");
+        fetchAll();
+      });
+    } else {
       const ref = await addDoc(collection(db, "announcements"), {
         ...annForm,
         createdAt: serverTimestamp(),
       });
-
       withUndo("Announcement added.", async () => {
         await deleteDoc(doc(db, "announcements", ref.id));
         showToast("Added announcement removed.");
         fetchAll();
       });
-
-      setAnnForm({
-        text:"",
-        startDate:"",
-        endDate:"",
-        active:true,
-        link:"",
-      });
-
-      fetchAll();
-    } catch(e) {
-      showToast("Error: "+e.message,"error");
     }
-
-    setAnnLoading(false);
-  };
+    resetAnnForm();
+    fetchAll();
+  } catch(e) {
+    showToast("Error: "+e.message,"error");
+  }
+  setAnnLoading(false);
+};
 
   const handleDeleteAnnouncement = async (announcement) => {
     if (!confirmAction("Are you sure you want to delete this announcement?"))
@@ -302,7 +341,92 @@ const [annLoading, setAnnLoading] = useState(false);
     }
   };
 
+  const resetAnnForm = () => {
+  setEditingAnnId(null);
+  setAnnForm({ text:"", startDate:"", endDate:"", active:true, link:"" });
+};
+
+const handleEditAnnouncement = (a) => {
+  setEditingAnnId(a.id);
+  setAnnForm({
+    text: a.text || "",
+    startDate: a.startDate || "",
+    endDate: a.endDate || "",
+    active: a.active !== undefined ? a.active : true,
+    link: a.link || "",
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+  const handleEditAd = (ad) => {
+    setEditingAdId(ad.id);
+    setAdForm({
+      title: ad.title || ad.Title || "",
+      description: ad.description || "",
+      imageUrl: ad.imageUrl || ad.Image || "",
+      videoUrl: ad.videoUrl || "",
+      icon: ad.icon || "🎓",
+      badge: ad.badge || ad.Badge || "",
+      note: ad.note || "",
+      btnText: ad.btnText || ad.Button || "",
+      link: ad.link || ad.Link || "",
+      startDate: ad.startDate || "",
+      endDate: ad.endDate || "",
+      active: ad.active !== undefined ? ad.active : (ad.Active === "true" || ad.Active === true),
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const resetAdForm = () => {
+    setEditingAdId(null);
+    setAdForm({
+      title: "", description: "", imageUrl: "", videoUrl: "", icon: "🎓",
+      badge: "", note: "", btnText: "", link: "",
+      startDate: "", endDate: "", active: true,
+    });
+  };
+
   const resetForm = () => { setForm(EMPTY_FORM); setEditId(null); setEditCol("diplomaCourses"); };
+  const resetPopupForm = () => { setEditingPopupId(null); setPopupForm(EMPTY_POPUP); };
+
+const handleEditPopup = (p) => {
+  setEditingPopupId(p.id);
+  const { id, createdAt, updatedAt, ...rest } = p;
+  setPopupForm({ ...EMPTY_POPUP, ...rest });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+const handleSavePopup = async () => {
+  if (!popupForm.title.trim() && !popupForm.imageUrl.trim() && !popupForm.videoUrl.trim())
+    return showToast("Add at least a title, image or video!", "error");
+  if (popupForm.btnText.trim() && !popupForm.link.trim())
+    return showToast("Button needs a link!", "error");
+  setPopupLoading(true);
+  try {
+    if (editingPopupId) {
+      await updateDoc(doc(db, "welcomePopups", editingPopupId), { ...popupForm, updatedAt: serverTimestamp() });
+      showToast("✅ Popup updated!");
+    } else {
+      await addDoc(collection(db, "welcomePopups"), { ...popupForm, createdAt: serverTimestamp() });
+      showToast("✅ Popup added!");
+    }
+    resetPopupForm(); fetchAll();
+  } catch (e) { showToast("Error: " + e.message, "error"); }
+  setPopupLoading(false);
+};
+
+const handleDeletePopup = async (p) => {
+  if (!confirmAction("Delete this popup?")) return;
+  const { id, ...restoreData } = p;
+  try {
+    await deleteDoc(doc(db, "welcomePopups", id));
+    withUndo("Popup deleted.", async () => {
+      await setDoc(doc(db, "welcomePopups", id), restoreData);
+      showToast("Popup restored."); fetchAll();
+    });
+    fetchAll();
+  } catch (e) { showToast("Error: " + e.message, "error"); }
+};
 
   return (
     <div className="admin">
@@ -596,7 +720,11 @@ const [annLoading, setAnnLoading] = useState(false);
             <button className={`admin__list-tab ${listTab==="free"?"active":""}`}
               onClick={()=>setListTab("free")}>🆓 Free ({freeCourses.length})</button>
               <button className={`admin__list-tab ${listTab==="announce"?"active":""}`}
-  onClick={()=>setListTab("announce")}>📢 Announcements</button>
+              onClick={()=>setListTab("announce")}>📢 Announcements</button>
+              <button className={`admin__list-tab ${listTab==="heroAd"?"active":""}`}
+              onClick={()=>setListTab("heroAd")}>🖼️ Hero Ads</button>
+              <button className={`admin__list-tab ${listTab==="popup"?"active":""}`}
+              onClick={()=>setListTab("popup")}>🎉 Popup ({popups.length})</button>
           </div>
         
         {fetching ? (
@@ -783,7 +911,7 @@ const [annLoading, setAnnLoading] = useState(false);
         color:"#60A5FA",
         marginBottom:12
       }}>
-        📢 Add New Announcement
+        {editingAnnId ? "✏️ Edit Announcement" : "📢 Add New Announcement"}
       </div>
 
       <div className="admin__group">
@@ -803,22 +931,21 @@ const [annLoading, setAnnLoading] = useState(false);
           }
         />
       </div>
-{/* 
-  To add link to the announcement, you can use the optional "Link" field below. If you leave it blank, clicking the announcement will open a contact popup instead of navigating to a link. */}
-  <div className="admin__group">
-  <label className="admin__label">
-    Link (optional)
-  </label>
-  <input
-    className="admin__input"
-    placeholder="e.g. /courses or https://example.com (blank = Contact popup)"
-    value={annForm.link}
-    onChange={e => setAnnForm(p => ({ ...p, link: e.target.value }))}
-  />
-  <span style={{ fontSize:11, color:"#64748B", marginTop:4, display:"block" }}>
-    💡 Leave blank → Contact popup will open on click
-  </span>
-</div>
+
+      <div className="admin__group">
+        <label className="admin__label">
+          Link (optional)
+        </label>
+        <input
+          className="admin__input"
+          placeholder="e.g. /courses or https://example.com (blank = Contact popup)"
+          value={annForm.link}
+          onChange={e => setAnnForm(p => ({ ...p, link: e.target.value }))}
+        />
+        <span style={{ fontSize:11, color:"#64748B", marginTop:4, display:"block" }}>
+          💡 Leave blank → Contact popup will open on click
+        </span>
+      </div>
 
       <div style={{
         display:"grid",
@@ -890,13 +1017,18 @@ const [annLoading, setAnnLoading] = useState(false);
         </label>
       </div>
 
-      <button
+       <button
         className="btn-admin-primary"
         disabled={annLoading}
         onClick={handleAddAnnouncement}
       >
-        {annLoading ? "Saving..." : "📢 Add Announcement"}
+        {annLoading ? "Saving..." : editingAnnId ? "💾 Update Announcement" : "📢 Add Announcement"}
       </button>
+      {editingAnnId && (
+        <button className="btn-admin-secondary" style={{ marginTop:8 }} onClick={resetAnnForm}>
+          Cancel
+        </button>
+      )}
     </div>
 
     {/* List */}
@@ -927,32 +1059,305 @@ const [annLoading, setAnnLoading] = useState(false);
             </span>
 
             <span>·</span>
-
-            <span style={{
-              color: a.active ? "#34D399" : "#EF4444"
-            }}>
-              {a.active ? "✅ Active" : "❌ Inactive"}
+   <span style={{ color: STATUS_UI[getStatus(a)].color }}>
+              {STATUS_UI[getStatus(a)].label}
             </span>
           </div>
         </div>
-
         <div className="admin__course-row-actions">
+          <button className="btn-icon" onClick={() => handleEditAnnouncement(a)} title="Edit">
+            ✏️
+          </button>
 
           <button
             className="btn-icon danger"
             onClick={() => handleDeleteAnnouncement(a)}
+            title="Delete"
           >
             🗑️
           </button>
+        </div>  
+      </div>
+    ))}
+  </div>
 
+) : listTab==="heroAd" ? (
+  <div>
+ 
+    <div style={{ background:"#1e293b", borderRadius:10, padding:16, marginBottom:20 }}>
+     <div style={{ fontSize:13, fontWeight:700, color:"#60A5FA", marginBottom:12 }}>
+        {editingAdId ? "✏️ Edit Hero Ad" : "🖼️ Add Hero Ad"}
+      </div>
+ 
+      <div className="admin__group">
+        <label className="admin__label">Ad Title *</label>
+        <input className="admin__input"
+          placeholder="e.g. Free AI MasterClass!"
+          value={adForm.title}
+          onChange={e => setAdForm(p => ({...p, title:e.target.value}))} />
+      </div>
+ 
+      <div className="admin__group">
+        <label className="admin__label">Description</label>
+        <textarea className="admin__textarea" rows={2}
+          placeholder="Short description of the offer"
+          value={adForm.description}
+          onChange={e => setAdForm(p => ({...p, description:e.target.value}))} />
+      </div>
+ 
+      <div className="admin__group">
+        <label className="admin__label">Image URL (optional — Cloudinary/Drive)</label>
+        <input className="admin__input"
+          placeholder="https://res.cloudinary.com/... or leave blank"
+          value={adForm.imageUrl}
+          onChange={e => setAdForm(p => ({...p, imageUrl:e.target.value}))} />
+      </div>
+
+        <div className="admin__group">
+        <label className="admin__label">YouTube Video Link — optional</label>
+        <input className="admin__input"
+          placeholder="https://www.youtube.com/watch?v=..."
+          value={adForm.videoUrl}
+          onChange={e => setAdForm(p => ({...p, videoUrl:e.target.value}))} />
+      </div>
+ 
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">Icon (if no image)</label>
+          <input className="admin__input" placeholder="🎓"
+            value={adForm.icon}
+            onChange={e => setAdForm(p => ({...p, icon:e.target.value}))}
+            style={{ textAlign:"center", fontSize:20 }} />
+        </div>
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">Badge Text</label>
+          <input className="admin__input" placeholder="e.g. LIMITED OFFER"
+            value={adForm.badge}
+            onChange={e => setAdForm(p => ({...p, badge:e.target.value}))} />
+        </div>
+      </div>
+ 
+      <div className="admin__group" style={{ marginTop:10 }}>
+        <label className="admin__label">Note (shown in yellow box)</label>
+        <input className="admin__input"
+          placeholder="e.g. Use center code 39210201"
+          value={adForm.note}
+          onChange={e => setAdForm(p => ({...p, note:e.target.value}))} />
+      </div>
+ 
+      <div className="admin__group">
+        <label className="admin__label">Button Text</label>
+        <input className="admin__input" placeholder="e.g. Register Now"
+          value={adForm.btnText}
+          onChange={e => setAdForm(p => ({...p, btnText:e.target.value}))} />
+      </div>
+ 
+      <div className="admin__group">
+        <label className="admin__label">Link (internal /courses or external https://...)</label>
+        <input className="admin__input"
+          placeholder="e.g. /courses or https://www.mscit.ai/"
+          value={adForm.link}
+          onChange={e => setAdForm(p => ({...p, link:e.target.value}))} />
+      </div>
+ 
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">Start Date</label>
+          <input className="admin__input" type="date"
+            value={adForm.startDate}
+            onChange={e => setAdForm(p => ({...p, startDate:e.target.value}))} />
+        </div>
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">End Date</label>
+          <input className="admin__input" type="date"
+            value={adForm.endDate}
+            onChange={e => setAdForm(p => ({...p, endDate:e.target.value}))} />
+        </div>
+      </div>
+ 
+      <div style={{ display:"flex", alignItems:"center", gap:8, margin:"12px 0" }}>
+        <input type="checkbox" id="adActive" checked={adForm.active}
+          onChange={e => setAdForm(p => ({...p, active:e.target.checked}))}
+          style={{ width:16, height:16 }} />
+        <label htmlFor="adActive" style={{ fontSize:13, color:"#94A3B8", fontWeight:600 }}>
+          Active (show on website)
+        </label>
+      </div>
+ 
+  <button className="btn-admin-primary" disabled={adLoading}
+        onClick={async () => {
+          if (!adForm.title.trim()) return showToast("Title required!","error");
+          setAdLoading(true);
+          try {
+            if (editingAdId) {
+              await updateDoc(doc(db, "heroAds", editingAdId), {
+                ...adForm,
+                updatedAt: serverTimestamp(),
+              });
+              showToast("✅ Hero Ad updated!");
+            } else {
+              await addDoc(collection(db, "heroAds"), {
+                ...adForm,
+                createdAt: serverTimestamp(),
+              });
+              showToast("✅ Hero Ad added!");
+            }
+            resetAdForm();
+            fetchAll();
+          } catch(e) { showToast("Error: "+e.message,"error"); }
+          setAdLoading(false);
+        }}>
+        {adLoading ? "Saving..." : editingAdId ? "💾 Update Hero Ad" : "🖼️ Add Hero Ad"}
+      </button>
+
+      {editingAdId && (
+        <button 
+          className="btn-admin-secondary" 
+          style={{ marginTop: 8 }} 
+          onClick={resetAdForm}
+        >
+          Cancel
+        </button>
+      )}
+    </div>
+ 
+    {/* List of existing ads */}
+    {heroAds.length === 0 ? (
+      <div className="admin__status">
+        <span className="admin__status-icon">📭</span>
+        <p>No hero ads yet</p>
+      </div>
+    ) : heroAds.map(a => (
+      <div key={a.id} className="admin__course-row">
+        <div className="admin__course-row-left">
+          <div className="admin__course-row-name" style={{ fontSize:13 }}>
+            {a.icon} {a.title}
+            {a.badge && <span className="admin__badge-tag">{a.badge}</span>}
+          </div>
+          <div className="admin__course-row-meta">
+            <span>{a.startDate||"No start"} → {a.endDate||"No end"}</span>
+            <span>·</span>
+         <span style={{ color: STATUS_UI[getStatus(a)].color }}>
+  {STATUS_UI[getStatus(a)].label}
+</span>
+            {a.link && <><span>·</span><span style={{color:"#60A5FA"}}>🔗 {a.link}</span></>}
+          </div>
+        </div>
+ <div className="admin__course-row-actions">
+          <button
+            className="btn-icon"
+            onClick={() => handleEditAd(a)}
+            title="Edit Ad"
+          >
+            ✏️
+          </button>
+
+          <button className="btn-icon danger"
+            onClick={async () => {
+              if (!window.confirm("Delete this ad?")) return;
+              await deleteDoc(doc(db, "heroAds", a.id));
+              showToast("🗑️ Ad deleted"); fetchAll();
+            }}>
+            🗑️
+          </button>
         </div>
       </div>
     ))}
   </div>
 
-) : null}
+) : listTab==="popup" ? (
+  <div>
+    <div style={{ background:"#1e293b", borderRadius:10, padding:16, marginBottom:20 }}>
+      <div style={{ fontSize:13, fontWeight:700, color:"#60A5FA", marginBottom:12 }}>
+        {editingPopupId ? "✏️ Edit Popup" : "🎉 Add Welcome Popup"}
+      </div>
 
-          
+      <div className="admin__group">
+        <label className="admin__label">Title (e.g. Happy Raksha Bandhan!)</label>
+        <input className="admin__input" value={popupForm.title}
+          onChange={e=>setPopupForm(p=>({...p,title:e.target.value}))} />
+      </div>
+
+      <div className="admin__group">
+        <label className="admin__label">Note / Wishes message</label>
+        <textarea className="admin__textarea" rows={3} value={popupForm.message}
+          onChange={e=>setPopupForm(p=>({...p,message:e.target.value}))} />
+      </div>
+
+      <div className="admin__group">
+        <label className="admin__label">Image URL (CDN) — optional</label>
+        <input className="admin__input" placeholder="https://res.cloudinary.com/..." value={popupForm.imageUrl}
+          onChange={e=>setPopupForm(p=>({...p,imageUrl:e.target.value}))} />
+      </div>
+
+      <div className="admin__group">
+        <label className="admin__label">YouTube Video Link — optional</label>
+        <input className="admin__input" placeholder="https://www.youtube.com/watch?v=..." value={popupForm.videoUrl}
+          onChange={e=>setPopupForm(p=>({...p,videoUrl:e.target.value}))} />
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">Button Text (blank = no button)</label>
+          <input className="admin__input" placeholder="e.g. Explore Courses" value={popupForm.btnText}
+            onChange={e=>setPopupForm(p=>({...p,btnText:e.target.value}))} />
+        </div>
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">Button Link</label>
+          <input className="admin__input" placeholder="/courses or https://..." value={popupForm.link}
+            onChange={e=>setPopupForm(p=>({...p,link:e.target.value}))} />
+        </div>
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginTop:10 }}>
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">Start Date</label>
+          <input className="admin__input" type="date" value={popupForm.startDate}
+            onChange={e=>setPopupForm(p=>({...p,startDate:e.target.value}))} />
+        </div>
+        <div className="admin__group" style={{ margin:0 }}>
+          <label className="admin__label">End Date</label>
+          <input className="admin__input" type="date" value={popupForm.endDate}
+            onChange={e=>setPopupForm(p=>({...p,endDate:e.target.value}))} />
+        </div>
+      </div>
+
+      <div style={{ display:"flex", alignItems:"center", gap:8, margin:"12px 0" }}>
+        <input type="checkbox" id="popupActive" checked={popupForm.active}
+          onChange={e=>setPopupForm(p=>({...p,active:e.target.checked}))} style={{ width:16, height:16 }} />
+        <label htmlFor="popupActive" style={{ fontSize:13, color:"#94A3B8", fontWeight:600 }}>
+          Active (show on website)
+        </label>
+      </div>
+
+      <button className="btn-admin-primary" disabled={popupLoading} onClick={handleSavePopup}>
+        {popupLoading ? "Saving..." : editingPopupId ? "💾 Update Popup" : "🎉 Add Popup"}
+      </button>
+      {editingPopupId && (
+        <button className="btn-admin-secondary" style={{ marginTop:8 }} onClick={resetPopupForm}>Cancel</button>
+      )}
+    </div>
+
+    {popups.length === 0 ? (
+      <div className="admin__status"><span className="admin__status-icon">📭</span><p>No popups yet</p></div>
+    ) : popups.map(p => (
+      <div key={p.id} className="admin__course-row">
+        <div className="admin__course-row-left">
+          <div className="admin__course-row-name" style={{ fontSize:13 }}>🎉 {p.title || "(No title)"}</div>
+          <div className="admin__course-row-meta">
+            <span>{p.startDate||"No start"} → {p.endDate||"No end"}</span>
+            <span>·</span>
+            <span style={{ color: STATUS_UI[getStatus(p)].color }}>{STATUS_UI[getStatus(p)].label}</span>
+          </div>
+        </div>
+        <div className="admin__course-row-actions">
+          <button className="btn-icon" onClick={()=>handleEditPopup(p)}>✏️</button>
+          <button className="btn-icon danger" onClick={()=>handleDeletePopup(p)}>🗑️</button>
+        </div>
+      </div>
+    ))}
+  </div>
+ ) : null}
         </div>
       </div>
 

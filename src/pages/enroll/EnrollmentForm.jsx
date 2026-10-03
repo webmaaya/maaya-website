@@ -137,41 +137,21 @@ export default function EnrollmentForm() {
     setErrors(p   => ({ ...p, [field]: "" }));
   };
 
-  // ── Validation ───────────────────────────────────────────
+  // ── Validation (sab optional, sirf bhari hui value ka format check) ──
   const v1 = () => {
     const e = {};
-    if (!form.fullName.trim())      e.fullName      = "Full name required";
-    if (!form.motherName.trim())    e.motherName    = "Mother's name required";
-    if (!form.schoolCollege.trim()) e.schoolCollege = "School / College name required";
-    if (!/^[6-9]\d{9}$/.test(form.whatsapp))
+    // WhatsApp: sirf tab check karo jab user ne kuch likha ho
+    if (form.whatsapp && !/^[6-9]\d{9}$/.test(form.whatsapp))
       e.whatsapp = "Valid 10-digit WhatsApp number required";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+    // Email: sirf tab check karo jab user ne kuch likha ho
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       e.email = "Valid email required";
-    if (!form.qualification)
-      e.qualification = "Please select your qualification";
-    if (!form.currentProfile.length)
-      e.currentProfile = "Please select at least one profile";
     setErrors(e);
     return !Object.keys(e).length;
   };
 
-  const v2 = () => {
-    const e = {};
-    if (!files.passport)     e.passport     = "Passport photo required";
-    if (!files.signature)    e.signature    = "Signature photo required";
-    if (!files.aadhaarFront) e.aadhaarFront = "Aadhaar front photo required";
-    if (form.aadhaarType === "small" && !files.aadhaarBack)
-      e.aadhaarBack = "Aadhaar back photo required for small Aadhaar";
-    setErrors(e);
-    return !Object.keys(e).length;
-  };
-
-  const v3 = () => {
-    const e = {};
-    if (!files.paymentShot) e.paymentShot = "Payment screenshot required";
-    setErrors(e);
-    return !Object.keys(e).length;
-  };
+  const v2 = () => true;
+  const v3 = () => true;
 
   const next = () => {
     if (step === 1 && v1()) { setStep(2); window.scrollTo({ top:0, behavior:"smooth" }); }
@@ -180,6 +160,7 @@ export default function EnrollmentForm() {
 
   // ── SUBMIT: Cloudinary → Firebase → EmailJS ──────────────
   const handleSubmit = async () => {
+    
     if (!v3()) return;
     setSubmitting(true);
 
@@ -187,7 +168,7 @@ export default function EnrollmentForm() {
       // ── 1. Upload all images to Cloudinary ──
       setSubmitProgress("📤 Uploading documents...");
       const folder = `enrollments/${courseId}`;
-
+     const upload = (file) => file ? uploadToCloudinary(file, folder) : Promise.resolve(null);
       const [
         passportUrl,
         signatureUrl,
@@ -195,13 +176,11 @@ export default function EnrollmentForm() {
         aadhaarBackUrl,
         paymentShotUrl,
       ] = await Promise.all([
-        uploadToCloudinary(files.passport,    folder),
-        uploadToCloudinary(files.signature,   folder),
-        uploadToCloudinary(files.aadhaarFront, folder),
-        files.aadhaarBack
-          ? uploadToCloudinary(files.aadhaarBack, folder)
-          : Promise.resolve(null),
-        uploadToCloudinary(files.paymentShot, folder),
+        upload(files.passport),
+        upload(files.signature),
+        upload(files.aadhaarFront),
+        upload(files.aadhaarBack),
+        upload(files.paymentShot),
       ]);
 
       // ── 2. Save to Firebase (URLs only — small & fast) ──
@@ -226,12 +205,11 @@ export default function EnrollmentForm() {
         courseType:     "online",
 
         // ✅ Cloudinary image URLs (real clickable links)
-        passportPhotoUrl:    passportUrl,
-        signaturePhotoUrl:   signatureUrl,
-        aadhaarFrontUrl:     aadhaarFrontUrl,
-        aadhaarBackUrl:      aadhaarBackUrl || null,
-        paymentScreenshotUrl: paymentShotUrl,
-
+              passportPhotoUrl:     passportUrl     || null,
+        signaturePhotoUrl:    signatureUrl    || null,
+        aadhaarFrontUrl:      aadhaarFrontUrl || null,
+        aadhaarBackUrl:       aadhaarBackUrl  || null,
+        paymentScreenshotUrl: paymentShotUrl  || null,
         // Status
         status:      "pending",
         submittedAt: serverTimestamp(),
@@ -268,11 +246,11 @@ export default function EnrollmentForm() {
           course_duration: course?.duration || "—",
 
           // ✅ Clickable image URLs in email
-          passport_url:     passportUrl,
-          signature_url:    signatureUrl,
-          aadhaar_front_url: aadhaarFrontUrl,
-          aadhaar_back_url:  aadhaarBackUrl || "Not uploaded (Big Aadhaar)",
-          payment_url:      paymentShotUrl,
+          passport_url:      passportUrl     || "Not uploaded",
+          signature_url:     signatureUrl    || "Not uploaded",
+          aadhaar_front_url: aadhaarFrontUrl || "Not uploaded",
+          aadhaar_back_url:  aadhaarBackUrl  || "Not uploaded",
+          payment_url:       paymentShotUrl  || "Not uploaded",
 
           // Firebase reference
           enrollment_id: docRef.id,
@@ -293,11 +271,11 @@ Price: ₹${course?.price}
 Duration: ${course?.duration}
 
 📎 DOCUMENTS (click to view):
-• Passport Photo: ${passportUrl}
-• Signature: ${signatureUrl}
-• Aadhaar Front: ${aadhaarFrontUrl}
-• Aadhaar Back: ${aadhaarBackUrl || "Not required (Big Aadhaar)"}
-• Payment Screenshot: ${paymentShotUrl}
+• Passport Photo: ${passportUrl || "Not uploaded"}
+• Signature: ${signatureUrl || "Not uploaded"}
+• Aadhaar Front: ${aadhaarFrontUrl || "Not uploaded"}
+• Aadhaar Back: ${aadhaarBackUrl || "Not uploaded"}
+• Payment Screenshot: ${paymentShotUrl || "Not uploaded"}
 
 Firebase Enrollment ID: ${docRef.id}
 
@@ -398,39 +376,39 @@ Please verify payment and send login credentials to student within 24-48 hours.`
           <div className="enroll__card">
             <h3 className="enroll__card-title">👤 Personal Details</h3>
 
-            <Field label="Full Name *" error={errors.fullName}>
+            <Field label="Full Name " error={errors.fullName}>
               <input className={`enroll__input ${errors.fullName?"error":""}`}
                 placeholder="Enter your full name"
                 value={form.fullName} onChange={e=>setF("fullName",e.target.value)} />
             </Field>
 
-            <Field label="Mother's Name *" error={errors.motherName}>
+            <Field label="Mother's Name" error={errors.motherName}>
               <input className={`enroll__input ${errors.motherName?"error":""}`}
                 placeholder="Enter your mother's full name"
                 value={form.motherName} onChange={e=>setF("motherName",e.target.value)} />
             </Field>
 
-            <Field label="School / College Name *" error={errors.schoolCollege}>
+            <Field label="School / College Name " error={errors.schoolCollege}>
               <input className={`enroll__input ${errors.schoolCollege?"error":""}`}
                 placeholder="Enter your school or college name"
                 value={form.schoolCollege} onChange={e=>setF("schoolCollege",e.target.value)} />
             </Field>
 
             <div className="enroll__two-col">
-              <Field label="WhatsApp Number *" error={errors.whatsapp}>
+              <Field label="WhatsApp Number " error={errors.whatsapp}>
                 <input className={`enroll__input ${errors.whatsapp?"error":""}`}
                   placeholder="10-digit number" maxLength={10}
                   value={form.whatsapp}
                   onChange={e=>setF("whatsapp",e.target.value.replace(/\D/,""))} />
               </Field>
-              <Field label="Email ID *" error={errors.email}>
+              <Field label="Email ID " error={errors.email}>
                 <input className={`enroll__input ${errors.email?"error":""}`}
                   placeholder="your@email.com" type="email"
                   value={form.email} onChange={e=>setF("email",e.target.value)} />
               </Field>
             </div>
 
-            <Field label="Educational Qualification *" error={errors.qualification}>
+            <Field label="Educational Qualification " error={errors.qualification}>
               <div className="enroll__qual-grid">
                 {QUALIFICATIONS.map(q=>(
                   <button key={q} type="button"
@@ -441,7 +419,7 @@ Please verify payment and send login credentials to student within 24-48 hours.`
             </Field>
 
             <Field
-              label={<>Current Profile * <span style={{fontWeight:400,textTransform:"none",fontSize:11}}>(select all that apply)</span></>}
+              label={<>Current Profile  <span style={{fontWeight:400,textTransform:"none",fontSize:11}}>(select all that apply)</span></>}
               error={errors.currentProfile}
             >
               <div className="enroll__profile-grid">
@@ -467,15 +445,15 @@ Please verify payment and send login credentials to student within 24-48 hours.`
             <h3 className="enroll__card-title">📎 Upload Documents</h3>
             <p className="enroll__card-subtitle">All photos must be clear & readable. Max 5MB each.</p>
 
-            <UploadBox label="Passport Size Photo *" field="passport" icon="🤳"
+            <UploadBox label="Passport Size Photo " field="passport" icon="🤳"
               hint="Clear face photo with white/light background"
               preview={previews.passport} error={errors.passport} onChange={handleFile} />
 
-            <UploadBox label="Signature Photo *" field="signature" icon="✍️"
+            <UploadBox label="Signature Photo " field="signature" icon="✍️"
               hint="Your signature on white paper, clearly photographed"
               preview={previews.signature} error={errors.signature} onChange={handleFile} />
 
-            <Field label="Aadhaar Card Type *">
+            <Field label="Aadhaar Card Type ">
               <div className="enroll__aadhaar-type">
                 {[
                   { v:"big",   l:"Full Sized Aadhaar Card — address on front side" },
@@ -490,8 +468,8 @@ Please verify payment and send login credentials to student within 24-48 hours.`
 
             <UploadBox
               label={form.aadhaarType==="big"
-                ? "Full Sized Aadhaar Card (Front — all details visible) *"
-                : "Small Sized Aadhaar Card — Front Side *"}
+                ? "Full Sized Aadhaar Card (Front — all details visible) "
+                : "Small Sized Aadhaar Card — Front Side "}
               field="aadhaarFront" icon="🪪"
               hint={form.aadhaarType==="big"
                 ? "Full Sized Aadhaar: name, photo, DOB & address all on front"
@@ -499,7 +477,7 @@ Please verify payment and send login credentials to student within 24-48 hours.`
               preview={previews.aadhaarFront} error={errors.aadhaarFront} onChange={handleFile} />
 
             {form.aadhaarType==="small" && (
-              <UploadBox label="Aadhaar Card — Back Side (address) *"
+              <UploadBox label="Aadhaar Card — Back Side (address) "
                 field="aadhaarBack" icon="🪪"
                 hint="Small Aadhaar: back side where address is printed"
                 preview={previews.aadhaarBack} error={errors.aadhaarBack} onChange={handleFile} />
@@ -591,7 +569,7 @@ Please verify payment and send login credentials to student within 24-48 hours.`
 
             {/* Payment screenshot */}
             <UploadBox
-              label="Upload Payment Screenshot *"
+              label="Upload Payment Screenshot "
               field="paymentShot" icon="📸"
               hint="Screenshot showing successful payment from your UPI app"
               preview={previews.paymentShot} error={errors.paymentShot} onChange={handleFile} />

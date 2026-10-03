@@ -15,8 +15,8 @@ const EMAILJS_PUBLIC_KEY  = "kDsxO0icILJAiKwDx";
 // ── Office Hours ─────────────────────────────────────────────
 // TODO: Update with real timings
 const HOURS = [
-  { day: "Monday – Saturday", time: "8:30 AM – 6:30 PM" },
-  { day: "Sunday",          time: "Closed" },
+  { day: "Tuesday – Sunday", time: "8:30 AM – 6:00 PM" },
+  { day: "Monday",          time: "Closed" },
 ];
 
 // ── Get all course titles from COURSES data ──────────────────

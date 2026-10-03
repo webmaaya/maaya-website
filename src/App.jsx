@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import {AuthProvider} from "./context/AuthContext";
 import ScrollToTop from "./Components/ScrollToTop";
+import WelcomePopup from "./Components/WelcomePopup/WelcomePopup";
 
 // Layout components
 import NavBar   from "./Components/navigations/NavBar";
@@ -45,6 +46,7 @@ export default function App() {
      <Route path="*" element={
        <>
       <NavBar />
+      <WelcomePopup />
       <Routes>   
        <Route path="/"           element={<Home/>} />
         <Route path="/courses"    element={<Courses/> }/>
